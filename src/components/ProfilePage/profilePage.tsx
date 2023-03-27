@@ -1,20 +1,16 @@
 import { Navigate, useNavigate } from "react-router-dom";
-import { Formik, Field, Form } from "formik";
-import * as Yup from "yup";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
-import "../Auth/auth.css"
+import "../commons/auth.css"
 import { createTheme } from '@mui/material/styles';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 
 import AuthService from "../../services/auth.service";
-import { TextField } from "@mui/material";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React from "react"
 import IUser from "../../types/user.type";
-import { padding } from "@mui/system";
 
 const theme = createTheme({
   palette:{

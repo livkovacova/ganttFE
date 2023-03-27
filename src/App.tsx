@@ -4,9 +4,9 @@ import './App.css';
 import {Route, Routes, useLocation} from "react-router-dom"
 import secureLocalStorage from "react-secure-storage";
 import { MyProjectsPage } from './components/MyProjectsPage/MyProjectsPage';
-import Login from './components/Auth/login.component';
-import Register from './components/Auth/register.component';
-import Profile from './components/Auth/profile.component';
+import Login from './components/Examples/login.component';
+import Register from './components/Examples/register.component';
+import Profile from './components/Examples/profile.component';
 
 
 function App() : React.ReactElement {

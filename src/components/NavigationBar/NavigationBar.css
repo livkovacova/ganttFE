@@ -1,0 +1,23 @@
+.navBarContainer {
+    height: 7vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid #B03066;
+    min-height: 48px;
+  }
+  
+  .navBarButtons {
+    margin-right: 1evw;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .logoWrapper {
+    padding-left: 0.2vw;
+    display: flex;
+    align-items: center;
+  }

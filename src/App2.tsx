@@ -6,19 +6,19 @@ import "./App2.css";
 import AuthService from "./services/auth.service";
 import IUser from './types/user.type';
 
-import Login from "./components/Auth/login.component";
-import Register from "./components/Auth/register.component";
+import Login from "./components/Examples/login.component";
+import Register from "./components/Examples/register.component";
 import Home from "./components/Examples/home.component";
-import Profile from "./components/Auth/profile.component";
+import Profile from "./components/Examples/profile.component";
 import BoardUser from "./components/Examples/boardUser.component";
 import BoardModerator from "./components/Examples/boardModerator.component";
 import BoardAdmin from "./components/Examples/boardAdmin.component";
 
 import EventBus from "./components/commons/EventBus";
-import LoginPage from "./components/Auth/loginPage";
-import RegisterPage from "./components/Auth/registerPage";
-import ProfilePage from "./components/Auth/profilePage";
-import HomePage from "./components/Examples/homePage";
+import LoginPage from "./components/LoginPage/loginPage";
+import RegisterPage from "./components/RegisterPage/registerPage";
+import ProfilePage from "./components/ProfilePage/profilePage";
+import HomePage from "./components/HomePage/homePage";
 
 type Props = {};
 

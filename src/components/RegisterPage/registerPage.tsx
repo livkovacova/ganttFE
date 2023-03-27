@@ -6,7 +6,7 @@ import YupPassword from 'yup-password'
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import "../Auth/auth.css"
+import "../commons/auth.css"
 import { createTheme } from '@mui/material/styles';
 
 import AuthService from "../../services/auth.service";
