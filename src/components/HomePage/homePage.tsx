@@ -14,9 +14,10 @@ import IUser from "../../types/user.type";
 import mainTheme from "../commons/mainTheme";
 import "../HomePage/homePage.css"
 import { getPageOfProjects, getProjectsById } from "../../services/ProjectDataService";
-import { Project } from "../commons/Projects";
+import { DEFAULT_PROJECT, Project } from "../commons/Projects";
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import TablePagination from '@mui/material/TablePagination';
+import { ProjectForm } from "./ProjectForm";
 
 const theme = responsiveFontSizes(mainTheme);
 
@@ -25,11 +26,29 @@ const HomePage = () => {
 
     const [projects, setProjects] = React.useState<Array<Project>>([]);
     const [projectFetched, setProjectFetched] = React.useState(false);
-    const [isOpenForm, setIsOpenForm] = React.useState<boolean>(false);
     const [userName, setUsername] = React.useState<string>("");
+
+    const [isOpenForm, setIsOpenForm] = React.useState<boolean>(false);
+    const [isEditing, setIsEditing] = React.useState<boolean>(false);
+    const [projectToEdit, setProjectToEdit] = React.useState<Project>(DEFAULT_PROJECT);
+    
     const [total, setTotal] = React.useState<number>(0);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+    const [refresh, setRefresh] = React.useState<boolean>(false);
+
+    const handleRefresh = () => setRefresh(!refresh);
+
+    // Create/edit event form
+    const onFormClick = () => setIsOpenForm(true);
+    const onFormClose = () => setIsOpenForm(false);
+
+    const handleEditClose = () => {
+        setProjectToEdit(DEFAULT_PROJECT);
+        setIsEditing(false);
+        onFormClose();
+    };
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
@@ -44,8 +63,6 @@ const HomePage = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-
-    const onFormClick = () => setIsOpenForm(true);
 
     const fetchProjectInfo = async () => {
         // let projects: Array<Project> = [{
@@ -65,9 +82,9 @@ const HomePage = () => {
         //     members: []
         // }];
         let currUser = AuthService.getCurrentUser();
-        const result = await getProjectsById(currUser.id, currUser.roles[0])
-        setProjects(result)
-        setProjectFetched(true)
+        const result = await getProjectsById(currUser.id, currUser.roles[0]);
+        setProjects(result);
+        setProjectFetched(true);
     }
 
     const fetchProjectInfoPaged = async () => {
@@ -97,7 +114,6 @@ const HomePage = () => {
     const renderProjects = (): React.ReactNode => {
         return (
             <div className="projectListContainer">
-                <NavigationBar onClick={onFormClick} userNameLetter={userName.charAt(0).toUpperCase()}/>
                 {projects?.map((project) =>
                     <div key={project.id} className="projectsContainer">
                         <div className="headingContainer">
@@ -114,7 +130,9 @@ const HomePage = () => {
     }
 
     return (
+        <ThemeProvider theme={theme}>
         <div className="projectsPageContainer">
+            <NavigationBar onClick={onFormClick} withCreate={true} isAdmin={true} userNameLetter={userName.charAt(0).toUpperCase()}/>
             {renderProjects()}
             <div className="TablePagination">
                 <div className="projectPaginationContainer">
@@ -125,10 +143,33 @@ const HomePage = () => {
                         rowsPerPage={rowsPerPage}
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
+                        sx={{
+                            color:"lightgrey",
+                            '& .MuiTablePagination-selectLabel ': {
+                                margin: 0
+                                },
+                            '& .MuiTablePagination-displayedRows ': {
+                                margin: 0
+                                },
+                            '& .MuiIconButton-root.Mui-disabled ': {
+                                    color: "darkgray"
+                                },
+                            '& .MuiSelect-icon ': {
+                                    color: "#B03066"
+                            },
+                    }}
                     />
                 </div>
             </div>
+            <ProjectForm
+                isOpen={isOpenForm}
+                onClose={handleEditClose}
+                isEditing={isEditing}
+                projectToEdit={projectToEdit}
+                refreshPage={handleRefresh}
+            />
         </div>
+        </ThemeProvider>
 
     // <div>
     //   <ThemeProvider theme={theme}>

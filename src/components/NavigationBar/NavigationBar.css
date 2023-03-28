@@ -6,6 +6,7 @@
     justify-content: space-between;
     border-bottom: 3px solid #B03066;
     min-height: 48px;
+    background-color: #f7f7f7;
   }
   
   .navBarButtons {

@@ -3,21 +3,23 @@ import {useNavigate} from "react-router-dom";
 import logo from "../../assets/images/ganttapp-logo.png";
 import "./NavigationBar.css";
 import Container from '@mui/material/Container';
-import { Avatar, Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
+import { Avatar, Box, ButtonGroup, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
 import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import mainTheme from "../commons/mainTheme";
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import authService from "../../services/auth.service";
+import AddIcon from '@mui/icons-material/Add';
 
 interface Props {
     onClick?: React.Dispatch<any>;
     userNameLetter?: string;
     withCreate?: boolean;
+    isAdmin?: boolean;
 }
 
-export const NavigationBar = ({onClick, userNameLetter, withCreate = true}: Props) => {
+export const NavigationBar = ({onClick, userNameLetter, withCreate, isAdmin}: Props) => {
     const navigate = useNavigate();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -76,8 +78,15 @@ export const NavigationBar = ({onClick, userNameLetter, withCreate = true}: Prop
                     >
                         My projects
                 </Typography>
+                {withCreate && isAdmin ?
+                     <IconButton color="primary" aria-label="create project" component="div" onClick={onClick} id="formOpener" sx={{marginLeft:"0.5vw"}}>
+                        <AddIcon></AddIcon>
+                     </IconButton>
+                                           :
+                     undefined
+                }
                 <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-                    <Tooltip title="Account settings">
+                    <Tooltip title="Account">
                         <IconButton
                             onClick={handleClick}
                             size="small"
