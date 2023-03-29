@@ -33,3 +33,19 @@ export const getPageOfProjects = async (userId: number, role: string, page?: num
                     return {};
                 });
 };
+
+export const createProject = async (projectName: string, projectDescription: string, manager: number, members: number[], resources: number, startDate: Date) => {
+    return axios.post(`${API_URL}save`, {
+        name: projectName,
+        description: projectDescription,
+        manager: manager,
+        resources: resources,
+        members: members,
+        startDate: startDate
+    })
+    .then((res: any) => console.log("Project succesfully created"))
+    .catch((err: any) => {
+        console.error("Error creating projects", err);
+        return {};
+    });
+};

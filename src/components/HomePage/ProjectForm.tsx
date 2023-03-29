@@ -17,6 +17,8 @@ import { getAllTeamMembers } from "../../services/UserDataService";
 import InputAdornment from '@mui/material/InputAdornment';
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { TeamMemberOption } from "./teamMemberOption";
+import { createProject } from "../../services/ProjectDataService";
 
 
 interface Props {
@@ -28,12 +30,12 @@ interface Props {
 }
 
 export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshPage}: Props) => {
-    const [projectMembersFormOptions, setProjectMembersFormOptions] = React.useState<Array<string>>([]);
-    const [selectedProjectMembersOptions, setSelectedProjectMembersOptions] = React.useState<Array<string>>([]);
+    const [projectMembersFormOptions, setProjectMembersFormOptions] = React.useState<Array<TeamMemberOption>>([]);
+    const [selectedProjectMembersOptions, setSelectedProjectMembersOptions] = React.useState<Array<TeamMemberOption>>([]);
     const [projectName, setProjectName] = React.useState<string>("");
     const [projectDescription, setProjectDescription] = React.useState<string>("");
     const [projectManager, setProjectManager] = React.useState<string>("");
-    const [currency, setCurrency] = React.useState<string>("");
+    const [currency, setCurrency] = React.useState<string>("EUR");
     const [projectResources, setProjectResources] = React.useState<number>(0);
     const [projectStart, setProjectStart] = React.useState<Date | null>(new Date());
     
@@ -67,14 +69,18 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
 
     const fetchUsers = async () => {
         const options = (await getAllTeamMembers())?.map((teamMember) => {
-                return teamMember.username;
+                let option: TeamMemberOption = {
+                    value: teamMember.id,
+                    text: teamMember.username
+                };
+                return option;
             }
         );
         if (!options){
             setProjectMembersFormOptions([]);
         }
         else{
-            setProjectMembersFormOptions(options as Array<string>);
+            setProjectMembersFormOptions(options as Array<TeamMemberOption>);
         }
     };
 
@@ -112,29 +118,31 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
         return isValid;
     };
 
-    // const saveEvent = async () => {
-    //     if (!isEditing) {
-    //         await createEvent(
-    //             projectName,
-    //             startInstantly ? EVENT_STATE.ACTIVE : EVENT_STATE.PLANNED,
-    //             parseInt(selectedProjectMembersOptions[0].value, 10),
-    //             projectStart,
-    //             eventEnd
-    //         );
-    //     } else {
-    //         const userGroup = await getUserGroup(parseInt(selectedProjectMembersOptions[0].value, 10));
-    //         await editEvent(
-    //             eventToEdit.id,
-    //             startInstantly ? EVENT_STATE.ACTIVE : eventToEdit.eventState,
-    //             projectName,
-    //             userGroup,
-    //             projectStart,
-    //             eventEnd
-    //         );
-    //     }
-    //     closeForm();
-    //     refreshPage(true);
-    // };
+    const saveProject = async () => {
+        if (!isEditing) {
+            await createProject(
+                projectName,
+                projectDescription,
+                authService.getCurrentUser().id,
+                selectedProjectMembersOptions.map((member) => member.value),
+                projectResources,
+                projectStart? projectStart : new Date()
+            );
+        }
+        // } else {
+            
+        //     await editEvent(
+        //         eventToEdit.id,
+        //         startInstantly ? EVENT_STATE.ACTIVE : eventToEdit.eventState,
+        //         projectName,
+        //         userGroup,
+        //         projectStart,
+        //         eventEnd
+        //     );
+        // }
+        closeForm();
+        refreshPage(true);
+    };
 
     // const onChangeCheckbox = () => {
     //     setStartInstantly(!startInstantly);
@@ -148,7 +156,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
         console.log(isFormValid());
         if (isFormValid()) {
             console.log("project saved")
-            // saveEvent();
+            saveProject();
         }
     };
 
@@ -158,11 +166,11 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
         } = event;
         setSelectedProjectMembersOptions(
           // On autofill we get a stringified value.
-          event.target.value as string[]
+          event.target.value as TeamMemberOption[]
         );
     };
 
-    const handleDelete = (e: React.MouseEvent, value: string) => {
+    const handleDelete = (e: React.MouseEvent, value: TeamMemberOption) => {
         e.preventDefault();
         console.log("clicked delete");
         setSelectedProjectMembersOptions((current) => _without(current, value));
@@ -181,7 +189,12 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
             setProjectDescription(projectToEdit.description);
             setProjectResources(projectToEdit.resources);
             setProjectManager(projectToEdit.manager.username);
-            setSelectedProjectMembersOptions(projectToEdit.members.map((user) => user.username));
+            setSelectedProjectMembersOptions(projectToEdit.members.map((user) => {
+                return { 
+                    value: user.id,
+                    text: user.username
+                }
+            }));
         }
     }, [isOpen]);
 
@@ -265,17 +278,17 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
                     IconComponent={KeyboardArrowDownIcon}
                     renderValue={(selected) => (
                     <div style={{display:"flex", flexWrap:"wrap"}}>
-                        {(selected as string[]).map((value) => (
+                        {(selected as TeamMemberOption[]).map((value) => (
                         <Chip
-                            key={value}
-                            label={value}
+                            key={value.value}
+                            label={value.text}
                             clickable
                             deleteIcon={
                             <CancelIcon
                                 onMouseDown={(event) => event.stopPropagation()}
                             />
                             }
-                            onDelete={(e) => handleDelete(e, value)}
+                            onDelete={(e) => {handleDelete(e, value)}}
                             onClick={() => console.log("clicked chip")}
                             style={{margin: 2}}
                         />
@@ -284,9 +297,10 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
                     )}
                 >
             {projectMembersFormOptions.map((user) => (
-              <MenuItem key={user} value={user}>
+                //@ts-ignore
+              <MenuItem key={user.value} value={user}>
                 <Checkbox checked={selectedProjectMembersOptions.includes(user)} />
-                <ListItemText primary={user} />
+                <ListItemText primary={user.text} />
               </MenuItem>
             ))}
           </Select>
@@ -303,11 +317,14 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
             fullWidth
             autoFocus
             margin="normal"
-            type="text"
-            value={projectResources}
+            type="number"
+            value={projectResources.toString(10)}
             onChange={(e) => setProjectResources(parseInt(e.target.value))}
             label="Resources"
             id="resources"
+            InputLabelProps={{
+                shrink: true,
+            }}
             InputProps={{
             endAdornment: <InputAdornment position="end">
                             <Select

@@ -60,10 +60,10 @@ export const NavigationBar = ({onClick, userNameLetter, withCreate, isAdmin}: Pr
         <div>
             <div className="navBarContainer">
                 <div className="logoWrapper">
-                    <img src={logo} alt="logo of GanttApp" style={{width: "82px"}}/>
+                    {/* <img src={logo} alt="logo of GanttApp" style={{width: "82px"}}/> */}
                     <Typography
                         variant="h5"
-                        style={{marginLeft: "0.1vw", fontWeight: "600"}}
+                        style={{marginLeft: "0.5vw", fontWeight: "600"}}
                         fontFamily={"Raleway, sans-serif"}
                     >
                         GanttApp
