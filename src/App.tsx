@@ -6,7 +6,6 @@ import secureLocalStorage from "react-secure-storage";
 import { MyProjectsPage } from './components/MyProjectsPage/MyProjectsPage';
 import Login from './components/Examples/login.component';
 import Register from './components/Examples/register.component';
-import Profile from './components/Examples/profile.component';
 
 
 function App() : React.ReactElement {
@@ -30,7 +29,6 @@ function App() : React.ReactElement {
       <Route path="/team" element={<MyProjectsPage isManager={false}/>}/>
       <Route path="/login" element={<Login/>}/>
       <Route path="/register" element={<Register/>}/>
-      <Route path="/profile" element={<Profile/>}/>
     </Routes>
   </>);
 }

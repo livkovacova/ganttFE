@@ -8,7 +8,6 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
-import { TeamMemberOption } from "./teamMemberOption";
 import CancelIcon from '@mui/icons-material/Cancel';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import _without from "lodash/without";
@@ -16,7 +15,8 @@ import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
 import { getAllTeamMembers } from "../../services/UserDataService";
 import InputAdornment from '@mui/material/InputAdornment';
-
+import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 
 interface Props {
@@ -97,18 +97,18 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
             setErrorProjectDescription(true);
             isValid = false;
         }
-        // if (projectManager.length === 0) {
-        //     setErrorProjectManager(true);
-        //     isValid = false;
-        // }
-        // // if (selectedProjectMembersOptions.length === 0) {
-        // //     setErrorSelectedOptions(true);
-        // //     isValid = false;
-        // // }
-        // if (!projectStart || areDatesInvalid()) {
-        //     setErrorProjectStart(true);
-        //     isValid = false;
-        // }
+        if (projectManager.length === 0) {
+            setErrorProjectManager(true);
+            isValid = false;
+        }
+        if (selectedProjectMembersOptions.length === 0) {
+            setErrorSelectedOptions(true);
+            isValid = false;
+        }
+        if (!projectStart || areDatesInvalid()) {
+            setErrorProjectStart(true);
+            isValid = false;
+        }
         return isValid;
     };
 
@@ -169,21 +169,21 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
     };
 
     // fetch userGroups when form is opened, reset form fields when creating new event
-    // React.useEffect(() => {
-    //     if (isOpen) {
-    //         clearErrors();
-    //     }
-    //     if (!isEditing) {
-    //         resetInputFields();
-    //     } else {
-    //         setProjectName(eventToEdit?.eventTitle);
-    //         setProjectStart(new Date(eventToEdit?.startDate));
-    //         setSelectedProjectMembersOptions([{
-    //             value: projectToEdit?.userGroup.id.toString(10),
-    //             text: projectToEdit?.members.
-    //         }]);
-    //     }
-    // }, [isOpen]);
+    React.useEffect(() => {
+        if (isOpen) {
+            clearErrors();
+        }
+        if (!isEditing) {
+            resetInputFields();
+        } else {
+            setProjectName(projectToEdit?.name);
+            setProjectStart(projectToEdit.startdate? new Date(projectToEdit.startdate) : new Date());
+            setProjectDescription(projectToEdit.description);
+            setProjectResources(projectToEdit.resources);
+            setProjectManager(projectToEdit.manager.username);
+            setSelectedProjectMembersOptions(projectToEdit.members.map((user) => user.username));
+        }
+    }, [isOpen]);
 
     React.useEffect(() => {
         let currentUserFromAuth = authService.getCurrentUser();
@@ -291,6 +291,14 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
             ))}
           </Select>
         </FormControl>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DatePicker
+            label="Start date"
+            value={projectStart}
+            onChange={(newStart) => setProjectStart(newStart)}
+            sx={{marginTop:"2vh"}}
+        />
+        </LocalizationProvider>
         <TextField
             fullWidth
             autoFocus

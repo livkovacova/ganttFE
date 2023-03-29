@@ -4,9 +4,10 @@ export interface Project {
     id: number;
     name: string;
     description: string;
-    manager: IUser | null;
+    manager: IUser;
     resources: number;
     members: Array<IUser>;
+    startdate: Date
 }
 
 export const DEFAULT_PROJECT: Project = {
@@ -15,5 +16,6 @@ export const DEFAULT_PROJECT: Project = {
     description: "",
     manager: DEFAULT_USER,
     resources: 0,
-    members: [DEFAULT_USER]
+    members: [DEFAULT_USER],
+    startdate: new Date()
 };

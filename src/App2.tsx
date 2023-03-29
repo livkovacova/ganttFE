@@ -1,15 +1,12 @@
 import { Component } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App2.css";
 
 import AuthService from "./services/auth.service";
 import IUser from './types/user.type';
 
-import Login from "./components/Examples/login.component";
-import Register from "./components/Examples/register.component";
 import Home from "./components/Examples/home.component";
-import Profile from "./components/Examples/profile.component";
 import BoardUser from "./components/Examples/boardUser.component";
 import BoardModerator from "./components/Examples/boardModerator.component";
 import BoardAdmin from "./components/Examples/boardAdmin.component";
