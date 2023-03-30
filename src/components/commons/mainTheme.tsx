@@ -7,9 +7,9 @@ const mainTheme = createTheme({
         contrastText: "white",
       },
       secondary: {
-        light: '#ff7961',
-        main: '#f44336',
-        dark: '#ba000d',
+        light: '#E0E0E0',
+        main: '#828282',
+        dark: '#27252D',
         contrastText: '#000',
       },
     }

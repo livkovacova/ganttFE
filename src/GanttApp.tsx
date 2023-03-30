@@ -1,5 +1,5 @@
-import { Component } from "react";
-import { Routes, Route} from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Routes, Route, useLocation} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App2.css";
 
@@ -16,6 +16,8 @@ import LoginPage from "./components/LoginPage/loginPage";
 import RegisterPage from "./components/RegisterPage/registerPage";
 import ProfilePage from "./components/ProfilePage/profilePage";
 import HomePage from "./components/HomePage/homePage";
+import ProjectDetailsPage from "./components/ProjectDetailsPage/ProjectDetailsPage";
+
 
 type Props = {};
 
@@ -24,68 +26,55 @@ type State = {
   currentUser: IUser | undefined
 }
 
-class App2 extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.logOut = this.logOut.bind(this);
+const GanttApp: React.FC<Props> = () => {
+    const [isManager, setIsManager] = useState<boolean>(false);
+    const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
+    const location = useLocation();
 
-    this.state = {
-      isManager: false,
-      currentUser: undefined,
-    };
-  }
-
-  componentDidMount() {
-    const user = AuthService.getCurrentUser();
-
-    if (user) {
-      this.setState({
-        currentUser: user,
-        isManager: user.roles.includes("ROLE_MANAGER"),
-      });
+    const logOut = () => {
+        AuthService.logout();
+        setIsManager(false);
+        setCurrentUser(undefined);
     }
 
-    EventBus.on("logout", this.logOut);
-  }
+    const setUserInfo = () => {
+        const user = AuthService.getCurrentUser();
+        if (user) {
+            setCurrentUser(user);
+            setIsManager(user.roles.includes("ROLE_MANAGER"));
+        }
+    }
 
-  componentWillUnmount() {
-    EventBus.remove("logout", this.logOut);
-  }
+    useEffect(() => {
+        setUserInfo();
+        EventBus.on("logout", logOut);
 
-  componentDidUpdate(){
-    
-  }
+        return () => {
+        EventBus.remove("logout", logOut);
+        };
+    }, []);
 
-  logOut() {
-    AuthService.logout();
-    this.setState({
-      isManager: false,
-      currentUser: undefined,
-    });
-  }
-
-  render() {
-    const { currentUser, isManager } = this.state;
+    useEffect(() => {
+        setUserInfo();
+    }, [location]);
 
     return (
-      <div>
         <div>
-          <Routes>
+        <div>
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<HomePage isManager={isManager}/>} />
+            <Route path="/projects/:id" element={<ProjectDetailsPage isManager={isManager} currentUser={currentUser}/>}/>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/user" element={<BoardUser />} />
             <Route path="/mod" element={<BoardModerator />} />
             <Route path="/manager" element={<BoardAdmin />} />
-          </Routes>
+            </Routes>
         </div>
-
-        { /*<AuthVerify logOut={this.logOut}/> */}
-      </div>
+        </div>
     );
-  }
-}
+};
 
-export default App2;
+export default GanttApp;

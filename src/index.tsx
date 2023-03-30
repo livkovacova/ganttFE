@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import './index.css';
 import App2 from './App2';
 import reportWebVitals from './reportWebVitals';
+import GanttApp from './GanttApp';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -11,7 +12,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <BrowserRouter>
-    <App2 />
+    <GanttApp />
   </BrowserRouter>
 );
 

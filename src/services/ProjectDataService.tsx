@@ -49,3 +49,31 @@ export const createProject = async (projectName: string, projectDescription: str
         return {};
     });
 };
+
+export const editProject = async (id: number, projectName: string, projectDescription: string, manager: number, members: number[], resources: number, startDate: Date) => {
+    return axios.post(`${API_URL}update`, {
+        id: id,
+        name: projectName,
+        description: projectDescription,
+        manager: manager,
+        resources: resources,
+        members: members,
+        startDate: startDate
+    })
+    .then((res: any) => console.log("Project succesfully edited"))
+    .catch((err: any) => {
+        console.error("Error editing projects", err);
+        return {};
+    });
+};
+
+export const deleteProject = async (projectId: number) => {
+    return axios.delete(API_URL + "delete", {
+        params: {id: projectId}
+    } )
+    .then((res: any) => console.log("Project succesfully deleted"))
+    .catch((err: any) => {
+        console.error("Error deleting project", err);
+        return {};
+    })
+}

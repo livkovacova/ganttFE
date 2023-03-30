@@ -2,12 +2,9 @@ import React from "react";
 import {useNavigate} from "react-router-dom";
 import logo from "../../assets/images/ganttapp-logo.png";
 import "./NavigationBar.css";
-import Container from '@mui/material/Container';
 import { Avatar, Box, ButtonGroup, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
-import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
+import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import mainTheme from "../commons/mainTheme";
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import authService from "../../services/auth.service";
 import AddIcon from '@mui/icons-material/Add';
@@ -15,11 +12,12 @@ import AddIcon from '@mui/icons-material/Add';
 interface Props {
     onClick?: React.Dispatch<any>;
     userNameLetter?: string;
+    isManager?: boolean;
+    mainTitle?: string;
     withCreate?: boolean;
-    isAdmin?: boolean;
 }
 
-export const NavigationBar = ({onClick, userNameLetter, withCreate, isAdmin}: Props) => {
+export const NavigationBar = ({onClick, userNameLetter, isManager, withCreate, mainTitle}: Props) => {
     const navigate = useNavigate();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -38,21 +36,6 @@ export const NavigationBar = ({onClick, userNameLetter, withCreate, isAdmin}: Pr
         navigate("/login");
     };
 
-    // const [dropDownOptions, setDropDownOptions] = React.useState<Array<Option>>([
-    //     {value: "events", text: "Events", groupBy: "Application", onClick: () => navigate("/")},
-    //     {value: "usergroups", text: "Usergroups", groupBy: "Application", onClick: () => navigate("/usergroups")},
-    //     {value: "currentusertickets", text: "My kudo cards", groupBy: "Application", onClick: () => navigate("/mykudocards")},
-    //     {value: "logout", text: "Log out", groupBy: "System", onClick: () => logout(navigate)}
-    // ]);
-
-    // const [dropDownOptionsAdmin, setDropDownOptionsAdminn] = React.useState<Array<Option>>([
-    //     {value: "events", text: "Events", groupBy: "Application", onClick: () => navigate("/")},
-    //     {value: "usergroups", text: "Usergroups", groupBy: "Application", onClick: () => navigate("/usergroups")},
-    //     {value: "currentusertickets", text: "My kudo cards", groupBy: "Application", onClick: () => navigate("/mykudocards")},
-    //     {value: "logout", text: "Log out", groupBy: "System", onClick: () => logout(navigate)},
-    //     {value: "audit", text: "Audit", groupBy: "Application", onClick: () => navigate("/audit")}
-    // ]);
-
     const theme = responsiveFontSizes(mainTheme);
 
     return (
@@ -63,7 +46,7 @@ export const NavigationBar = ({onClick, userNameLetter, withCreate, isAdmin}: Pr
                     {/* <img src={logo} alt="logo of GanttApp" style={{width: "82px"}}/> */}
                     <Typography
                         variant="h5"
-                        style={{marginLeft: "0.5vw", fontWeight: "600"}}
+                        style={{marginLeft: "1vw", fontWeight: "600"}}
                         fontFamily={"Raleway, sans-serif"}
                     >
                         GanttApp
@@ -76,16 +59,16 @@ export const NavigationBar = ({onClick, userNameLetter, withCreate, isAdmin}: Pr
                         style={{marginLeft: "0.1vw", fontWeight: "600"}}
                         fontFamily={"Raleway, sans-serif"}
                     >
-                        My projects
+                        {mainTitle}
                 </Typography>
-                {withCreate && isAdmin ?
+                {isManager && withCreate?
                      <IconButton color="primary" aria-label="create project" component="div" onClick={onClick} id="formOpener" sx={{marginLeft:"0.5vw"}}>
                         <AddIcon></AddIcon>
                      </IconButton>
                                            :
                      undefined
                 }
-                <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', marginRight:"1vw"}}>
                     <Tooltip title="Account">
                         <IconButton
                             onClick={handleClick}
@@ -145,18 +128,6 @@ export const NavigationBar = ({onClick, userNameLetter, withCreate, isAdmin}: Pr
                 Logout
                 </MenuItem>
             </Menu>
-                    {/* {withCreate && isAdmin ?
-                     <ButtonIcon icon={ICON.PLUS} onClick={onClick} id="formOpener"/>
-                                           :
-                     undefined
-                    }
-                    <ButtonIconDropdown
-                        icon={ICON.ELLIPSIS}
-                        options={isAdmin ? dropDownOptionsAdmin : dropDownOptions}
-                        id="navDropdownButton"
-                        onChangeSelection={() => {
-                        }}
-                    /> */}
                 </div>
             </div>
         </div>

@@ -7,7 +7,7 @@ export interface Project {
     manager: IUser;
     resources: number;
     members: Array<IUser>;
-    startdate: Date
+    startdate?: Date | null
 }
 
 export const DEFAULT_PROJECT: Project = {

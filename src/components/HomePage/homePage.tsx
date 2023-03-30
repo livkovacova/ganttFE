@@ -13,15 +13,26 @@ import React from "react"
 import IUser from "../../types/user.type";
 import mainTheme from "../commons/mainTheme";
 import "../HomePage/homePage.css"
-import { getPageOfProjects, getProjectsById } from "../../services/ProjectDataService";
+import { deleteProject, getPageOfProjects, getProjectsById } from "../../services/ProjectDataService";
 import { DEFAULT_PROJECT, Project } from "../commons/Projects";
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import TablePagination from '@mui/material/TablePagination';
 import { ProjectForm } from "./ProjectForm";
+import { ButtonGroup, IconButton } from "@mui/material";
+import { DeleteForever, ChevronRight } from "@mui/icons-material";
+import EditIcon from '@mui/icons-material/Edit';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
+import InfoIcon from '@mui/icons-material/Info';
 
 const theme = responsiveFontSizes(mainTheme);
 
-const HomePage = () => {
+interface Props {
+    isManager: boolean;
+}
+
+const HomePage = ({isManager}: Props) => {
     const navigate = useNavigate();
 
     const [projects, setProjects] = React.useState<Array<Project>>([]);
@@ -30,6 +41,7 @@ const HomePage = () => {
 
     const [isOpenForm, setIsOpenForm] = React.useState<boolean>(false);
     const [isEditing, setIsEditing] = React.useState<boolean>(false);
+    const [onlyView, setOnlyView] = React.useState<boolean>(false);
     const [projectToEdit, setProjectToEdit] = React.useState<Project>(DEFAULT_PROJECT);
     
     const [total, setTotal] = React.useState<number>(0);
@@ -37,6 +49,11 @@ const HomePage = () => {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const [refresh, setRefresh] = React.useState<boolean>(false);
+
+    const [projectForAction, setProjectForAction] = React.useState<Project>({} as Project);
+    const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+    const onDeleteDialogClick = () => setDeleteDialogOpen(true);
+    const onDeleteDialogClose = () => setDeleteDialogOpen(false);
 
     const handleRefresh = () => setRefresh(!refresh);
 
@@ -47,6 +64,7 @@ const HomePage = () => {
     const handleEditClose = () => {
         setProjectToEdit(DEFAULT_PROJECT);
         setIsEditing(false);
+        setOnlyView(false);
         onFormClose();
     };
 
@@ -64,28 +82,28 @@ const HomePage = () => {
         setPage(0);
     };
 
-    const fetchProjectInfo = async () => {
-        // let projects: Array<Project> = [{
-        //     id: 123,
-        //     name: "projectName",
-        //     description: "decs",
-        //     manager: null,
-        //     resources: 123,
-        //     members: []
-        // },
-        // {
-        //     id: 123,
-        //     name: "projectName",
-        //     description: "decs",
-        //     manager: null,
-        //     resources: 123,
-        //     members: []
-        // }];
-        let currUser = AuthService.getCurrentUser();
-        const result = await getProjectsById(currUser.id, currUser.roles[0]);
-        setProjects(result);
-        setProjectFetched(true);
-    }
+    const handleDialogClick = (project: Project) => {
+        setProjectForAction(project);
+        onDeleteDialogClick();
+    };
+
+    const onDeleteDialogConfirm = async (project: Project): Promise<void> => {
+        await deleteProject(project.id);
+        onDeleteDialogClose();
+        setRefresh(true);
+    };
+
+    const handleEditClick = (project: Project) => {
+        setProjectToEdit(project);
+        setIsEditing(true);
+        onFormClick();
+    };
+
+    const handleViewClick = (project: Project) => {
+        setProjectToEdit(project);
+        setOnlyView(true);
+        onFormClick();
+    };
 
     const fetchProjectInfoPaged = async () => {
         let currUser = AuthService.getCurrentUser();
@@ -100,16 +118,8 @@ const HomePage = () => {
     });
 
     React.useEffect(() => {
-        fetchProjectInfo();
-    }, [projectFetched]);
-
-    React.useEffect(() => {
         fetchProjectInfoPaged();
-    }, [projectFetched]);
-
-    React.useEffect(() => {
-        fetchProjectInfoPaged();
-    }, [page, rowsPerPage]);
+    }, [page, rowsPerPage, refresh, projectFetched]);
 
     const renderProjects = (): React.ReactNode => {
         return (
@@ -119,9 +129,27 @@ const HomePage = () => {
                         <div className="headingContainer">
                             <h5 className="headingStyle">{project?.name}</h5>
                         </div>
-                        <div className="eventButtons">
-                            A
-                        </div>
+                        <ButtonGroup className="projectButtons">
+                            {isManager ?
+                                (<>
+                                    <IconButton onClick={() => handleDialogClick(project)} className="deleteButton">
+                                        <DeleteForever></DeleteForever>
+                                    </IconButton>
+                                    <IconButton onClick={() => handleEditClick(project)}>
+                                        <EditIcon></EditIcon>
+                                    </IconButton>                     
+                                </>)
+                                    :
+                                    (<>
+                                        <IconButton onClick={() => handleViewClick(project)}>
+                                            <InfoIcon></InfoIcon>
+                                        </IconButton>                     
+                                    </>)
+                            }
+                            <IconButton onClick={() => navigate(`/projects/${project?.id}`)}>
+                                <ChevronRight></ChevronRight>
+                            </IconButton>
+                        </ButtonGroup>
                     </div>
                     )
                 }
@@ -132,8 +160,17 @@ const HomePage = () => {
     return (
         <ThemeProvider theme={theme}>
         <div className="projectsPageContainer">
-            <NavigationBar onClick={onFormClick} withCreate={true} isAdmin={true} userNameLetter={userName.charAt(0).toUpperCase()}/>
+            <NavigationBar onClick={onFormClick} isManager={isManager} mainTitle="My projects" withCreate={true} userNameLetter={userName.charAt(0).toUpperCase()}/>
             {renderProjects()}
+            <Dialog open={isDeleteDialogOpen} onClose={onDeleteDialogClose}>
+                 <DialogTitle>
+                    Are you sure you want to delete "{projectForAction.name}" project?
+                </DialogTitle>
+                <DialogActions>
+                    <Button onClick={onDeleteDialogClose} color="secondary">Cancel</Button>
+                    <Button onClick={() => onDeleteDialogConfirm(projectForAction)} color="warning" variant="contained">Delete</Button>
+                </DialogActions>
+            </Dialog>
             <div className="TablePagination">
                 <div className="projectPaginationContainer">
                     <TablePagination
@@ -167,6 +204,7 @@ const HomePage = () => {
                 isEditing={isEditing}
                 projectToEdit={projectToEdit}
                 refreshPage={handleRefresh}
+                onlyView={onlyView}
             />
         </div>
         </ThemeProvider>

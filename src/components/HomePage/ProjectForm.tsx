@@ -18,7 +18,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TeamMemberOption } from "./teamMemberOption";
-import { createProject } from "../../services/ProjectDataService";
+import { createProject, editProject } from "../../services/ProjectDataService";
 
 
 interface Props {
@@ -27,9 +27,10 @@ interface Props {
     isEditing: boolean;
     projectToEdit: Project;
     refreshPage: React.Dispatch<boolean>;
+    onlyView: boolean;
 }
 
-export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshPage}: Props) => {
+export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView, refreshPage}: Props) => {
     const [projectMembersFormOptions, setProjectMembersFormOptions] = React.useState<Array<TeamMemberOption>>([]);
     const [selectedProjectMembersOptions, setSelectedProjectMembersOptions] = React.useState<Array<TeamMemberOption>>([]);
     const [projectName, setProjectName] = React.useState<string>("");
@@ -47,7 +48,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
 
     const resetInputFields = () => {
         setProjectName("");
-        // setSelectedProjectMembersOptions([]);
+        setSelectedProjectMembersOptions([]);
         setProjectStart(new Date());
         setProjectManager(authService.getCurrentUser().username)
         setProjectDescription("");
@@ -128,35 +129,26 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
                 projectResources,
                 projectStart? projectStart : new Date()
             );
+        } else {
+            await editProject(
+                projectToEdit.id,
+                projectName,
+                projectDescription,
+                authService.getCurrentUser().id,
+                selectedProjectMembersOptions.map((member) => member.value),
+                projectResources,
+                projectStart? projectStart : new Date()
+            );
         }
-        // } else {
-            
-        //     await editEvent(
-        //         eventToEdit.id,
-        //         startInstantly ? EVENT_STATE.ACTIVE : eventToEdit.eventState,
-        //         projectName,
-        //         userGroup,
-        //         projectStart,
-        //         eventEnd
-        //     );
-        // }
         closeForm();
-        refreshPage(true);
     };
-
-    // const onChangeCheckbox = () => {
-    //     setStartInstantly(!startInstantly);
-    //     setProjectStart(new Date());
-    //     if(isEditing && startInstantly){
-    //         setProjectStart(new Date(eventToEdit?.startDate));
-    //     }
-    // };
 
     const onFormSubmit = () => {
         console.log(isFormValid());
         if (isFormValid()) {
             console.log("project saved")
             saveProject();
+            refreshPage(true);
         }
     };
 
@@ -165,7 +157,6 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
           target: { value },
         } = event;
         setSelectedProjectMembersOptions(
-          // On autofill we get a stringified value.
           event.target.value as TeamMemberOption[]
         );
     };
@@ -176,12 +167,11 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
         setSelectedProjectMembersOptions((current) => _without(current, value));
     };
 
-    // fetch userGroups when form is opened, reset form fields when creating new event
     React.useEffect(() => {
         if (isOpen) {
             clearErrors();
         }
-        if (!isEditing) {
+        if (!isEditing && !onlyView) {
             resetInputFields();
         } else {
             setProjectName(projectToEdit?.name);
@@ -210,11 +200,16 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
         <div>
           <Dialog fullWidth open={isOpen} onClose={closeForm} >
             
-            <DialogTitle>{isEditing ? "Edit project" : "New project"}</DialogTitle>
+            <DialogTitle>{isEditing ? "Edit project" : !onlyView ? "New project" : projectName}</DialogTitle>
             <DialogContent sx={{paddingBottom:"0.1vh", display:"flex", flexDirection:"column", justifyContent:"space-between"}}>
-              <DialogContentText>
-                Enter informations about project.
-              </DialogContentText>
+                {!onlyView ? 
+                (
+                    <DialogContentText>
+                        Enter informations about project.
+                    </DialogContentText>
+                ) :
+                null
+                }
               <TextField
                 autoFocus
                 margin="normal"
@@ -222,6 +217,9 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
                 label="Name"
                 type="text"
                 value={projectName}
+                InputProps={{
+                    readOnly: onlyView,
+                }}
                 fullWidth
                 variant="standard"
                 onChange={(e) => setProjectName(e.target.value)}
@@ -243,6 +241,9 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
                 label="Description"
                 type="text"
                 value={projectDescription}
+                InputProps={{
+                    readOnly: onlyView,
+                }}
                 fullWidth
                 variant="standard"
                 onChange={(e) => setProjectDescription(e.target.value)}
@@ -273,6 +274,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
                     id="mutiple-chip"
                     multiple
                     variant="outlined"
+                    readOnly={isEditing || onlyView}
                     value={selectedProjectMembersOptions}
                     onChange={handleChange}
                     IconComponent={KeyboardArrowDownIcon}
@@ -299,7 +301,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
             {projectMembersFormOptions.map((user) => (
                 //@ts-ignore
               <MenuItem key={user.value} value={user}>
-                <Checkbox checked={selectedProjectMembersOptions.includes(user)} />
+                <Checkbox readOnly={isEditing} checked={selectedProjectMembersOptions.includes(user)} />
                 <ListItemText primary={user.text} />
               </MenuItem>
             ))}
@@ -309,6 +311,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
         <DatePicker
             label="Start date"
             value={projectStart}
+            readOnly={isEditing || onlyView}
             onChange={(newStart) => setProjectStart(newStart)}
             sx={{marginTop:"2vh"}}
         />
@@ -326,26 +329,35 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, refreshP
                 shrink: true,
             }}
             InputProps={{
-            endAdornment: <InputAdornment position="end">
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={currency}
-                                label="currency"
-                                variant="standard"
-                                onChange={(e) => setCurrency(e.target.value)}
-                            >
-                                <MenuItem value={"EUR"}>€</MenuItem>
-                                <MenuItem value={"DOLARS"}>$</MenuItem>
-                            </Select>
-                        </InputAdornment>,
+                endAdornment: <InputAdornment position="end">
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={currency}
+                                    label="currency"
+                                    variant="standard"
+                                    readOnly={onlyView}
+                                    onChange={(e) => setCurrency(e.target.value)}
+                                >
+                                    <MenuItem value={"EUR"}>€</MenuItem>
+                                    <MenuItem value={"DOLARS"}>$</MenuItem>
+                                </Select>
+                            </InputAdornment>,
+                inputProps: { 
+                    min: 0 
+                },
+                readOnly: onlyView
           }}
           variant="standard"
         />
             </DialogContent>
             <DialogActions>
-              <Button onClick={closeForm}>Cancel</Button>
-              <Button onClick={onFormSubmit}>Save project</Button>
+              <Button onClick={closeForm} color="secondary">Cancel</Button>
+              {!onlyView ? 
+              (<Button onClick={onFormSubmit} variant="contained">Save project</Button>)
+              :
+              null
+              }
             </DialogActions>
           </Dialog>
         </div>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import secureLocalStorage from "react-secure-storage";
 
 const API_URL = "http://localhost:8080/api/auth/";
 
@@ -11,7 +12,7 @@ class AuthService {
       })
       .then(response => {
         if (response.data.token) {
-          localStorage.setItem("user", JSON.stringify(response.data));
+          secureLocalStorage.setItem("user", JSON.stringify(response.data));
         }
 
         return response.data;
@@ -19,7 +20,7 @@ class AuthService {
   }
 
   logout() {
-    localStorage.removeItem("user");
+    secureLocalStorage.removeItem("user");
   }
 
   register(username: string, email: string, password: string, roles: Array<string>) {
@@ -32,8 +33,8 @@ class AuthService {
   }
 
   getCurrentUser() {
-    const userStr = localStorage.getItem("user");
-    if (userStr) return JSON.parse(userStr);
+    const userStr = secureLocalStorage.getItem("user");
+    if (userStr) return JSON.parse(userStr as string);
 
     return null;
   }
