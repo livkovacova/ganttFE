@@ -32,7 +32,7 @@ interface Props {
     phaseToEdit: Phase;
     refreshPage: () => void;
     savedPhases: Array<Phase>;
-    onSubmit: () => void;
+    onSubmit: (phase:Phase) => void;
     project: Project;
 }
 
@@ -42,10 +42,8 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     const [phaseName, setPhaseName] = React.useState<string>("");
     const [currency, setCurrency] = React.useState<string>("EUR");
     const [createdTasks, setCreatedTasks] = React.useState<Array<Task>>([]);
-    
 
     const [errorPhaseName, setErrorPhaseName] = React.useState<boolean>(false);
-
 
     const resetInputFields = () => {
         setPhaseName("");
@@ -53,9 +51,6 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
 
     const clearErrors = () => {
         setErrorPhaseName(false);
-        // setErrorProjectDescription(false);
-        // setErrorSelectedOptions(false);
-        // setErrorProjectStart(false);
     };
 
     const closeForm = () => {
@@ -122,8 +117,11 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         console.log(isFormValid());
         if (isFormValid()) {
             console.log("phase saved")
-            //create Phase from tasks and name and pass as param
-            onSubmit();
+            let phase: Phase = {
+                name: phaseName,
+                tasks: createdTasks
+            }
+            onSubmit(phase);
             closeForm();
             refreshPage();
         }

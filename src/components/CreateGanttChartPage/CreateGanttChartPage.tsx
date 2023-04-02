@@ -78,7 +78,7 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
 
     React.useEffect(() => {
         fetchProjectInfo();
-    });
+    },[]);
 
     const renderPhasesList = (): React.ReactNode => {
         return (
@@ -124,15 +124,9 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
         let updatedPhases = savedPhases;
         updatedPhases.push(phase);
         setSavedPhases(updatedPhases);
-        //savedPhases.push({name:"new phase", tasks:["task1", "task 2"]})
         console.log(savedPhases);
         setRefresh(!refresh);
     };
-
-    const onSumbitAddingPhase = () => {
-        console.log("Phase submited");
-    }
-
 
     return (
         <ThemeProvider theme={theme}>
@@ -169,7 +163,7 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
                     phaseToEdit={phaseToEdit}
                     refreshPage={handleRefresh}
                     savedPhases={savedPhases}
-                    onSubmit={onSumbitAddingPhase}
+                    onSubmit={onAddPhaseClick}
                     project={project}
                 />
             </div>
