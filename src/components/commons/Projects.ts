@@ -7,7 +7,9 @@ export interface Project {
     manager: IUser;
     resources: number;
     members: Array<IUser>;
-    startdate?: Date | null
+    startdate?: Date | null,
+    ganttchart?: string | null,
+    treechart?: string | null
 }
 
 export const DEFAULT_PROJECT: Project = {
@@ -17,5 +19,7 @@ export const DEFAULT_PROJECT: Project = {
     manager: DEFAULT_USER,
     resources: 0,
     members: [DEFAULT_USER],
-    startdate: new Date()
+    startdate: new Date(),
+    ganttchart: null,
+    treechart: null
 };

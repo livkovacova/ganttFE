@@ -1,11 +1,11 @@
-.projectDetailsPageContainer{
+.pageContainer{
     overflow-x: hidden;
     height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-.projectDetailContainer {
+.phasesContainer {
     display: flex;
     flex-direction: column;
     overflow: auto;
@@ -17,15 +17,27 @@
     align-items: center;
 }
 
-.projectDetailButtons{
-    margin: 0;
-    max-width:30vw;
-    align-self: center;
-    flex-direction: column;
-    box-shadow: 0 0 0 0 !important;
-    min-height: 15vh;
-    justify-content: space-between;
-    transform: translateY(30vh);
+.addButton{
+    display:"flex";
+    flex-direction:"row";
+    justify-content:"flex-start";
+    width: 90vw;
+    padding: 0.5em;
+}
+.createGanttButtons{
+    height: 4em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 1vw;
+}
+
+
+.submitButtonsContainer {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 2px solid lightgrey;
+    
 }
 
 @media only screen and (max-width: 400px) {

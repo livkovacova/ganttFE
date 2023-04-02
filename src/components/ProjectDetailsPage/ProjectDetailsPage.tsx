@@ -7,6 +7,7 @@ import IUser from "../../types/user.type";
 import {useParams, useNavigate} from "react-router-dom";
 import { Button, ButtonGroup, IconButton, Tooltip } from "@mui/material";
 import "../ProjectDetailsPage/ProjectDetailsPage.css"
+import { getProjectById } from "../../services/ProjectDataService";
 
 
 interface Props {
@@ -22,13 +23,29 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
 
     const [isGanttCreated, setGanttCreated] = useState<boolean>(false);
     const [isTreeCreated, setTreeCreated] = useState<boolean>(false);
+    const [projectName, setProjectName] = useState<string>("");
     const [refresh, setRefresh] = useState<boolean>(false);
+
+    const fetchProjectInfo = async () => {
+        const project = await getProjectById(parseInt(id!));
+        if (project.ganttchart){
+            setGanttCreated(true);
+        }
+        if(project.treechart){
+            setTreeCreated(true);
+        }
+        setProjectName(project.name);
+    };
+
+    React.useEffect(() => {
+        fetchProjectInfo();
+    });
 
     const renderFirstButton = (): React.ReactNode => {
         return (
             <>{isManager && !isGanttCreated? 
                 (
-                <Button fullWidth color="primary" onClick={() => navigate(`/projects/${id}`)}>
+                <Button fullWidth color="primary" onClick={() => navigate(`/projects/${id}/create-gantt`)}>
                     CREATE GANTT CHART
                 </Button>) 
                     :
@@ -71,7 +88,7 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
     return (
         <ThemeProvider theme={theme}>
             <div className="projectDetailsPageContainer">
-                <NavigationBar withCreate={false} isManager={isManager} mainTitle="Project detail" userNameLetter={currentUser?.username.charAt(0).toUpperCase()}/>
+                <NavigationBar withCreate={false} isManager={isManager} mainTitle={projectName} userNameLetter={currentUser?.username.charAt(0).toUpperCase()}/>
                 <div className="projectDetailContainer">
                     <ButtonGroup 
                     variant="contained" 

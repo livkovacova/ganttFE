@@ -26,7 +26,7 @@ interface Props {
     onClose: () => void;
     isEditing: boolean;
     projectToEdit: Project;
-    refreshPage: React.Dispatch<boolean>;
+    refreshPage: () => void;
     onlyView: boolean;
 }
 
@@ -148,7 +148,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
         if (isFormValid()) {
             console.log("project saved")
             saveProject();
-            refreshPage(true);
+            refreshPage();
         }
     };
 

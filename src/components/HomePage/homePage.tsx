@@ -13,7 +13,7 @@ import React from "react"
 import IUser from "../../types/user.type";
 import mainTheme from "../commons/mainTheme";
 import "../HomePage/homePage.css"
-import { deleteProject, getPageOfProjects, getProjectsById } from "../../services/ProjectDataService";
+import { deleteProject, getPageOfProjects, getProjectsForUserById } from "../../services/ProjectDataService";
 import { DEFAULT_PROJECT, Project } from "../commons/Projects";
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import TablePagination from '@mui/material/TablePagination';
@@ -82,7 +82,7 @@ const HomePage = ({isManager}: Props) => {
         setPage(0);
     };
 
-    const handleDialogClick = (project: Project) => {
+    const handleDeleteDialogClick = (project: Project) => {
         setProjectForAction(project);
         onDeleteDialogClick();
     };
@@ -132,7 +132,7 @@ const HomePage = ({isManager}: Props) => {
                         <ButtonGroup className="projectButtons">
                             {isManager ?
                                 (<>
-                                    <IconButton onClick={() => handleDialogClick(project)} className="deleteButton">
+                                    <IconButton onClick={() => handleDeleteDialogClick(project)} className="deleteButton">
                                         <DeleteForever></DeleteForever>
                                     </IconButton>
                                     <IconButton onClick={() => handleEditClick(project)}>

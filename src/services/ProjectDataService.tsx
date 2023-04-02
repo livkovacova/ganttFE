@@ -4,7 +4,7 @@ import { Project } from "../components/commons/Projects";
 
 const API_URL = "http://localhost:8080/api/projects/";
 
-export const getProjectsById = async (userId: number, role: string): Promise<Array<Project>> => {
+export const getProjectsForUserById = async (userId: number, role: string): Promise<Array<Project>> => {
     return axios.get(API_URL + "byUser", {
         params: {
             userId: userId,
@@ -33,6 +33,19 @@ export const getPageOfProjects = async (userId: number, role: string, page?: num
                     return {};
                 });
 };
+
+export const getProjectById= async (id: number): Promise<Project> => {
+    return axios.get(API_URL + "project", {
+        params: {
+            id: id,
+        }
+    } )
+    .then((res: any) => res.data)
+    .catch((err: any) => {
+        console.error("Error fetching project", err);
+        return {};
+    })
+}
 
 export const createProject = async (projectName: string, projectDescription: string, manager: number, members: number[], resources: number, startDate: Date) => {
     return axios.post(`${API_URL}save`, {
