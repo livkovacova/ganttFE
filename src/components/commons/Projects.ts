@@ -6,6 +6,7 @@ export interface Project {
     description: string;
     manager: IUser;
     resources: number;
+    currency: string;
     members: Array<IUser>;
     startdate?: Date | null,
     ganttchart?: string | null,
@@ -18,6 +19,7 @@ export const DEFAULT_PROJECT: Project = {
     description: "",
     manager: DEFAULT_USER,
     resources: 0,
+    currency: "EUR",
     members: [DEFAULT_USER],
     startdate: new Date(),
     ganttchart: null,

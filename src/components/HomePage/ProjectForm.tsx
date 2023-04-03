@@ -127,6 +127,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
                 authService.getCurrentUser().id,
                 selectedProjectMembersOptions.map((member) => member.value),
                 projectResources,
+                currency,
                 projectStart? projectStart : new Date()
             );
         } else {
@@ -137,6 +138,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
                 authService.getCurrentUser().id,
                 selectedProjectMembersOptions.map((member) => member.value),
                 projectResources,
+                currency,
                 projectStart? projectStart : new Date()
             );
         }
@@ -178,6 +180,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
             setProjectStart(projectToEdit.startdate? new Date(projectToEdit.startdate) : new Date());
             setProjectDescription(projectToEdit.description);
             setProjectResources(projectToEdit.resources);
+            setCurrency(projectToEdit.currency);
             setProjectManager(projectToEdit.manager.username);
             setSelectedProjectMembersOptions(projectToEdit.members.map((user) => {
                 return { 

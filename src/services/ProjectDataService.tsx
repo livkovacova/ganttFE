@@ -47,12 +47,13 @@ export const getProjectById= async (id: number): Promise<Project> => {
     })
 }
 
-export const createProject = async (projectName: string, projectDescription: string, manager: number, members: number[], resources: number, startDate: Date) => {
+export const createProject = async (projectName: string, projectDescription: string, manager: number, members: number[], resources: number, currency: string, startDate: Date) => {
     return axios.post(`${API_URL}save`, {
         name: projectName,
         description: projectDescription,
         manager: manager,
         resources: resources,
+        currency: currency,
         members: members,
         startDate: startDate
     })
@@ -63,13 +64,14 @@ export const createProject = async (projectName: string, projectDescription: str
     });
 };
 
-export const editProject = async (id: number, projectName: string, projectDescription: string, manager: number, members: number[], resources: number, startDate: Date) => {
+export const editProject = async (id: number, projectName: string, projectDescription: string, manager: number, members: number[], resources: number, currency: string, startDate: Date) => {
     return axios.post(`${API_URL}update`, {
         id: id,
         name: projectName,
         description: projectDescription,
         manager: manager,
         resources: resources,
+        currency: currency,
         members: members,
         startDate: startDate
     })

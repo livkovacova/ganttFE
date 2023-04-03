@@ -1,5 +1,5 @@
 import { Project } from "../commons/Projects";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, TextField as DateField, TextField, IconButton} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, TextField as DateField, TextField, IconButton, Typography} from "@mui/material";
 import React from "react";
 import authService from "../../services/auth.service";
 import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
@@ -20,9 +20,12 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TeamMemberOption } from "../HomePage/teamMemberOption";
 import { createProject, editProject } from "../../services/ProjectDataService";
 import { Phase } from "../commons/Phase";
-import { Task } from "../commons/Task";
+import { DEFAULT_TASK, Task } from "../commons/Task";
 import DoneIcon from '@mui/icons-material/Done';
 import { PredecessorOption } from "./PredecessorOption";
+import AddIcon from '@mui/icons-material/Add';
+import { ProjectTaskForm } from "../ProjectTaskForm/ProjectTaskForm";
+import "./ProjectPhaseDialog.css"
 
 
 interface Props {
@@ -42,8 +45,12 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     const [phaseName, setPhaseName] = React.useState<string>("");
     const [currency, setCurrency] = React.useState<string>("EUR");
     const [createdTasks, setCreatedTasks] = React.useState<Array<Task>>([]);
+    const [savedTasks, setSavedTasks] = React.useState<Array<Task>>([]);
+    const [refresh, setRefresh] = React.useState<boolean>(false);
 
     const [errorPhaseName, setErrorPhaseName] = React.useState<boolean>(false);
+
+    const handleRefresh = () => setRefresh(!refresh);
 
     const resetInputFields = () => {
         setPhaseName("");
@@ -75,7 +82,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     }
 
     const updatePredecessorsOptions = () => {
-        const thisPhaseOptions: Array<PredecessorOption> = createdTasks.map((task) => {
+        const thisPhaseOptions: Array<PredecessorOption> = savedTasks.map((task) => {
             let option: PredecessorOption = {
                 value: task.workid,
                 text: task.name
@@ -83,7 +90,11 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             return option;
         });
         let allOptions = predecessorsFormOptions.concat(thisPhaseOptions);
+        console.log("all opts> "+allOptions);
+        console.log("this phase opttions> "+thisPhaseOptions);
         allOptions.length == 0 ? setPredecessorsFormOptions([]) : setPredecessorsFormOptions(allOptions);
+        console.log("som v update:");
+        console.log(predecessorsFormOptions);
     }
 
     const prepareAssigneesOptions = () => {
@@ -146,7 +157,54 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
 
     React.useEffect(() => {
         updatePredecessorsOptions();
-    }, [createdTasks]);
+        console.log("useefect");
+    }, [savedTasks]);
+
+    const renderTaskForms = (): React.ReactNode => {
+        return (
+            createdTasks.map((task, index) => (
+                <ProjectTaskForm 
+                    key={index} 
+                    onSubmit={onTaskFormSave} 
+                    taskForAction={task} 
+                    isEditing={false} 
+                    refreshPage={refreshPage}
+                    assigneesOptions={assigneesFormOptions}
+                    predecessorsOptions={predecessorsFormOptions}
+                    currency = {project.currency}
+                    />
+                )
+            )
+        )
+    };
+
+    const addNewTaskForm = () => {
+        let newTask = {
+            workid: createdTasks.length,
+            name: "New task",
+            duration: 1,
+            priority: 0,
+            assignees: [],
+            resources: 0,
+            predecessors: [],
+            extendable: true
+        }
+        setCreatedTasks([...createdTasks, newTask]);
+        console.log(createdTasks);
+        handleRefresh();
+    }
+
+    //add is Editing
+    const onTaskFormSave = (task: Task) => {
+        let updatedTasks = savedTasks;
+        console.log("som v updateeeeeeeeeee");
+        console.log("toto je task:");
+        console.log(task.name);
+        updatedTasks.push(task);
+        console.log(updatedTasks);
+        setSavedTasks(updatedTasks);
+        setRefresh(!refresh);
+    };
 
     const theme = responsiveFontSizes(mainTheme);
     
@@ -168,11 +226,18 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
                 autoFocus
                 margin="normal"
                 id="phaseName"
-                label="Name"
+                label="Phase Name"
                 type="text"
                 value={phaseName}
                 fullWidth
                 variant="standard"
+                size="medium"
+                InputProps={{
+                    style: {fontSize: "1.5rem"}
+                }}
+                InputLabelProps={{
+                    style: {fontSize: "1.5rem"}
+                }}
                 onChange={(e) => setPhaseName(e.target.value)}
               />
               {
@@ -185,11 +250,19 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
                         null
                 }
             </DialogTitle>
-            <DialogContent sx={{paddingBottom:"0.1vh", display:"flex", flexDirection:"column", justifyContent:"space-between"}}>
+            <DialogContent sx={{paddingBottom:"0.1vh", display:"flex", flexDirection:"column"}}>
                 
                 <DialogContentText>
-                    Enter informations about tasks in this phase.
+                    <Typography variant="subtitle2">Enter informations about tasks in this phase.</Typography>
                 </DialogContentText>
+                <div className="tasksListContainer">
+                    {renderTaskForms()}
+                    <div className="addButton">
+                    <Button onClick={() => addNewTaskForm()} startIcon={<AddIcon/>}>
+                        Add task
+                    </Button>
+                </div>
+                </div>
               
             </DialogContent>
             <DialogActions>
