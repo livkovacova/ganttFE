@@ -5,7 +5,7 @@ import React from "react";
 import { duration, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import mainTheme from "../commons/mainTheme";
 import "./ProjectTaskForm.css"
-import { Checkbox, Chip, FormControl, FormControlLabel, FormHelperText, IconButton, InputAdornment, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent, Switch, TextField } from "@mui/material";
+import { Button, ButtonGroup, Checkbox, Chip, FormControl, FormControlLabel, FormHelperText, IconButton, InputAdornment, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent, Switch, TextField } from "@mui/material";
 import { TIME_UNIT } from "../commons/model";
 import _without from "lodash/without";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -17,7 +17,7 @@ interface Props {
     isEditing: boolean;
     taskForAction: Task;
     refreshPage: () => void;
-    onSubmit: (task:Task) => void;
+    onSubmit: (task:Task, isEditing:boolean) => void;
     assigneesOptions: Array<TeamMemberOption>;
     predecessorsOptions: Array<PredecessorOption>;
     currency: string;
@@ -33,6 +33,7 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
     const [extendable, setExtendable] = React.useState(taskForAction.extendable);
     const [selectedTaskAssignees, setSelectedTaskAssignees] = React.useState<Array<TeamMemberOption>>([]);
     const [selectedTaskPredecessors, setSelectedTaskPredecessors] = React.useState<Array<PredecessorOption>>([]);
+    const [saved, setSaved] = React.useState(false);
 
     const setNewTaskName = (name: string) => {
         taskForAction.name = name;
@@ -88,6 +89,23 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
         setSelectedTaskPredecessors((current) => _without(current, value));
         taskForAction.predecessors = selectedTaskPredecessors.map((predecessor) => predecessor.value);
     };
+
+
+    const handleSaveClick = (task: Task) => {
+        //find task.predeccesors.value in selectedTaskPredecessors, if its there update them
+        let updatedSelectedOptions: Array<PredecessorOption> = [];
+        selectedTaskPredecessors.forEach((selected) => {
+            let updatedOption = predecessorsOptions.find((predecessor) => predecessor.value == selected.value);
+            if(updatedOption){
+                updatedSelectedOptions.push(updatedOption);
+            }
+        })
+        setSelectedTaskPredecessors(updatedSelectedOptions);
+        console.log("updatedChips");
+        console.log(updatedSelectedOptions);
+        setSaved(true);
+        onSubmit(task, saved);
+    }
 
     const theme = responsiveFontSizes(mainTheme);
 
@@ -268,9 +286,20 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                 ))}
             </Select>
             </FormControl>
-            <IconButton color="primary" onClick={() => {console.log(taskForAction);onSubmit(taskForAction)}}>
-                <DoneIcon></DoneIcon>
-            </IconButton>
+            <ButtonGroup orientation="horizontal" sx={{justifyContent:"flex-end"}}>
+                <Button color="secondary" onClick={() => {console.log("remove")}}>
+                    REMOVE
+                </Button>
+                {saved? (
+                <Button color="primary" onClick={() => {handleSaveClick(taskForAction)}}>
+                    UPDATE
+                </Button>
+                ) : (
+                <Button color="primary" onClick={() => {handleSaveClick(taskForAction)}}>
+                    SAVE
+                </Button>
+                )}
+            </ButtonGroup>
                 </div>
             </div>
         </ThemeProvider>

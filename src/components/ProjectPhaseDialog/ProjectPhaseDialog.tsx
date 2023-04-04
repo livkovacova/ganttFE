@@ -11,6 +11,7 @@ import Chip from '@mui/material/Chip';
 import CancelIcon from '@mui/icons-material/Cancel';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import _without from "lodash/without";
+import { isEqual } from "lodash";
 import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
 import { getAllTeamMembers } from "../../services/UserDataService";
@@ -47,6 +48,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     const [createdTasks, setCreatedTasks] = React.useState<Array<Task>>([]);
     const [savedTasks, setSavedTasks] = React.useState<Array<Task>>([]);
     const [refresh, setRefresh] = React.useState<boolean>(false);
+    const [taskEdited, setTaskEdited] = React.useState(false);
 
     const [errorPhaseName, setErrorPhaseName] = React.useState<boolean>(false);
 
@@ -81,6 +83,23 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         otherPhasesOptions.length == 0 ? setPredecessorsFormOptions([]) : setPredecessorsFormOptions(otherPhasesOptions);
     }
 
+    const throwDuplicatesAway = (array: Array<PredecessorOption>): Array<PredecessorOption> => {
+        let result: PredecessorOption[] = [];
+        array.reverse().forEach((item) => {
+            let found = result.some((value) => isEqual(value.value, item.value));
+            if (!found) {
+                result.push(item);
+            }
+        })
+        // for (let item of array) {
+        //     let found = result.some((value) => isEqual(value.value, item.value));
+        //     if (!found) {
+        //         result.push(item);
+        //     }
+        // }
+        return result;
+    }
+
     const updatePredecessorsOptions = () => {
         const thisPhaseOptions: Array<PredecessorOption> = savedTasks.map((task) => {
             let option: PredecessorOption = {
@@ -89,9 +108,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             }
             return option;
         });
-        let allOptions = predecessorsFormOptions.concat(thisPhaseOptions);
-        console.log("all opts> "+allOptions);
-        console.log("this phase opttions> "+thisPhaseOptions);
+        let allOptions = throwDuplicatesAway(predecessorsFormOptions.concat(thisPhaseOptions));
         allOptions.length == 0 ? setPredecessorsFormOptions([]) : setPredecessorsFormOptions(allOptions);
         console.log("som v update:");
         console.log(predecessorsFormOptions);
@@ -130,8 +147,9 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             console.log("phase saved")
             let phase: Phase = {
                 name: phaseName,
-                tasks: createdTasks
+                tasks: savedTasks
             }
+            console.log(savedTasks);
             onSubmit(phase);
             closeForm();
             refreshPage();
@@ -158,7 +176,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     React.useEffect(() => {
         updatePredecessorsOptions();
         console.log("useefect");
-    }, [savedTasks]);
+    }, [savedTasks, taskEdited]);
 
     const renderTaskForms = (): React.ReactNode => {
         return (
@@ -190,20 +208,26 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             extendable: true
         }
         setCreatedTasks([...createdTasks, newTask]);
+        console.log("Created: ");
         console.log(createdTasks);
         handleRefresh();
     }
 
     //add is Editing
-    const onTaskFormSave = (task: Task) => {
-        let updatedTasks = savedTasks;
-        console.log("som v updateeeeeeeeeee");
-        console.log("toto je task:");
-        console.log(task.name);
-        updatedTasks.push(task);
-        console.log(updatedTasks);
-        setSavedTasks(updatedTasks);
-        setRefresh(!refresh);
+    const onTaskFormSave = (task: Task, isEditing: boolean) => {
+        if(isEditing){
+            //podobne aj pre created tasks
+            let editedTask = savedTasks.find((savedTask) => savedTask.workid == task.workid);
+            editedTask = structuredClone(task);
+            setSavedTasks(savedTasks);
+            setTaskEdited(!taskEdited);
+        }
+        else{
+            setSavedTasks([...savedTasks, task]);
+        }
+        console.log("Saved: ");
+        console.log(savedTasks);
+        handleRefresh();
     };
 
     const theme = responsiveFontSizes(mainTheme);
@@ -257,7 +281,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
                 </DialogContentText>
                 <div className="tasksListContainer">
                     {renderTaskForms()}
-                    <div className="addButton">
+                    <div>
                     <Button onClick={() => addNewTaskForm()} startIcon={<AddIcon/>}>
                         Add task
                     </Button>
