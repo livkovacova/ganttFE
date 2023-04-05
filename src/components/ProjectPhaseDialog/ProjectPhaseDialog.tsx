@@ -49,6 +49,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     const [savedTasks, setSavedTasks] = React.useState<Array<Task>>([]);
     const [refresh, setRefresh] = React.useState<boolean>(false);
     const [taskEdited, setTaskEdited] = React.useState(false);
+    const [newTaskId, setNewTaskId] = React.useState(0); //pozor ked budes editovat
 
     const [errorPhaseName, setErrorPhaseName] = React.useState<boolean>(false);
 
@@ -108,7 +109,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             }
             return option;
         });
-        let allOptions = throwDuplicatesAway(predecessorsFormOptions.concat(thisPhaseOptions));
+        let allOptions = throwDuplicatesAway(predecessorsFormOptions.concat(thisPhaseOptions)).reverse();
         allOptions.length == 0 ? setPredecessorsFormOptions([]) : setPredecessorsFormOptions(allOptions);
         console.log("som v update:");
         console.log(predecessorsFormOptions);
@@ -180,10 +181,11 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
 
     const renderTaskForms = (): React.ReactNode => {
         return (
-            createdTasks.map((task, index) => (
+            createdTasks.map((task) => (
                 <ProjectTaskForm 
-                    key={index} 
+                    key={task.workid} 
                     onSubmit={onTaskFormSave} 
+                    onDelete={onTaskFormDelete}
                     taskForAction={task} 
                     isEditing={false} 
                     refreshPage={refreshPage}
@@ -198,7 +200,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
 
     const addNewTaskForm = () => {
         let newTask = {
-            workid: createdTasks.length,
+            workid: newTaskId,
             name: "New task",
             duration: 1,
             priority: 0,
@@ -208,6 +210,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             extendable: true
         }
         setCreatedTasks([...createdTasks, newTask]);
+        setNewTaskId(newTaskId+1);
         console.log("Created: ");
         console.log(createdTasks);
         handleRefresh();
@@ -229,6 +232,19 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         console.log(savedTasks);
         handleRefresh();
     };
+
+    const findPredecessor = (taskId: number): PredecessorOption => {        
+        let found = predecessorsFormOptions.find((option) => option.value === taskId);
+        return found!;
+    }
+
+    const onTaskFormDelete = (task: Task) => {
+        setCreatedTasks((current) => _without(current, task));
+        setSavedTasks((current) => _without(current, task));
+        setPredecessorsFormOptions((current) => _without(current, findPredecessor(task.workid)));
+        setTaskEdited(!taskEdited)
+        handleRefresh();
+    }
 
     const theme = responsiveFontSizes(mainTheme);
     

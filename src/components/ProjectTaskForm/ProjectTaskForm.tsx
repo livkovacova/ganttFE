@@ -18,12 +18,13 @@ interface Props {
     taskForAction: Task;
     refreshPage: () => void;
     onSubmit: (task:Task, isEditing:boolean) => void;
+    onDelete: (task:Task) => void;
     assigneesOptions: Array<TeamMemberOption>;
     predecessorsOptions: Array<PredecessorOption>;
     currency: string;
 }
 
-export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmit, assigneesOptions, predecessorsOptions, currency }: Props) => {
+export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmit, onDelete, assigneesOptions, predecessorsOptions, currency }: Props) => {
 
     const [errorTaskName, setErrorTaskName] = React.useState(false);
     const [taskName, setTaskName] = React.useState(taskForAction.name);
@@ -80,7 +81,10 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
         setSelectedTaskPredecessors(
           event.target.value as PredecessorOption[]
         );
-        taskForAction.predecessors = selectedTaskPredecessors.map((predecessor) => predecessor.value)
+        console.log("HANDLE CHANGE PRED SELECTED:")
+        console.log(selectedTaskPredecessors);
+        let predecessors = event.target.value as PredecessorOption[];
+        taskForAction.predecessors = predecessors.map((predecessor) => predecessor.value);
     };
 
     const handleDeletePredecessor = (e: React.MouseEvent, value: PredecessorOption) => {
@@ -92,20 +96,46 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
 
 
     const handleSaveClick = (task: Task) => {
-        //find task.predeccesors.value in selectedTaskPredecessors, if its there update them
-        let updatedSelectedOptions: Array<PredecessorOption> = [];
-        selectedTaskPredecessors.forEach((selected) => {
-            let updatedOption = predecessorsOptions.find((predecessor) => predecessor.value == selected.value);
-            if(updatedOption){
-                updatedSelectedOptions.push(updatedOption);
-            }
-        })
-        setSelectedTaskPredecessors(updatedSelectedOptions);
-        console.log("updatedChips");
-        console.log(updatedSelectedOptions);
         setSaved(true);
         onSubmit(task, saved);
     }
+
+    const findAssignees = (): TeamMemberOption[] => {
+        let foundSelectedAssignees: TeamMemberOption[] = [];
+        taskForAction.assignees.forEach((assignee) => {
+            let founded = assigneesOptions.find((option) => option.value === assignee);
+            if(founded){
+                foundSelectedAssignees.push(founded);
+            }
+        })
+        return foundSelectedAssignees;
+    }
+
+    const findPredecessors = (): PredecessorOption[] => {
+        let foundSelectedPredecessors: PredecessorOption[] = [];
+        taskForAction.predecessors.forEach((predecessor) => {
+            let found = predecessorsOptions.find((option) => option.value === predecessor);
+            if(found){
+                foundSelectedPredecessors.push(found);
+            }
+        })
+        return foundSelectedPredecessors;
+    }
+
+    const findAndSetSelectedOptions = () => {
+        setSelectedTaskAssignees(findAssignees);
+        setSelectedTaskPredecessors(findPredecessors);
+    }
+    
+    React.useEffect(() => {
+        console.log("useefect");
+    }, [saved]);
+
+
+    React.useEffect(() => {
+        findAndSetSelectedOptions();
+    }, [saved]);
+
 
     const theme = responsiveFontSizes(mainTheme);
 
@@ -247,19 +277,19 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                 </div>
                 <div className="taskInfoContainer">
                     <FormControl fullWidth margin="dense">
-                        <InputLabel id="mutiple-chip-label">Task Predecessors</InputLabel>
+                        <InputLabel id="mutiple-chip-label2">Task Predecessors</InputLabel>
                         <Select
-                            labelId="mutiple-chip-label"
+                            labelId="mutiple-chip-label2"
                             label="Task Predecessors"
-                            id="mutiple-chip"
+                            id="mutiple-chip2"
                             multiple
                             variant="outlined"
                             value={selectedTaskPredecessors}
                             onChange={handleChangePredecessors}
                             IconComponent={KeyboardArrowDownIcon}
-                            renderValue={(selected) => (
+                            renderValue={() => (
                             <div style={{display:"flex", flexWrap:"wrap"}}>
-                                {(selected as PredecessorOption[]).map((value) => (
+                                {(selectedTaskPredecessors as PredecessorOption[]).map((value) => (
                                 <Chip
                                     key={value.value}
                                     label={value.text}
@@ -280,14 +310,14 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                     {predecessorsOptions.map((predecessor) => (
                         //@ts-ignore
                     <MenuItem key={predecessor.value} value={predecessor}>
-                        <Checkbox checked={selectedTaskPredecessors.includes(predecessor)} />
+                        <Checkbox checked={selectedTaskPredecessors.some((predItem) => JSON.stringify(predecessor) === JSON.stringify(predItem))} />
                         <ListItemText primary={predecessor.text} />
                     </MenuItem>
                 ))}
             </Select>
             </FormControl>
             <ButtonGroup orientation="horizontal" sx={{justifyContent:"flex-end"}}>
-                <Button color="secondary" onClick={() => {console.log("remove")}}>
+                <Button color="secondary" onClick={() => {onDelete(taskForAction)}}>
                     REMOVE
                 </Button>
                 {saved? (
