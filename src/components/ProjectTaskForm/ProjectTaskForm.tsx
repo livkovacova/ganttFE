@@ -69,7 +69,6 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
 
     const handleDeleteAssignees = (e: React.MouseEvent, value: TeamMemberOption) => {
         e.preventDefault();
-        console.log("clicked delete");
         setSelectedTaskAssignees((current) => _without(current, value));
         taskForAction.assignees = selectedTaskAssignees.map((assignee) => assignee.value);
     };
@@ -81,15 +80,12 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
         setSelectedTaskPredecessors(
           event.target.value as PredecessorOption[]
         );
-        console.log("HANDLE CHANGE PRED SELECTED:")
-        console.log(selectedTaskPredecessors);
         let predecessors = event.target.value as PredecessorOption[];
         taskForAction.predecessors = predecessors.map((predecessor) => predecessor.value);
     };
 
     const handleDeletePredecessor = (e: React.MouseEvent, value: PredecessorOption) => {
         e.preventDefault();
-        console.log("clicked delete");
         setSelectedTaskPredecessors((current) => _without(current, value));
         taskForAction.predecessors = selectedTaskPredecessors.map((predecessor) => predecessor.value);
     };
@@ -126,16 +122,14 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
         setSelectedTaskAssignees(findAssignees);
         setSelectedTaskPredecessors(findPredecessors);
     }
-    
-    React.useEffect(() => {
-        console.log("useefect");
-    }, [saved]);
-
 
     React.useEffect(() => {
         findAndSetSelectedOptions();
     }, [saved]);
 
+    React.useEffect(() => {
+        setSelectedTaskPredecessors(findPredecessors);
+     },[predecessorsOptions])
 
     const theme = responsiveFontSizes(mainTheme);
 
@@ -290,19 +284,20 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                             renderValue={() => (
                             <div style={{display:"flex", flexWrap:"wrap"}}>
                                 {(selectedTaskPredecessors as PredecessorOption[]).map((value) => (
-                                <Chip
-                                    key={value.value}
-                                    label={value.text}
-                                    clickable
-                                    deleteIcon={
-                                    <CancelIcon
-                                        onMouseDown={(event) => event.stopPropagation()}
-                                    />
-                                    }
-                                    onDelete={(e) => {handleDeletePredecessor(e, value)}}
-                                    onClick={() => console.log("clicked chip")}
-                                    style={{margin: 2}}
-                                />
+                                // <Chip
+                                //     key={value.value}
+                                //     label={value.text}
+                                //     clickable
+                                //     deleteIcon={
+                                //     <CancelIcon
+                                //         onMouseDown={(event) => event.stopPropagation()}
+                                //     />
+                                //     }
+                                //     onDelete={(e) => {handleDeletePredecessor(e, value)}}
+                                //     onClick={() => console.log("clicked chip")}
+                                //     style={{margin: 2}}
+                                // />
+                                value.text
                                 ))}
                             </div>
                             )}
@@ -310,7 +305,7 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                     {predecessorsOptions.map((predecessor) => (
                         //@ts-ignore
                     <MenuItem key={predecessor.value} value={predecessor}>
-                        <Checkbox checked={selectedTaskPredecessors.some((predItem) => JSON.stringify(predecessor) === JSON.stringify(predItem))} />
+                        <Checkbox checked={selectedTaskPredecessors.some((predItem) => predItem.value === predecessor.value)} />
                         <ListItemText primary={predecessor.text} />
                     </MenuItem>
                 ))}

@@ -179,6 +179,18 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         console.log("useefect");
     }, [savedTasks, taskEdited]);
 
+    const removeItselfFromOptions = (taskId: number): PredecessorOption[] => {
+        let updatedPredecessorsOptions = predecessorsFormOptions;
+        const thisTaskOption = updatedPredecessorsOptions.find((option) => {
+            return option.value === taskId;
+        })
+        if (thisTaskOption){
+            updatedPredecessorsOptions = _without(updatedPredecessorsOptions, thisTaskOption);
+        }
+        console.log("REMOVED");
+        return updatedPredecessorsOptions;
+    }
+
     const renderTaskForms = (): React.ReactNode => {
         return (
             createdTasks.map((task) => (
@@ -190,7 +202,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
                     isEditing={false} 
                     refreshPage={refreshPage}
                     assigneesOptions={assigneesFormOptions}
-                    predecessorsOptions={predecessorsFormOptions}
+                    predecessorsOptions={removeItselfFromOptions(task.workid)}
                     currency = {project.currency}
                     />
                 )
