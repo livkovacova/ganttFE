@@ -5,16 +5,16 @@ import { responsiveFontSizes } from '@mui/material/styles';
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
 import {useParams, useNavigate} from "react-router-dom";
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, ButtonGroup, Divider, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, ButtonGroup, Dialog, DialogActions, DialogTitle, Divider, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
 import "../CreateGanttChartPage/CreateGanttChartPage.css"
 import { getProjectById } from "../../services/ProjectDataService";
-import { DeleteForever } from "@mui/icons-material";
-import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import { DEFAULT_PHASE, Phase } from "../commons/Phase";
 import { ProjectPhaseDialog } from "../ProjectPhaseDialog/ProjectPhaseDialog";
 import { DEFAULT_PROJECT, Project } from "../commons/Projects";
+import _without from "lodash/without";
+
 
 interface Props {
     currentUser: IUser | undefined;
@@ -66,17 +66,16 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
         onFormClick();
     }
 
-    const handleDialogClick = (phase: Phase) => {
-        setPhaseForAction(phase);
+    const handleDeleteDialogClick = (phase: Phase) => {
+        setPhaseToEdit(phase);
         onDeleteDialogClick();
     };
 
     const onDeleteDialogConfirm = (phase: Phase) => {
-        // await deleteProject(project.id);
+        setSavedPhases((current) => _without(current, phase));
         onDeleteDialogClose();
         setRefresh(true);
     };
-
 
     const fetchProjectInfo = async () => {
         const project = await getProjectById(parseInt(id!));
@@ -118,7 +117,7 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
                     </AccordionDetails>
                     <Divider />
                     <AccordionActions>
-                        <Button size="small" color="secondary" onClick={() => alert('cancel '+{index})}>Remove</Button>
+                        <Button size="small" color="secondary" onClick={() => handleDeleteDialogClick(phase)}>Remove</Button>
                         <Button size="small" color="primary" onClick={() => handleEditClick(phase)}>Edit</Button>
                     </AccordionActions>
                   </Accordion>
@@ -156,6 +155,15 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
                         Add phase
                     </Button>
                 </div>
+                <Dialog open={isDeleteDialogOpen} onClose={onDeleteDialogClose}>
+                    <DialogTitle>
+                        Are you sure you want to delete "{phaseToEdit.name}" phase?
+                    </DialogTitle>
+                    <DialogActions>
+                        <Button onClick={onDeleteDialogClose} color="secondary">Cancel</Button>
+                        <Button onClick={() => onDeleteDialogConfirm(phaseToEdit)} color="warning" variant="contained">Delete</Button>
+                    </DialogActions>
+                </Dialog>
                 </div>
                 <div className="submitButtonsContainer">
                     <ButtonGroup 

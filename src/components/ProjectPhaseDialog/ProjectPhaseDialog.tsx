@@ -92,7 +92,9 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             }) 
         });
         
+        console.log(otherPhasesOptions);
         otherPhasesOptions.length == 0 ? setPredecessorsFormOptions([]) : setPredecessorsFormOptions(otherPhasesOptions);
+        console.log(predecessorsFormOptions);
     }
 
     const throwDuplicatesAway = (array: Array<PredecessorOption>): Array<PredecessorOption> => {
@@ -114,6 +116,8 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             }
             return option;
         });
+        console.log(thisPhaseOptions)
+        console.log(predecessorsFormOptions)
         let allOptions = throwDuplicatesAway(predecessorsFormOptions.concat(thisPhaseOptions)).reverse();
         allOptions.length == 0 ? setPredecessorsFormOptions([]) : setPredecessorsFormOptions(allOptions);
         console.log("som v update:");
@@ -181,6 +185,10 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         preparePredecessorsOptions();
         updatePredecessorsOptions();
     }, []);
+
+    React.useEffect(() => {
+        preparePredecessorsOptions();
+    }, [savedPhases]);
 
     React.useEffect(() => {
         updatePredecessorsOptions();
