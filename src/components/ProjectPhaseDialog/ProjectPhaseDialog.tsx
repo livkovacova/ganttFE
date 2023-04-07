@@ -44,12 +44,11 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     const [assigneesFormOptions, setAssigneesFormOptions] = React.useState<Array<TeamMemberOption>>([]);
     const [predecessorsFormOptions, setPredecessorsFormOptions] = React.useState<Array<PredecessorOption>>([]);
     const [phaseName, setPhaseName] = React.useState<string>("");
-    const [currency, setCurrency] = React.useState<string>("EUR");
     const [createdTasks, setCreatedTasks] = React.useState<Array<Task>>([]);
     const [savedTasks, setSavedTasks] = React.useState<Array<Task>>([]);
     const [refresh, setRefresh] = React.useState<boolean>(false);
     const [taskEdited, setTaskEdited] = React.useState(false);
-    const [newTaskId, setNewTaskId] = React.useState(0); //pozor ked budes editovat
+    const [newTaskId, setNewTaskId] = React.useState(0);
 
     const [errorPhaseName, setErrorPhaseName] = React.useState<boolean>(false);
 
@@ -57,17 +56,29 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
 
     const resetInputFields = () => {
         setPhaseName("");
+        setCreatedTasks([]);
+        setSavedTasks([]);
+        setTaskEdited(false);
     };
 
     const clearErrors = () => {
         setErrorPhaseName(false);
     };
 
-    const closeForm = () => {
+    const closeForm = (saved: boolean) => {
         clearErrors();
         resetInputFields();
+        if(!saved){
+            removePredecessorsOnClose();
+        }
         onClose();
     };
+
+    const removePredecessorsOnClose = () => {
+        let optionsToRemoveIds: number[] = savedTasks.map((task) => task.workid);
+        let newOptions = predecessorsFormOptions.filter((option) => !optionsToRemoveIds.includes(option.value))
+        setPredecessorsFormOptions(newOptions);
+    }
 
     const preparePredecessorsOptions = () => {
         let otherPhasesOptions: Array<PredecessorOption> = [];
@@ -92,12 +103,6 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
                 result.push(item);
             }
         })
-        // for (let item of array) {
-        //     let found = result.some((value) => isEqual(value.value, item.value));
-        //     if (!found) {
-        //         result.push(item);
-        //     }
-        // }
         return result;
     }
 
@@ -147,12 +152,13 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         if (isFormValid()) {
             console.log("phase saved")
             let phase: Phase = {
+                workId: phaseToEdit.workId,
                 name: phaseName,
                 tasks: savedTasks
             }
             console.log(savedTasks);
             onSubmit(phase);
-            closeForm();
+            closeForm(true);
             refreshPage();
         }
     };
@@ -164,7 +170,9 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         if (!isEditing) {
             resetInputFields();
         } else {
-            setPhaseName(phaseToEdit?.name);
+            setPhaseName(phaseToEdit.name);
+            setSavedTasks(phaseToEdit.tasks);
+            setCreatedTasks(phaseToEdit.tasks);
         }
     }, [isOpen]);
 
@@ -199,7 +207,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
                     onSubmit={onTaskFormSave} 
                     onDelete={onTaskFormDelete}
                     taskForAction={task} 
-                    isEditing={false} 
+                    isEditing={savedTasks.some(savedTask => savedTask.workid === task.workid)} 
                     refreshPage={refreshPage}
                     assigneesOptions={assigneesFormOptions}
                     predecessorsOptions={removeItselfFromOptions(task.workid)}
@@ -231,7 +239,6 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     //add is Editing
     const onTaskFormSave = (task: Task, isEditing: boolean) => {
         if(isEditing){
-            //podobne aj pre created tasks
             let editedTask = savedTasks.find((savedTask) => savedTask.workid == task.workid);
             editedTask = structuredClone(task);
             setSavedTasks(savedTasks);
@@ -318,7 +325,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
               
             </DialogContent>
             <DialogActions>
-              <Button onClick={closeForm} color="secondary">Cancel</Button>
+              <Button onClick={() => closeForm(isEditing)} color="secondary">Cancel</Button>
               <IconButton color="primary" onClick={onFormSubmit}>
                 <DoneIcon></DoneIcon>
               </IconButton>

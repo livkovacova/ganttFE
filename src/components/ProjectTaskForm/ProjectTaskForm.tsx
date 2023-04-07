@@ -87,13 +87,13 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
     const handleDeletePredecessor = (e: React.MouseEvent, value: PredecessorOption) => {
         e.preventDefault();
         setSelectedTaskPredecessors((current) => _without(current, value));
-        taskForAction.predecessors = selectedTaskPredecessors.map((predecessor) => predecessor.value);
+        taskForAction.predecessors = _without(taskForAction.predecessors, value.value);
     };
 
 
     const handleSaveClick = (task: Task) => {
+        onSubmit(task, (saved || isEditing));
         setSaved(true);
-        onSubmit(task, saved);
     }
 
     const findAssignees = (): TeamMemberOption[] => {
@@ -281,23 +281,22 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                             value={selectedTaskPredecessors}
                             onChange={handleChangePredecessors}
                             IconComponent={KeyboardArrowDownIcon}
-                            renderValue={() => (
+                            renderValue={(selected) => (
                             <div style={{display:"flex", flexWrap:"wrap"}}>
-                                {(selectedTaskPredecessors as PredecessorOption[]).map((value) => (
-                                // <Chip
-                                //     key={value.value}
-                                //     label={value.text}
-                                //     clickable
-                                //     deleteIcon={
-                                //     <CancelIcon
-                                //         onMouseDown={(event) => event.stopPropagation()}
-                                //     />
-                                //     }
-                                //     onDelete={(e) => {handleDeletePredecessor(e, value)}}
-                                //     onClick={() => console.log("clicked chip")}
-                                //     style={{margin: 2}}
-                                // />
-                                value.text
+                                {(selected as PredecessorOption[]).map((value) => (
+                                <Chip
+                                    key={value.value}
+                                    label={value.text}
+                                    clickable
+                                    deleteIcon={
+                                    <CancelIcon
+                                        onMouseDown={(event) => event.stopPropagation()}
+                                    />
+                                    }
+                                    onDelete={(e) => {handleDeletePredecessor(e, value)}}
+                                    onClick={() => console.log("clicked chip")}
+                                    style={{margin: 2}}
+                                />
                                 ))}
                             </div>
                             )}
@@ -305,7 +304,8 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                     {predecessorsOptions.map((predecessor) => (
                         //@ts-ignore
                     <MenuItem key={predecessor.value} value={predecessor}>
-                        <Checkbox checked={selectedTaskPredecessors.some((predItem) => predItem.value === predecessor.value)} />
+                        {/* <Checkbox checked={selectedTaskPredecessors.some((predItem) => predItem.value === predecessor.value)} /> */}
+                        <Checkbox checked={selectedTaskPredecessors.includes(predecessor)} />
                         <ListItemText primary={predecessor.text} />
                     </MenuItem>
                 ))}
@@ -315,7 +315,7 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                 <Button color="secondary" onClick={() => {onDelete(taskForAction)}}>
                     REMOVE
                 </Button>
-                {saved? (
+                {saved || isEditing? (
                 <Button color="primary" onClick={() => {handleSaveClick(taskForAction)}}>
                     UPDATE
                 </Button>

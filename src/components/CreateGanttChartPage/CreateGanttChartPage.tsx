@@ -36,6 +36,7 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
     const [phaseToEdit, setPhaseToEdit] = React.useState<Phase>(DEFAULT_PHASE);
     const [phaseForAction, setPhaseForAction] = React.useState<Phase>({} as Phase);
     const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+    const [newPhaseId, setNewPhaseId] = React.useState(0);
     
     const onDeleteDialogClick = () => setDeleteDialogOpen(true);
     const onDeleteDialogClose = () => setDeleteDialogOpen(false);
@@ -57,6 +58,13 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
         setIsEditing(false);
         onFormClose();
     };
+
+    const handleAddNewPhaseClick = () => {
+        let newPhaseToEdit = DEFAULT_PHASE;
+        newPhaseToEdit.workId = newPhaseId;
+        setPhaseToEdit(newPhaseToEdit);
+        onFormClick();
+    }
 
     const handleDialogClick = (phase: Phase) => {
         setPhaseForAction(phase);
@@ -111,7 +119,7 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
                     <Divider />
                     <AccordionActions>
                         <Button size="small" color="secondary" onClick={() => alert('cancel '+{index})}>Remove</Button>
-                        <Button size="small" color="primary" onClick={() => alert('save')}>Edit</Button>
+                        <Button size="small" color="primary" onClick={() => handleEditClick(phase)}>Edit</Button>
                     </AccordionActions>
                   </Accordion>
                     )
@@ -120,10 +128,19 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
         )
     }
 
-    const onAddPhaseClick = (phase: Phase) => {
-        let updatedPhases = savedPhases;
-        updatedPhases.push(phase);
-        setSavedPhases(updatedPhases);
+    const onAddPhaseSubmit = (phase: Phase) => {
+        console.log(phase);
+        console.log(isEditing);
+        if(!isEditing){
+            setSavedPhases([...savedPhases, phase]);
+            setNewPhaseId(newPhaseId+1);
+        }
+        else{
+            //let editedPhase = savedPhases.find((savedPhase) => savedPhase.workId === phase.workId);
+            let editedPhases = savedPhases.map(savedPhase => savedPhase.workId === phase.workId? phase : savedPhase)
+            setSavedPhases(editedPhases);
+            setIsEditing(false);
+        }
         console.log(savedPhases);
         setRefresh(!refresh);
     };
@@ -135,7 +152,7 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
                 <div className="phasesContainer">
                 {renderPhasesList()}
                 <div className="addButton">
-                    <Button onClick={() => onFormClick()} startIcon={<AddIcon/>}>
+                    <Button onClick={() => handleAddNewPhaseClick()} startIcon={<AddIcon/>}>
                         Add phase
                     </Button>
                 </div>
@@ -163,7 +180,7 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
                     phaseToEdit={phaseToEdit}
                     refreshPage={handleRefresh}
                     savedPhases={savedPhases}
-                    onSubmit={onAddPhaseClick}
+                    onSubmit={onAddPhaseSubmit}
                     project={project}
                 />
             </div>
