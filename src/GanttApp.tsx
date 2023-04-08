@@ -18,6 +18,7 @@ import ProfilePage from "./components/ProfilePage/profilePage";
 import HomePage from "./components/HomePage/homePage";
 import ProjectDetailsPage from "./components/ProjectDetailsPage/ProjectDetailsPage";
 import CreateGanttChartPage from "./components/CreateGanttChartPage/CreateGanttChartPage";
+import GanttChartPage from "./components/GanttChartPage/GanttChartPage";
 
 
 type Props = {};
@@ -63,16 +64,17 @@ const GanttApp: React.FC<Props> = () => {
         <div>
         <div>
             <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<HomePage isManager={isManager}/>} />
-            <Route path="/projects/:id" element={<ProjectDetailsPage isManager={isManager} currentUser={currentUser}/>}/>
-            <Route path="/projects/:id/create-gantt" element={<CreateGanttChartPage currentUser={currentUser}/>}/>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/user" element={<BoardUser />} />
-            <Route path="/mod" element={<BoardModerator />} />
-            <Route path="/manager" element={<BoardAdmin />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<HomePage isManager={isManager}/>} />
+                <Route path="/projects/:id" element={<ProjectDetailsPage isManager={isManager} currentUser={currentUser}/>}/>
+                <Route path="/projects/:id/create-gantt" element={<CreateGanttChartPage currentUser={currentUser}/>}/>
+                <Route path="/projects/:id/gantt-chart" element={<GanttChartPage/>}/>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/user" element={<BoardUser />} />
+                <Route path="/mod" element={<BoardModerator />} />
+                <Route path="/manager" element={<BoardAdmin />} />
             </Routes>
         </div>
         </div>

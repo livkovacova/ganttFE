@@ -144,6 +144,16 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
         setRefresh(!refresh);
     };
 
+    const onCreateGanttChartSubmit = () => {
+        navigate(`/projects/${id}/gantt-chart`, {
+            state: {
+                currentUser: currentUser,
+                project: project,
+                phases: savedPhases
+            }
+        })
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <div className="pageContainer">
@@ -171,6 +181,7 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
                     className="createGanttButtons" 
                     >
                         <Button 
+                        onClick={onCreateGanttChartSubmit}
                         disabled={savedPhases.length == 0} 
                         color="primary" 
                         sx={{

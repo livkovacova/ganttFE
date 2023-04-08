@@ -6,7 +6,7 @@ import { duration, responsiveFontSizes, ThemeProvider } from '@mui/material/styl
 import mainTheme from "../commons/mainTheme";
 import "./ProjectTaskForm.css"
 import { Button, ButtonGroup, Checkbox, Chip, FormControl, FormControlLabel, FormHelperText, IconButton, InputAdornment, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent, Switch, TextField } from "@mui/material";
-import { TIME_UNIT } from "../commons/model";
+import { PRIORITY, TIME_UNIT } from "../commons/model";
 import _without from "lodash/without";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -32,6 +32,7 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
     const [timeUnit, setTimeUnit] = React.useState<string>(TIME_UNIT.DAYS);
     const [taskResources, setTaskResources] = React.useState(taskForAction.resources);
     const [extendable, setExtendable] = React.useState(taskForAction.extendable);
+    const [priority, setPriority] = React.useState<number>(PRIORITY.MEDIUM)
     const [selectedTaskAssignees, setSelectedTaskAssignees] = React.useState<Array<TeamMemberOption>>([]);
     const [selectedTaskPredecessors, setSelectedTaskPredecessors] = React.useState<Array<PredecessorOption>>([]);
     const [saved, setSaved] = React.useState(false);
@@ -54,6 +55,11 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
     const toggleExtendable = (checked: boolean) => {
         taskForAction.extendable = checked;
         setExtendable(checked);
+    }
+
+    const setNewPriority = (priority: PRIORITY) => {
+        taskForAction.priority = priority;
+        setPriority(priority);
     }
 
     const handleChangeAssignees = (event: SelectChangeEvent<typeof selectedTaskAssignees>) => {
@@ -194,16 +200,36 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                 variant="standard"
                 />
 
-                <FormControl>
-                    <FormControlLabel
-                            control={
-                                <Switch checked={extendable} onChange={(e) => toggleExtendable(e.target.checked)} name="jason" />
-                            }
-                            label="Extendable"
-                            labelPlacement="end"
-                            sx={{marginRight:0, flexDirection:"row"}}
-                    />
-                </FormControl>
+                <div className="furtherInfoContainer">
+                    <FormControl>
+                        <FormControlLabel
+                                control={
+                                    <Switch checked={extendable} onChange={(e) => toggleExtendable(e.target.checked)} name="jason" />
+                                }
+                                label="Extendable"
+                                labelPlacement="end"
+                                sx={{marginRight:0, flexDirection:"row"}}
+                        />
+                    </FormControl>
+
+                    <FormControl >
+                        <InputLabel id="priority-select-label">Priority</InputLabel>
+                        <Select
+                            labelId="priority-select-label"
+                            id="priority-simple-select"
+                            value={priority}
+                            label="time unit"
+                            size="small"
+                            fullWidth
+                            onChange={(e) => setPriority(e.target.value as number)}
+                        >
+                        <MenuItem value={PRIORITY.LOW} color="blue">LOW</MenuItem>
+                        <MenuItem value={PRIORITY.MEDIUM} color="green">MEDIUM</MenuItem>
+                        <MenuItem value={PRIORITY.HIGH} color="red">HIGH</MenuItem>
+                        </Select>
+                    </FormControl>
+                    
+                </div>
 
                 <TextField
                 fullWidth

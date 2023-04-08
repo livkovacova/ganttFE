@@ -18,6 +18,14 @@
     width: 25vw;
 }
 
+.furtherInfoContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2vh;
+}
+
 /* @media only screen and (max-width: 400px) {
     .taskFormContainer {
       margin-left: 0;
