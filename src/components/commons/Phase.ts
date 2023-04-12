@@ -1,4 +1,4 @@
-import { Task } from "./Task";
+import { Task, TaskResponse } from "./Task";
 
 export interface Phase {
     workId: number;
@@ -10,4 +10,11 @@ export const DEFAULT_PHASE: Phase = {
     workId: 0,
     name: "",
     tasks: []
+}
+
+export interface PhaseResponse {
+    workId: number;
+    name: string;
+    tasks: Array<TaskResponse>;
+    projectId: number;
 }

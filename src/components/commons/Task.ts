@@ -1,5 +1,7 @@
+import { PRIORITY } from "./model";
+
 export interface Task {
-    workid: number;
+    workId: number;
     name: string;
     duration: number;
     priority: number;
@@ -10,7 +12,7 @@ export interface Task {
 }
 
 export const DEFAULT_TASK: Task = {
-    workid: 0,
+    workId: 0,
     name: "New task",
     duration: 0,
     priority: 0,
@@ -18,4 +20,17 @@ export const DEFAULT_TASK: Task = {
     resources: 0,
     predecessors: [],
     extendable: true
+}
+
+export interface TaskResponse {
+    workId: number;
+    name: string;
+    priority: PRIORITY; //string
+    duration: number;
+    resources: number;
+    extendable: boolean;
+    predecessors: Array<number>;
+    assignees: Array<number>;
+    startDate: Date;
+    endDate: Date;
 }

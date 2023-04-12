@@ -15,6 +15,7 @@ import { ProjectPhaseDialog } from "../ProjectPhaseDialog/ProjectPhaseDialog";
 import { DEFAULT_PROJECT, Project } from "../commons/Projects";
 import _without from "lodash/without";
 import { useLocation } from "react-router-dom";
+import { GanttChart } from "../commons/GanttChart";
 
 const theme = responsiveFontSizes(mainTheme);
 
@@ -29,7 +30,8 @@ export const GanttChartPage = () => {
     const phases: Phase[] = location.state.phases;
 
     const generateGanttChart = async () => {
-        const chart = await createGanttChart(project.id, phases);
+        const chart: GanttChart = await createGanttChart(project.id, phases);
+        console.log(chart);
     };
 
     React.useEffect(() => {

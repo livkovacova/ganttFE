@@ -75,7 +75,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     };
 
     const removePredecessorsOnClose = () => {
-        let optionsToRemoveIds: number[] = savedTasks.map((task) => task.workid);
+        let optionsToRemoveIds: number[] = savedTasks.map((task) => task.workId);
         let newOptions = predecessorsFormOptions.filter((option) => !optionsToRemoveIds.includes(option.value))
         setPredecessorsFormOptions(newOptions);
     }
@@ -85,7 +85,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         savedPhases.map((phase) => {
             phase.tasks.map((task) =>{
                 let option: PredecessorOption = {
-                    value: task.workid,
+                    value: task.workId,
                     text: task.name
                 }
                 otherPhasesOptions.push(option);
@@ -111,7 +111,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     const updatePredecessorsOptions = () => {
         const thisPhaseOptions: Array<PredecessorOption> = savedTasks.map((task) => {
             let option: PredecessorOption = {
-                value: task.workid,
+                value: task.workId,
                 text: task.name
             }
             return option;
@@ -211,14 +211,14 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         return (
             createdTasks.map((task) => (
                 <ProjectTaskForm 
-                    key={task.workid} 
+                    key={task.workId} 
                     onSubmit={onTaskFormSave} 
                     onDelete={onTaskFormDelete}
                     taskForAction={task} 
-                    isEditing={savedTasks.some(savedTask => savedTask.workid === task.workid)} 
+                    isEditing={savedTasks.some(savedTask => savedTask.workId === task.workId)} 
                     refreshPage={refreshPage}
                     assigneesOptions={assigneesFormOptions}
-                    predecessorsOptions={removeItselfFromOptions(task.workid)}
+                    predecessorsOptions={removeItselfFromOptions(task.workId)}
                     currency = {project.currency}
                     />
                 )
@@ -228,7 +228,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
 
     const addNewTaskForm = () => {
         let newTask = {
-            workid: newTaskId,
+            workId: newTaskId,
             name: "New task",
             duration: 1,
             priority: 0,
@@ -247,7 +247,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     //add is Editing
     const onTaskFormSave = (task: Task, isEditing: boolean) => {
         if(isEditing){
-            let editedTask = savedTasks.find((savedTask) => savedTask.workid == task.workid);
+            let editedTask = savedTasks.find((savedTask) => savedTask.workId == task.workId);
             editedTask = structuredClone(task);
             setSavedTasks(savedTasks);
             setTaskEdited(!taskEdited);
@@ -268,7 +268,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     const onTaskFormDelete = (task: Task) => {
         setCreatedTasks((current) => _without(current, task));
         setSavedTasks((current) => _without(current, task));
-        setPredecessorsFormOptions((current) => _without(current, findPredecessor(task.workid)));
+        setPredecessorsFormOptions((current) => _without(current, findPredecessor(task.workId)));
         setTaskEdited(!taskEdited)
         handleRefresh();
     }
