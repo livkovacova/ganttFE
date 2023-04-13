@@ -3,8 +3,7 @@ import {useNavigate} from "react-router-dom";
 import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import mainTheme from "../commons/mainTheme";
 import { GanttChart } from "../commons/GanttChart";
-import { Chart } from "react-google-charts";
-import { PRIORITY } from "../commons/enums";
+import { Chart, GoogleChartWrapper } from "react-google-charts";
 import IUser from "../../types/user.type";
 
 interface Props {
@@ -17,23 +16,16 @@ interface Props {
 export const GanttChartComponent = ({chart, currency, projectMembers, projectStartDate}: Props) => {
     const navigate = useNavigate();
 
-    const endOfTheDay = 23 * 60 * 60 * 1000;
-    const colorByCustomProperty: { [key: string]: string } = {};
-
     const getNewDate = (date: Date, start: boolean): Date => {
-        const newDate = new Date(date);
-        if(start){
-            newDate.setHours(0);
+        let newDate = new Date(date);
+        if(!start){
+            newDate = new Date(newDate.getTime() + 86400000);
+        }
+        newDate.setHours(0);
             newDate.setMinutes(0);
             newDate.setSeconds(0);
             newDate.setMilliseconds(0);
-        }
-        else{
-            newDate.setHours(23);
-            newDate.setMinutes(59);
-            newDate.setSeconds(59);
-            newDate.setMilliseconds(999);
-        }
+        
         return newDate;
     }
 
@@ -67,9 +59,9 @@ export const GanttChartComponent = ({chart, currency, projectMembers, projectSta
         { type: 'number', label: 'Percent Complete' },
         { type: "string", label: "Dependecies" },
         { type: "string", label: "Resource" },
-        { type: "string", label: "Priority"},
-        { type: "string", label: "Assignees" },
-        { typ: "string", label: "Phase"}
+        // { type: "string", label: "Priority"},
+        // { type: "string", label: "Assignees" },
+        // { typ: "string", label: "Phase"}
     ];
 
     const taskRows: (string | number | Date | null)[][] = [];
@@ -87,41 +79,28 @@ export const GanttChartComponent = ({chart, currency, projectMembers, projectSta
                 null,
                 getDependenciesProperty(task.predecessors),
                 task.resources.toString() + currency,
-                task.priority,
-                getAssigneesProperty(task.assignees),
-                phase.name
+                // task.priority,
+                // getAssigneesProperty(task.assignees),
+                // phase.name
             ])
         })
     })
 
     const data = [ganttChartDataColumns, ...taskRows];
 
-    const getColorByCustomProperty = (label: string): string => {
-        const customProperty = data.find((row) => row[1] === label)![10] as string;
-        if (!colorByCustomProperty[customProperty]) {
-          colorByCustomProperty[customProperty] = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-        }
-        return colorByCustomProperty[customProperty];
-    };
-
     const options = {
         height: data.length * 30 + 50,
         gantt: {
             colorByRowLabel: true,
-            groupByRowLabel: false,
-            barHeight: 30,
-            innerGridHorizLine: {
-                stroke: '#ccc',
-                strokeWidth: 0.5,
-          },
+            groupByRowLabel: true,
         },
-        colors: ['yellow', 'blue'],
-        rowProperties: {
-            phase: {
-              label: 'Phase',
-              type: 'string',
-            },
-        },
+        colors: ['yellow', 'blue', 'red'],
+        // rowProperties: {
+        //     phase: {
+        //       label: 'Phase',
+        //       type: 'string',
+        //     },
+        // },
     };
 
     return (
