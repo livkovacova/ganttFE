@@ -1,4 +1,4 @@
-import { PRIORITY } from "./model";
+import { PRIORITY } from "./enums";
 
 export interface Task {
     workId: number;

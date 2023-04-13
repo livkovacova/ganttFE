@@ -5,17 +5,14 @@ import { responsiveFontSizes } from '@mui/material/styles';
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
 import {useParams, useNavigate} from "react-router-dom";
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, ButtonGroup, Dialog, DialogActions, DialogTitle, Divider, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
 import "../CreateGanttChartPage/CreateGanttChartPage.css"
-import { createGanttChart } from "../../services/GanttChartService";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AddIcon from '@mui/icons-material/Add';
-import { DEFAULT_PHASE, Phase } from "../commons/Phase";
-import { ProjectPhaseDialog } from "../ProjectPhaseDialog/ProjectPhaseDialog";
-import { DEFAULT_PROJECT, Project } from "../commons/Projects";
+import { createGanttChart, getGanttChart } from "../../services/GanttChartService";
+import { Phase } from "../commons/Phase";
+import { Project } from "../commons/Projects";
 import _without from "lodash/without";
 import { useLocation } from "react-router-dom";
-import { GanttChart } from "../commons/GanttChart";
+import { DEFAULT_CHART, GanttChart } from "../commons/GanttChart";
+import { GanttChartComponent } from "./GanttChartComponent";
 
 const theme = responsiveFontSizes(mainTheme);
 
@@ -28,21 +25,39 @@ export const GanttChartPage = () => {
     const project: Project = location.state.project;
     const currentUser: IUser = location.state.currentUser;
     const phases: Phase[] = location.state.phases;
+    const alreadyCreated: boolean = location.state.alreadyCreated;
+    const [ganttChart, setGanttChart] = useState<GanttChart>(DEFAULT_CHART);
 
     const generateGanttChart = async () => {
-        const chart: GanttChart = await createGanttChart(project.id, phases);
-        console.log(chart);
+        const chart: GanttChart = await createGanttChart(parseInt(id!), phases);
+        setGanttChart(chart);
     };
 
-    React.useEffect(() => {
-        generateGanttChart();
+    const fetchGanttChart = async () => {
+        const chart: GanttChart = await getGanttChart(parseInt(id!));
+        setGanttChart(chart)
+    }
+
+    useEffect(() => {
+        if(!alreadyCreated){
+            generateGanttChart();
+        }
+        else{
+            fetchGanttChart();
+        }
     },[]);
 
     return (
         <ThemeProvider theme={theme}>
             <div className="pageContainer">
                 <NavigationBar withCreate={false} isManager={true} mainTitle={project.name + " | Gantt chart"} userNameLetter={currentUser.username.charAt(0).toUpperCase()}/>
-                <div className="chartContainer">
+                <div className="chartContainer" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+                    <GanttChartComponent 
+                        chart={ganttChart} 
+                        currency={project.currency}
+                        projectMembers={project.members}
+                        projectStartDate={project.startdate!}
+                    />
                 </div>
                 <div className="bottomSectionContainer">
                 </div>

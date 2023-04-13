@@ -149,7 +149,8 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
             state: {
                 currentUser: currentUser,
                 project: project,
-                phases: savedPhases
+                phases: savedPhases,
+                alreadyCreated: false
             }
         })
     }

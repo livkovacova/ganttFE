@@ -11,8 +11,8 @@ export const enum TIME_UNIT {
 }
 
 export enum PRIORITY {
-    LOW,
-    MEDIUM,
-    HIGH,
+    LOW = "LOW",
+    MEDIUM = "MEDIUM",
+    HIGH = "HIGH",
 }
 

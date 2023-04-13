@@ -37,6 +37,15 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
         setProjectName(project.name);
     };
 
+    const onViewGanttChartClick = () => {
+        navigate(`/projects/${id}/gantt-chart`, {
+            state: {
+                currentUser: currentUser,
+                alreadyCreated: true
+            }
+        })
+    }
+
     React.useEffect(() => {
         fetchProjectInfo();
     });
@@ -51,7 +60,7 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
                     :
                 <Tooltip title={!isGanttCreated ? "Gantt Chart is not created yet." : null} arrow>
                     <span>
-                        <Button fullWidth color="primary" disabled={!isGanttCreated} onClick={() => navigate(`/projects/${id}`)}>
+                        <Button fullWidth color="primary" disabled={!isGanttCreated} onClick={() => onViewGanttChartClick}>
                             VIEW GANTT CHART
                         </Button>
                     </span>

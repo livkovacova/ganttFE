@@ -5,3 +5,9 @@ export interface GanttChart {
     phases: Array<PhaseResponse>;
     project: number;
 }
+
+export const DEFAULT_CHART: GanttChart = {
+    id: 0,
+    phases: [],
+    project: 0
+}
