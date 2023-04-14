@@ -19,6 +19,7 @@
     "bootstrap": "^5.2.3",
     "date-fns": "^2.29.3",
     "formik": "^2.2.9",
+    "gantt-task-react": "^0.3.9",
     "lodash.without": "^4.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -57,6 +58,7 @@
     ]
   },
   "devDependencies": {
+    "@mui/types": "^7.2.4",
     "@types/lodash": "^4.14.192"
   }
 }

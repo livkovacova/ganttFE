@@ -90,11 +90,15 @@ export const GanttChartComponent = ({chart, currency, projectMembers, projectSta
     const data = [ganttChartDataColumns, ...taskRows];
 
     const options = {
+        hAxis:{
+            position: 'bottom'
+        },
         height: data.length * 35 + 50,
         gantt: {
             legend: 'top',
             colorByRowLabel: true,
             groupByRowLabel: true,
+            scrollTo: 0.5
         },
         colors: ['yellow', 'blue', 'red'],
         rowProperties: {

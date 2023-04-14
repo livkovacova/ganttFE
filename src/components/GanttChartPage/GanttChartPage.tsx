@@ -1,7 +1,7 @@
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React, {useEffect, useState} from "react";
 import mainTheme from "../commons/mainTheme";
-import { responsiveFontSizes } from '@mui/material/styles';
+import { responsiveFontSizes } from '@mui/material/';
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
 import {useParams, useNavigate} from "react-router-dom";
@@ -13,6 +13,7 @@ import _without from "lodash/without";
 import { useLocation } from "react-router-dom";
 import { DEFAULT_CHART, GanttChart } from "../commons/GanttChart";
 import { GanttChartComponent } from "./GanttChartComponent";
+import { AnotherTry } from "./GnattChartV2";
 
 const theme = responsiveFontSizes(mainTheme);
 
@@ -51,14 +52,13 @@ export const GanttChartPage = () => {
         <ThemeProvider theme={theme}>
             <div className="pageContainer">
                 <NavigationBar withCreate={false} isManager={true} mainTitle={project.name + " | Gantt chart"} userNameLetter={currentUser.username.charAt(0).toUpperCase()}/>
-                <div className="chartContainer" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-                    <GanttChartComponent 
-                        chart={ganttChart} 
-                        currency={project.currency}
-                        projectMembers={project.members}
-                        projectStartDate={project.startdate!}
+                    <AnotherTry 
+                        // chart={ganttChart} 
+                        // currency={project.currency}
+                        // projectMembers={project.members}
+                        // projectStartDate={project.startdate!}
                     />
-                </div>
+                
                 <div className="bottomSectionContainer">
                 </div>
             </div>
