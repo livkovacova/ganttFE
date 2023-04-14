@@ -2,7 +2,7 @@ import React from "react";
 import {useNavigate} from "react-router-dom";
 import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import mainTheme from "../commons/mainTheme";
-import { GanttChart } from "../commons/GanttChart";
+import { GanttChart, MODEL_CHART } from "../commons/GanttChart";
 import { Chart, GoogleChartWrapper } from "react-google-charts";
 import IUser from "../../types/user.type";
 
@@ -28,6 +28,7 @@ export const GanttChartComponent = ({chart, currency, projectMembers, projectSta
         
         return newDate;
     }
+
 
     const theme = responsiveFontSizes(mainTheme);
 
@@ -59,13 +60,13 @@ export const GanttChartComponent = ({chart, currency, projectMembers, projectSta
         { type: 'number', label: 'Percent Complete' },
         { type: "string", label: "Dependecies" },
         { type: "string", label: "Resource" },
-        // { type: "string", label: "Priority"},
-        // { type: "string", label: "Assignees" },
-        // { typ: "string", label: "Phase"}
+        { type: "string", label: "Priority"},
+        { type: "string", label: "Assignees" },
+        { typ: "string", label: "Phase"}
     ];
 
     const taskRows: (string | number | Date | null)[][] = [];
-    chart.phases.forEach(phase => {
+    MODEL_CHART.phases.forEach(phase => {
         phase.tasks.forEach( task =>{
             const startDate = getNewDate(task.startDate, true);
             const endDate = getNewDate(task.endDate, false);
@@ -79,9 +80,9 @@ export const GanttChartComponent = ({chart, currency, projectMembers, projectSta
                 null,
                 getDependenciesProperty(task.predecessors),
                 task.resources.toString() + currency,
-                // task.priority,
-                // getAssigneesProperty(task.assignees),
-                // phase.name
+                task.priority,
+                getAssigneesProperty(task.assignees),
+                phase.name
             ])
         })
     })
@@ -89,18 +90,19 @@ export const GanttChartComponent = ({chart, currency, projectMembers, projectSta
     const data = [ganttChartDataColumns, ...taskRows];
 
     const options = {
-        height: data.length * 30 + 50,
+        height: data.length * 35 + 50,
         gantt: {
+            legend: 'top',
             colorByRowLabel: true,
             groupByRowLabel: true,
         },
         colors: ['yellow', 'blue', 'red'],
-        // rowProperties: {
-        //     phase: {
-        //       label: 'Phase',
-        //       type: 'string',
-        //     },
-        // },
+        rowProperties: {
+            phase: {
+              label: 'Phase',
+              type: 'string',
+            },
+        },
     };
 
     return (
@@ -111,6 +113,7 @@ export const GanttChartComponent = ({chart, currency, projectMembers, projectSta
                 height="100%"
                 data={data}
                 options={options}
+                style={{padding: "20px"}}
             />
         </ThemeProvider>
     );
