@@ -1,13 +1,22 @@
 import React from "react";
 import { Task, ViewMode, Gantt } from "gantt-task-react";
 import { ViewSwitcher } from "./view-switcher";
-import { getStartEndDateForProject, initTasks } from "./helper";
+import { getStartEndDateForProject, prepareTasks } from "./helper";
 import "gantt-task-react/dist/index.css";
 import './GnattChartV2.css'
+import { GanttChart } from "../commons/GanttChart";
+import IUser from "../../types/user.type";
 
-export const AnotherTry = () => {
-const [view, setView] = React.useState<ViewMode>(ViewMode.Day);
-  const [tasks, setTasks] = React.useState<Task[]>(initTasks());
+interface Props {
+  chart: GanttChart,
+  currency: string,
+  projectMembers: Array<IUser>,
+  projectStartDate: Date
+}
+
+export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }: Props) => {
+  const [view, setView] = React.useState<ViewMode>(ViewMode.Day);
+  const [tasks, setTasks] = React.useState<Task[]>(prepareTasks(chart, currency, projectMembers, projectStartDate));
   const [isChecked, setIsChecked] = React.useState(true);
   let columnWidth = 65;
   if (view === ViewMode.Year) {

@@ -1,11 +1,11 @@
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React, {useEffect, useState} from "react";
 import mainTheme from "../commons/mainTheme";
-import { responsiveFontSizes } from '@mui/material/styles';
+import { responsiveFontSizes } from '@mui/material/';
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
 import {useParams, useNavigate} from "react-router-dom";
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, ButtonGroup, Dialog, DialogActions, DialogTitle, Divider, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, ButtonGroup, Dialog, DialogActions, DialogTitle, Divider, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material/";
 import "../CreateGanttChartPage/CreateGanttChartPage.css"
 import { getProjectById } from "../../services/ProjectDataService";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';

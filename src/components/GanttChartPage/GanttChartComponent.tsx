@@ -1,6 +1,6 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
-import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
+import { responsiveFontSizes, ThemeProvider } from '@mui/material/';
 import mainTheme from "../commons/mainTheme";
 import { GanttChart, MODEL_CHART } from "../commons/GanttChart";
 import { Chart, GoogleChartWrapper } from "react-google-charts";
@@ -98,7 +98,6 @@ export const GanttChartComponent = ({chart, currency, projectMembers, projectSta
             legend: 'top',
             colorByRowLabel: true,
             groupByRowLabel: true,
-            scrollTo: 0.5
         },
         colors: ['yellow', 'blue', 'red'],
         rowProperties: {

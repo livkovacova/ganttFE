@@ -53,10 +53,10 @@ export const GanttChartPage = () => {
             <div className="pageContainer">
                 <NavigationBar withCreate={false} isManager={true} mainTitle={project.name + " | Gantt chart"} userNameLetter={currentUser.username.charAt(0).toUpperCase()}/>
                     <AnotherTry 
-                        // chart={ganttChart} 
-                        // currency={project.currency}
-                        // projectMembers={project.members}
-                        // projectStartDate={project.startdate!}
+                        chart={ganttChart} 
+                        currency={project.currency}
+                        projectMembers={project.members}
+                        projectStartDate={project.startdate!}
                     />
                 
                 <div className="bottomSectionContainer">
