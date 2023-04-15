@@ -1,11 +1,12 @@
 import React from "react";
 import { Task, ViewMode, Gantt } from "gantt-task-react";
 import { ViewSwitcher } from "./view-switcher";
-import { getStartEndDateForProject, prepareTasks } from "./helper";
+import { ExtendedTask, getStartEndDateForProject, prepareTasks } from "./helper";
 import "gantt-task-react/dist/index.css";
 import './GnattChartV2.css'
 import { GanttChart } from "../commons/GanttChart";
 import IUser from "../../types/user.type";
+import { fontFamily } from "@mui/system";
 
 interface Props {
   chart: GanttChart,
@@ -76,6 +77,65 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }
     console.log("On expander click Id:" + task.id);
   };
 
+  const CustomizedTaskTooltipContent: React.FC<{ task: ExtendedTask }> = ({ task }) => {
+    return (
+      <div>
+        <div>
+          <strong>{task.name}</strong>
+        </div>
+        {task.type === "task"? 
+        (<>
+          <div>Priority: {task.priority}</div>
+          <div>Assignees: {task.assignees}</div>
+          <div>Resources: {task.resources}</div>
+        </>)
+        :
+        (undefined)
+        }
+        <div>
+          {task.start.toLocaleDateString()} - {task.end.toLocaleDateString()}
+        </div>
+      </div>
+    );
+  }
+
+  const computeGanttWidth = (): number => {
+    return 50*(tasks.length) > window.innerHeight*0.67 ? window.innerHeight*0.67 : 50*(tasks.length);
+  }
+
+  const MyCustomizedTooltip: React.FC<{task: ExtendedTask, fontSize: string, fontFamily: string}> = ({task, fontSize, fontFamily}) => {
+    const style = {
+      fontSize,
+      fontFamily
+    };
+    return (
+      <div className="tooltipContainer" style={style}>
+      <b style={{ fontSize: fontSize + 6 }}>{`${
+        task.name
+      }: ${task.start.toLocaleDateString()} - ${task.end.toLocaleDateString()}`}</b>
+      {task.end.getTime() - task.start.getTime() !== 0 && (
+        <div className="tooltipParagraph">{`Duration: ${~~(
+          (task.end.getTime() - task.start.getTime()) /
+          (1000 * 60 * 60 * 24)
+        )} day(s)`}</div>
+      )}
+      {task.type === "task"? 
+        (<>
+          <div className="tooltipParagraph">Priority: {task.priority}</div>
+          <div className="tooltipParagraph">Assignees: {task.assignees}</div>
+          <div className="tooltipParagraph">Resources: {task.resources}</div>
+        </>)
+        :
+        (undefined)
+        }
+
+      <div className="tooltipParagraph">
+        {!!task.progress && `Progress: ${task.progress} %`}
+      </div>
+    </div>
+    )
+  }
+
   return (
     <div className="Wrapper">
       <ViewSwitcher
@@ -83,10 +143,10 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }
         onViewListChange={setIsChecked}
         isChecked={isChecked}
       />
-      <h3>Gantt With Limited Height</h3>
       <Gantt
         tasks={tasks}
         viewMode={view}
+        fontFamily="Raleway, sans-serif"
         onDateChange={handleTaskChange}
         onDelete={handleTaskDelete}
         onProgressChange={handleProgressChange}
@@ -95,8 +155,11 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }
         onSelect={handleSelect}
         onExpanderClick={handleExpanderClick}
         listCellWidth={isChecked ? "155px" : ""}
-        ganttHeight={400}
+        ganttHeight={computeGanttWidth()}
         columnWidth={columnWidth}
+        TooltipContent={MyCustomizedTooltip}
+        projectBackgroundColor='#B03066'
+        todayColor="rgba(245, 139, 0, 0.3)"
       />
     </div>
   );

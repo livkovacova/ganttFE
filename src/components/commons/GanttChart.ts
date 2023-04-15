@@ -95,8 +95,92 @@ export const MODEL_CHART: GanttChart = {
                     assignees: [
                         0
                     ],
-                    startDate: new Date("2023-04-27T00:00:00.000Z"),
-                    endDate: new Date("2023-05-01T00:00:00.000Z")
+                    startDate: new Date("2023-05-01T00:00:00.000Z"),
+                    endDate: new Date("2023-05-02T00:00:00.000Z")
+                },
+                {
+                    workId: 6,
+                    name: "New task 6",
+                    priority: PRIORITY.HIGH,
+                    duration: 5,
+                    resources: 22,
+                    extendable: false,
+                    predecessors: [1],
+                    assignees: [
+                        0
+                    ],
+                    startDate: new Date("2023-05-02T00:00:00.000Z"),
+                    endDate: new Date("2023-05-03T00:00:00.000Z")
+                },
+                {
+                    workId: 7,
+                    name: "New task 7",
+                    priority: PRIORITY.HIGH,
+                    duration: 5,
+                    resources: 22,
+                    extendable: false,
+                    predecessors: [1],
+                    assignees: [
+                        0
+                    ],
+                    startDate: new Date("2023-05-03T00:00:00.000Z"),
+                    endDate: new Date("2023-05-04T00:00:00.000Z")
+                },
+                {
+                    workId: 8,
+                    name: "New task 8",
+                    priority: PRIORITY.HIGH,
+                    duration: 5,
+                    resources: 22,
+                    extendable: false,
+                    predecessors: [1],
+                    assignees: [
+                        0
+                    ],
+                    startDate: new Date("2023-05-04T00:00:00.000Z"),
+                    endDate: new Date("2023-05-05T00:00:00.000Z")
+                },
+                {
+                    workId: 9,
+                    name: "New task 9",
+                    priority: PRIORITY.HIGH,
+                    duration: 5,
+                    resources: 22,
+                    extendable: false,
+                    predecessors: [1],
+                    assignees: [
+                        0
+                    ],
+                    startDate: new Date("2023-05-05T00:00:00.000Z"),
+                    endDate: new Date("2023-05-07T00:00:00.000Z")
+                },
+                {
+                    workId: 10,
+                    name: "New task 10",
+                    priority: PRIORITY.HIGH,
+                    duration: 5,
+                    resources: 22,
+                    extendable: false,
+                    predecessors: [1],
+                    assignees: [
+                        0
+                    ],
+                    startDate: new Date("2023-05-07T00:00:00.000Z"),
+                    endDate: new Date("2023-05-08T00:00:00.000Z")
+                },
+                {
+                    workId: 11,
+                    name: "New task 11",
+                    priority: PRIORITY.HIGH,
+                    duration: 5,
+                    resources: 22,
+                    extendable: false,
+                    predecessors: [1],
+                    assignees: [
+                        0
+                    ],
+                    startDate: new Date("2023-05-08T00:00:00.000Z"),
+                    endDate: new Date("2023-05-09T00:00:00.000Z")
                 },
                 
             ],

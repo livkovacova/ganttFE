@@ -46,21 +46,23 @@ export const NavigationBar = ({onClick, userNameLetter, isManager, withCreate, m
                     {/* <img src={logo} alt="logo of GanttApp" style={{width: "82px"}}/> */}
                     <Typography
                         variant="h5"
-                        style={{marginLeft: "1vw", fontWeight: "600"}}
+                        style={{color:"#B03066", marginLeft: "1vw", fontWeight: "600"}}
                         fontFamily={"Raleway, sans-serif"}
                     >
                         GanttApp
                     </Typography>
-                </div>
-
-                <div className="navBarButtons">
-                <Typography
-                        variant="h6"
-                        style={{marginLeft: "0.1vw", fontWeight: "600"}}
+                    <div style={{color: "white", marginLeft: "0.7vw", backgroundColor:"#B8C2CC", padding: "0.4vw", borderRadius: 3}}>
+                    <Typography
+                        variant="body1"
+                        style={{fontWeight: "100"}}
                         fontFamily={"Raleway, sans-serif"}
                     >
                         {mainTitle}
                 </Typography>
+                </div>
+                </div>
+
+                <div className="navBarButtons">
                 {isManager && withCreate?
                      <IconButton color="primary" aria-label="create project" component="div" onClick={onClick} id="formOpener" sx={{marginLeft:"0.5vw"}}>
                         <AddIcon></AddIcon>
@@ -78,7 +80,7 @@ export const NavigationBar = ({onClick, userNameLetter, isManager, withCreate, m
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
                         >
-                            <Avatar sx={{ width: 32, height: 32 }}>{userNameLetter}</Avatar>
+                            <Avatar style={{backgroundColor: "#B03066"}} sx={{ width: 32, height: 32}}>{userNameLetter}</Avatar>
                         </IconButton>
                     </Tooltip>
                 </Box>

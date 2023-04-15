@@ -1,11 +1,11 @@
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React, {useEffect, useState} from "react";
 import mainTheme from "../commons/mainTheme";
-import { responsiveFontSizes } from '@mui/material/styles';
+import { responsiveFontSizes } from '@mui/material/';
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
 import {useParams, useNavigate} from "react-router-dom";
-import { Button, ButtonGroup, IconButton, Tooltip } from "@mui/material";
+import { Button, ButtonGroup, IconButton, Tooltip } from "@mui/material/";
 import "../ProjectDetailsPage/ProjectDetailsPage.css"
 import { getProjectById } from "../../services/ProjectDataService";
 
@@ -60,7 +60,7 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
                     :
                 <Tooltip title={!isGanttCreated ? "Gantt Chart is not created yet." : null} arrow>
                     <span>
-                        <Button fullWidth color="primary" disabled={!isGanttCreated} onClick={() => onViewGanttChartClick}>
+                        <Button fullWidth color="primary" disabled={!isGanttCreated} onClick={onViewGanttChartClick}>
                             VIEW GANTT CHART
                         </Button>
                     </span>
