@@ -1,6 +1,6 @@
 import React from "react";
 import { Task, ViewMode, Gantt } from "gantt-task-react";
-import { ViewSwitcher } from "./view-switcher";
+import { ViewSettings } from "./view-switcher";
 import { ExtendedTask, getStartEndDateForProject, prepareTasks } from "./helper";
 import "gantt-task-react/dist/index.css";
 import './GnattChartV2.css'
@@ -138,10 +138,10 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }
 
   return (
     <div className="Wrapper">
-      <ViewSwitcher
+      <ViewSettings
         onViewModeChange={viewMode => setView(viewMode)}
         onViewListChange={setIsChecked}
-        isChecked={isChecked}
+        showTaskList={isChecked}
       />
       <Gantt
         tasks={tasks}

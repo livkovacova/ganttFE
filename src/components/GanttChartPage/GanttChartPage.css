@@ -20,6 +20,15 @@
 .bottomSectionContainer {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     border-top: 2px solid lightgrey;
-    
+    height: 8vh;
+}
+
+.saveGanttButtons{
+    height: 3em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 1vw;
 }

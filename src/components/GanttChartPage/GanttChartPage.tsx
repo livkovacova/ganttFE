@@ -1,11 +1,11 @@
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React, {useEffect, useState} from "react";
 import mainTheme from "../commons/mainTheme";
-import { responsiveFontSizes } from '@mui/material/';
+import { Button, ButtonGroup, responsiveFontSizes } from '@mui/material/';
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
 import {useParams, useNavigate} from "react-router-dom";
-import "../CreateGanttChartPage/CreateGanttChartPage.css"
+import "./GanttChartPage.css"
 import { createGanttChart, getGanttChart } from "../../services/GanttChartService";
 import { Phase } from "../commons/Phase";
 import { Project } from "../commons/Projects";
@@ -60,6 +60,24 @@ export const GanttChartPage = () => {
                     />
                 
                 <div className="bottomSectionContainer">
+                    <div
+                    className="saveGanttButtons" 
+                    >
+                        <Button
+                        sx={{marginRight: "0.4vw"}}
+                        variant="contained" 
+                        onClick={() => {console.log("beck to edit phases")}}
+                        color="secondary" 
+                    >Back to edit project phases</Button>
+
+                        <Button 
+                        variant="contained" 
+                        onClick={() => {console.log("saved Gantt Chart")}}
+                        color="primary" 
+                    >Save GANTT CHART</Button>
+
+                        
+                    </div>
                 </div>
             </div>
         </ThemeProvider>
