@@ -143,6 +143,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
             );
         }
         closeForm();
+        refreshPage();
     };
 
     const onFormSubmit = () => {

@@ -126,7 +126,7 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
 
     React.useEffect(() => {
         findAndSetSelectedOptions();
-    }, [saved]);
+    }, [saved, assigneesOptions]);
 
     React.useEffect(() => {
         setSelectedTaskPredecessors(findPredecessors);

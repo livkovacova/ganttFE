@@ -1,3 +1,4 @@
+import { BooleanLiteral } from "typescript";
 import IUser, { DEFAULT_USER } from "../../types/user.type";
 
 export interface Project {
@@ -9,8 +10,8 @@ export interface Project {
     currency: string;
     members: Array<IUser>;
     startdate?: Date | null,
-    ganttchart?: string | null,
-    treechart?: string | null
+    ganttCreated: boolean,
+    treeCreated: boolean
 }
 
 export const DEFAULT_PROJECT: Project = {
@@ -22,6 +23,6 @@ export const DEFAULT_PROJECT: Project = {
     currency: "EUR",
     members: [DEFAULT_USER],
     startdate: new Date(),
-    ganttchart: null,
-    treechart: null
+    ganttCreated: false,
+    treeCreated: false
 };

@@ -8,6 +8,7 @@ import {useParams, useNavigate} from "react-router-dom";
 import { Button, ButtonGroup, IconButton, Tooltip } from "@mui/material/";
 import "../ProjectDetailsPage/ProjectDetailsPage.css"
 import { getProjectById } from "../../services/ProjectDataService";
+import { Project } from "../commons/Projects";
 
 
 interface Props {
@@ -25,30 +26,31 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
     const [isTreeCreated, setTreeCreated] = useState<boolean>(false);
     const [projectName, setProjectName] = useState<string>("");
     const [refresh, setRefresh] = useState<boolean>(false);
+    const [project, setProject] = useState<Project>();
 
     const fetchProjectInfo = async () => {
         const project = await getProjectById(parseInt(id!));
-        if (project.ganttchart){
-            setGanttCreated(true);
-        }
-        if(project.treechart){
-            setTreeCreated(true);
-        }
+        console.log(project);
+        setGanttCreated(project.ganttCreated);
+        setTreeCreated(project.treeCreated);
         setProjectName(project.name);
+        setProject(project);
     };
 
     const onViewGanttChartClick = () => {
         navigate(`/projects/${id}/gantt-chart`, {
             state: {
+                project: project,
                 currentUser: currentUser,
-                alreadyCreated: true
+                alreadyCreated: true, 
+                onlyView: true
             }
         })
     }
 
     React.useEffect(() => {
         fetchProjectInfo();
-    });
+    },[]);
 
     const renderFirstButton = (): React.ReactNode => {
         return (

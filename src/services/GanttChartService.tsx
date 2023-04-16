@@ -25,7 +25,25 @@ export const getGanttChart= async (id: number): Promise<GanttChart> => {
     } )
     .then((res: any) => res.data)
     .catch((err: any) => {
-        console.error("Error fetching gantt charts", err);
+        console.error("Error fetching gantt chart", err);
+        return {};
+    })
+}
+
+export const uploadGanttChart= async (ganttChart: GanttChart) => {
+    return axios.post(API_URL + "/save", ganttChart)
+    .then((res: any) => res.data)
+    .catch((err: any) => {
+        console.error("Error saving gantt chart", err);
+        return {};
+    })
+}
+
+export const updateGanttChart= async (ganttChart: GanttChart) => {
+    return axios.post(API_URL + "/update", ganttChart)
+    .then((res: any) => res.data)
+    .catch((err: any) => {
+        console.error("Error saving gantt chart", err);
         return {};
     })
 }

@@ -6,7 +6,7 @@ import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
 import {useParams, useNavigate} from "react-router-dom";
 import "./GanttChartPage.css"
-import { createGanttChart, getGanttChart } from "../../services/GanttChartService";
+import { createGanttChart, getGanttChart, uploadGanttChart } from "../../services/GanttChartService";
 import { Phase } from "../commons/Phase";
 import { Project } from "../commons/Projects";
 import _without from "lodash/without";
@@ -16,6 +16,10 @@ import { GanttChartComponent } from "./GanttChartComponent";
 import { AnotherTry } from "./GnattChartV2";
 
 const theme = responsiveFontSizes(mainTheme);
+
+interface Props {
+    currentUser: IUser | undefined;
+}
 
 export const GanttChartPage = () => {
 
@@ -27,7 +31,8 @@ export const GanttChartPage = () => {
     const currentUser: IUser = location.state.currentUser;
     const phases: Phase[] = location.state.phases;
     const alreadyCreated: boolean = location.state.alreadyCreated;
-    const [ganttChart, setGanttChart] = useState<GanttChart>(DEFAULT_CHART);
+    const onlyView: boolean = location.state.onlyView;
+    const [ganttChart, setGanttChart] = useState<GanttChart>();
 
     const generateGanttChart = async () => {
         const chart: GanttChart = await createGanttChart(parseInt(id!), phases);
@@ -35,11 +40,18 @@ export const GanttChartPage = () => {
     };
 
     const fetchGanttChart = async () => {
-        const chart: GanttChart = await getGanttChart(parseInt(id!));
+        const chart: GanttChart = await getGanttChart(project.id);
         setGanttChart(chart)
     }
 
+    const saveGanttChart = async () => {
+        await uploadGanttChart(ganttChart!);
+        console.log("gantt saved");
+        //refreshPage
+    }
+
     useEffect(() => {
+        console.log(alreadyCreated)
         if(!alreadyCreated){
             generateGanttChart();
         }
@@ -48,17 +60,29 @@ export const GanttChartPage = () => {
         }
     },[]);
 
+    const handleDateChanges = (chart: GanttChart) => {
+        setGanttChart(chart);
+        console.log(chart);
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <div className="pageContainer">
                 <NavigationBar withCreate={false} isManager={true} mainTitle={project.name + " | Gantt chart"} userNameLetter={currentUser.username.charAt(0).toUpperCase()}/>
+                {ganttChart != undefined || null ? (
+                    <>
                     <AnotherTry 
-                        chart={ganttChart} 
+                        chart={ganttChart!} 
                         currency={project.currency}
                         projectMembers={project.members}
                         projectStartDate={project.startdate!}
+                        onDateChange={handleDateChanges}
+                        readonly={alreadyCreated}
                     />
-                
+                    </>
+                ):
+                undefined}
+                    
                 <div className="bottomSectionContainer">
                     <div
                     className="saveGanttButtons" 
@@ -69,19 +93,23 @@ export const GanttChartPage = () => {
                         onClick={() => {console.log("beck to edit phases")}}
                         color="secondary" 
                     >Back to edit project phases</Button>
-
-                        <Button 
-                        variant="contained" 
-                        onClick={() => {console.log("saved Gantt Chart")}}
-                        color="primary" 
-                    >Save GANTT CHART</Button>
-
+                        {alreadyCreated? undefined : (
+                            <>
+                                <Button 
+                                variant="contained" 
+                                onClick={() => {saveGanttChart()}}
+                                color="primary" 
+                                >Save GANTT CHART</Button>
+                            </>
+                        )}
                         
                     </div>
                 </div>
             </div>
         </ThemeProvider>
     );
+                    //add mesage about saved gantt
+
 };
 
 export default GanttChartPage;

@@ -33,4 +33,5 @@ export interface TaskResponse {
     assignees: Array<number>;
     startDate: Date;
     endDate: Date;
+    realId?: number
 }

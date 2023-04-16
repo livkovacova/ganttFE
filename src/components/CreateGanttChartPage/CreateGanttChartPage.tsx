@@ -34,7 +34,6 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
     const [isOpenForm, setIsOpenForm] = React.useState<boolean>(false);
     const [isEditing, setIsEditing] = React.useState<boolean>(false);
     const [phaseToEdit, setPhaseToEdit] = React.useState<Phase>(DEFAULT_PHASE);
-    const [phaseForAction, setPhaseForAction] = React.useState<Phase>({} as Phase);
     const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [newPhaseId, setNewPhaseId] = React.useState(0);
     
@@ -82,6 +81,7 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
         setProject(project);
         setProjectName(project.name);
     };
+    
 
     React.useEffect(() => {
         fetchProjectInfo();

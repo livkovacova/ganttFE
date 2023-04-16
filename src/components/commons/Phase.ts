@@ -17,4 +17,5 @@ export interface PhaseResponse {
     name: string;
     tasks: Array<TaskResponse>;
     projectId: number;
+    realId?: number
 }

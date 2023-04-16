@@ -126,6 +126,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
 
     const prepareAssigneesOptions = () => {
         const options = project.members.map((teamMember) => {
+                console.log(teamMember.id)
                 let option: TeamMemberOption = {
                     value: teamMember.id,
                     text: teamMember.username
@@ -137,6 +138,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             setAssigneesFormOptions([]);
         }
         else{
+            console.log(options)
             setAssigneesFormOptions(options as Array<TeamMemberOption>);
         }
     };
@@ -184,7 +186,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         prepareAssigneesOptions();
         preparePredecessorsOptions();
         updatePredecessorsOptions();
-    }, []);
+    }, [project]);
 
     React.useEffect(() => {
         preparePredecessorsOptions();

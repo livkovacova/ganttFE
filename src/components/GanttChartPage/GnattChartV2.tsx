@@ -12,12 +12,14 @@ interface Props {
   chart: GanttChart,
   currency: string,
   projectMembers: Array<IUser>,
-  projectStartDate: Date
+  projectStartDate: Date,
+  onDateChange: (chart:GanttChart) => void;
+  readonly: boolean
 }
 
-export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }: Props) => {
+export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate, onDateChange, readonly }: Props) => {
   const [view, setView] = React.useState<ViewMode>(ViewMode.Day);
-  const [tasks, setTasks] = React.useState<Task[]>(prepareTasks(chart, currency, projectMembers, projectStartDate));
+  const [tasks, setTasks] = React.useState<Task[]>(prepareTasks(chart, currency, projectMembers, projectStartDate, readonly));
   const [isChecked, setIsChecked] = React.useState(true);
   let columnWidth = 65;
   if (view === ViewMode.Year) {
@@ -31,6 +33,16 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }
   const handleTaskChange = (task: Task) => {
     console.log("On date change Id:" + task.id);
     let newTasks = tasks.map(t => (t.id === task.id ? task : t));
+    chart.phases.forEach(phase => {
+      phase.tasks.map(phaseTask => {
+        if(phaseTask.workId == parseInt(task.id)){
+          phaseTask.startDate = task.start;
+          phaseTask.endDate = task.end;
+          const newDuration = task.end.getTime() - task.start.getTime();
+          phaseTask.duration = Math.ceil(newDuration / (1000 * 3600 * 24));
+        }
+      })
+    }) 
     if (task.project) {
       const [start, end] = getStartEndDateForProject(newTasks, task.project);
       const project = newTasks[newTasks.findIndex(t => t.id === task.project)];
@@ -44,6 +56,7 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }
         );
       }
     }
+    onDateChange(chart);
     setTasks(newTasks);
   };
 
@@ -53,11 +66,6 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }
       setTasks(tasks.filter(t => t.id !== task.id));
     }
     return conf;
-  };
-
-  const handleProgressChange = async (task: Task) => {
-    setTasks(tasks.map(t => (t.id === task.id ? task : t)));
-    console.log("On progress change Id:" + task.id);
   };
 
   const handleDblClick = (task: Task) => {
@@ -76,28 +84,6 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }
     setTasks(tasks.map(t => (t.id === task.id ? task : t)));
     console.log("On expander click Id:" + task.id);
   };
-
-  const CustomizedTaskTooltipContent: React.FC<{ task: ExtendedTask }> = ({ task }) => {
-    return (
-      <div>
-        <div>
-          <strong>{task.name}</strong>
-        </div>
-        {task.type === "task"? 
-        (<>
-          <div>Priority: {task.priority}</div>
-          <div>Assignees: {task.assignees}</div>
-          <div>Resources: {task.resources}</div>
-        </>)
-        :
-        (undefined)
-        }
-        <div>
-          {task.start.toLocaleDateString()} - {task.end.toLocaleDateString()}
-        </div>
-      </div>
-    );
-  }
 
   const computeGanttWidth = (): number => {
     return 50*(tasks.length) > window.innerHeight*0.67 ? window.innerHeight*0.67 : 50*(tasks.length);
@@ -149,7 +135,6 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate }
         fontFamily="Raleway, sans-serif"
         onDateChange={handleTaskChange}
         onDelete={handleTaskDelete}
-        onProgressChange={handleProgressChange}
         onDoubleClick={handleDblClick}
         onClick={handleClick}
         onSelect={handleSelect}

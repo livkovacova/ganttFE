@@ -50,10 +50,11 @@ function getStartEndDateForProjectPhase(tasks: TaskResponse[]) {
   return [start, end];
 }
 
-export function prepareTasks( chart: GanttChart, currency: string, projectMembers: Array<IUser>, projectStartDate: Date) {
+export function prepareTasks( chart: GanttChart, currency: string, projectMembers: Array<IUser>, projectStartDate: Date, readOnly: boolean) {
 
   const getAssigneesProperty = (assignees: Array<number>): string =>{
     const result: Array<string> = [];
+    console.log(projectMembers)
     assignees.forEach(assignee => {
         let member = projectMembers.find(member => member.id === assignee);
         if (member !== undefined){
@@ -73,7 +74,8 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
 
   const preparedTasks: ExtendedTask[] = [];
 
-  MODEL_CHART.phases.forEach(phase => {
+  //PRIORITY IS LOW ALWAYS
+  chart.phases.forEach(phase => {
     const [phaseStart, phaseEnd] = getStartEndDateForProjectPhase(phase.tasks);
     const newPhase: ExtendedTask = {
       start: new Date(phaseStart.getFullYear(), phaseStart.getMonth(), phaseStart.getDate()),
@@ -83,11 +85,13 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
       progress: 0,
       type: "project",
       hideChildren: false,
+      isDisabled: readOnly
     }
     preparedTasks.push(newPhase);
     phase.tasks.forEach( task =>{
         const startDate = getNewDate(task.startDate, true);
         const endDate = getNewDate(task.endDate, false);
+        console.log(task.assignees);
         const newTask: ExtendedTask = {
           start: new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()),
           end: new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()),
@@ -95,6 +99,7 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
           id: task.workId.toString(),
           progress: 0,
           type: "task",
+          isDisabled: readOnly,
           project: phase.name,
           priority: task.priority,
           dependencies: getDependenciesProperty(task.predecessors),
