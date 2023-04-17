@@ -19,6 +19,7 @@ import HomePage from "./components/HomePage/homePage";
 import ProjectDetailsPage from "./components/ProjectDetailsPage/ProjectDetailsPage";
 import CreateGanttChartPage from "./components/CreateGanttChartPage/CreateGanttChartPage";
 import GanttChartPage from "./components/GanttChartPage/GanttChartPage";
+import DependencyDiagramPage from "./components/DependencyDiagram/DependencyDiagramPage";
 
 
 type Props = {};
@@ -69,6 +70,7 @@ const GanttApp: React.FC<Props> = () => {
                 <Route path="/projects/:id" element={<ProjectDetailsPage isManager={isManager} currentUser={currentUser}/>}/>
                 <Route path="/projects/:id/create-gantt" element={<CreateGanttChartPage currentUser={currentUser}/>}/>
                 <Route path="/projects/:id/gantt-chart" element={<GanttChartPage/>}/>
+                <Route path="/projects/:id/dependency-diagram" element={<DependencyDiagramPage/>}/>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/profile" element={<ProfilePage />} />

@@ -48,6 +48,16 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
         })
     }
 
+    const onDependencyDiagramClick = (alreadyCreated: boolean) => {
+        navigate(`/projects/${id}/dependency-diagram`, {
+            state: {
+                project: project,
+                currentUser: currentUser,
+                alreadyCreated: alreadyCreated, 
+            }
+        })
+    }
+
     React.useEffect(() => {
         fetchProjectInfo();
     },[]);
@@ -78,7 +88,7 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
                 (
                 <Tooltip title={!isGanttCreated ? "Create Gantt Chart first." : null} arrow>
                     <span>
-                        <Button fullWidth color="primary" disabled={!isGanttCreated} onClick={() => console.log("handleGenerateTreeClick()")}>
+                        <Button fullWidth color="primary" disabled={!isGanttCreated} onClick={() => onDependencyDiagramClick(false)}>
                             GENERATE DEPENDENCY TREE
                         </Button>
                     </span>
@@ -86,7 +96,7 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
                     :
                 <Tooltip title={!isTreeCreated ? "Dependency tree is not created yet." : null} arrow>
                     <span>
-                        <Button fullWidth color="primary" disabled={!isTreeCreated} onClick={() => navigate(`/projects/${id}`)}>
+                        <Button fullWidth color="primary" disabled={!isTreeCreated} onClick={() => onDependencyDiagramClick(true)}>
                             VIEW DEPENDENCY TREE
                         </Button>
                     </span>

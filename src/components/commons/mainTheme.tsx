@@ -12,6 +12,9 @@ const mainTheme = createTheme({
         dark: '#828282',
         contrastText: '#4F4F4F',
       },
+    },
+    typography: {
+      fontFamily: "Raleway, sans-serif"
     }
 })
 

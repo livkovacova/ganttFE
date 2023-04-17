@@ -1,0 +1,67 @@
+.pageContainer{
+    overflow-x: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.chartContainer {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    overflow-x: hidden;
+    flex: 100 100;
+    scrollbar-gutter: stable;
+    background-color: #f7f7f7;
+    padding-top: 2vh;
+    align-items: center;
+}
+
+.bottomSectionContainer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-top: 2px solid lightgrey;
+    height: 8vh;
+}
+
+.saveGanttButtons{
+    height: 3em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 1vw;
+}
+
+.phaseContainer{
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 10px 0px 4px 0px rgba(0, 0, 0, 0.3);
+    border-radius: 0 10px 0 0;
+    overflow: hidden;
+}
+
+.phasesWrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #02445a;
+    height: 85vh;
+    overflow-x: scroll;
+}
+
+.phaseHeader{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 10%;
+    background-color: #035E7B;
+    color: white;
+}
+
+.phaseTasks{
+    background-color: whitesmoke;
+    height: 90%;
+}
