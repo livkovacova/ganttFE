@@ -135,6 +135,7 @@ export const DependencyDiagramPage = () => {
         }
     ]
 
+
     return (
         <ThemeProvider theme={theme}>
             <div className="pageContainer">
