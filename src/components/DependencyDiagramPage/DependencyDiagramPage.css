@@ -17,11 +17,11 @@
     align-items: center;
 }
 
-.bottomSectionContainer {
+.bottomSectionContainerHere {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    border-top: 2px solid lightgrey;
+    /* border-top: 2px solid lightgrey; */
     height: 8vh;
 }
 
@@ -44,9 +44,8 @@
 
 .phasesWrapper{
     align-items: center;
-    background-color: #02445a;
+    background-color: #27252D;
     height: 85vh;
-    overflow-x: scroll;
 }
 
 .phaseHeader{

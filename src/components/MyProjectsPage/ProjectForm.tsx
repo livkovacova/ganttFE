@@ -17,7 +17,7 @@ import { getAllTeamMembers } from "../../services/UserDataService";
 import InputAdornment from '@mui/material/InputAdornment';
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { TeamMemberOption } from "./teamMemberOption";
+import { TeamMemberOption } from "../commons/TeamMemberOption";
 import { createProject, editProject } from "../../services/ProjectDataService";
 
 

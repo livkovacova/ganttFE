@@ -8,6 +8,7 @@ import mainTheme from "../commons/mainTheme";
 import Logout from '@mui/icons-material/Logout';
 import authService from "../../services/auth.service";
 import AddIcon from '@mui/icons-material/Add';
+import ViewStreamIcon from '@mui/icons-material/ViewStream';
 
 interface Props {
     onClick?: React.Dispatch<any>;
@@ -29,7 +30,7 @@ export const NavigationBar = ({onClick, userNameLetter, isManager, withCreate, m
         setAnchorEl(null);
     };
     const handleRedirect = () => {
-        navigate("/profile");
+        navigate("/home");
     };
     const handleLogout = () => {
         authService.logout();
@@ -120,7 +121,10 @@ export const NavigationBar = ({onClick, userNameLetter, isManager, withCreate, m
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                 <MenuItem onClick={handleRedirect}>
-                <Avatar /> Profile
+                <ListItemIcon>
+                    <ViewStreamIcon fontSize="small" />
+                </ListItemIcon>
+                My projects
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={handleLogout}>

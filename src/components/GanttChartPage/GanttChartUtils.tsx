@@ -1,15 +1,8 @@
 import { Task } from "gantt-task-react";
-import { GanttChart, MODEL_CHART } from "../commons/GanttChart";
+import { GanttChart} from "../commons/GanttChart";
 import IUser from "../../types/user.type";
 import { PRIORITY } from "../commons/enums";
 import { TaskResponse } from "../commons/Task";
-
-interface Props {
-  chart: GanttChart,
-  currency: string,
-  projectMembers: Array<IUser>,
-  projectStartDate: Date
-}
 
 export interface ExtendedTask extends Task {
   priority?: PRIORITY,

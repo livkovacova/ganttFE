@@ -1,32 +1,19 @@
 import { Project } from "../commons/Projects";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, TextField as DateField, TextField, IconButton, Typography} from "@mui/material";
 import React from "react";
-import authService from "../../services/auth.service";
-import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
+import { responsiveFontSizes,} from '@mui/material/styles';
 import mainTheme from "../commons/mainTheme";
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Chip from '@mui/material/Chip';
-import CancelIcon from '@mui/icons-material/Cancel';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import _without from "lodash/without";
 import { isEqual } from "lodash";
-import Checkbox from "@mui/material/Checkbox";
-import ListItemText from "@mui/material/ListItemText";
-import { getAllTeamMembers } from "../../services/UserDataService";
-import InputAdornment from '@mui/material/InputAdornment';
-import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { TeamMemberOption } from "../HomePage/teamMemberOption";
-import { createProject, editProject } from "../../services/ProjectDataService";
+import { TeamMemberOption } from "../commons/TeamMemberOption";
 import { Phase } from "../commons/Phase";
-import { DEFAULT_TASK, Task } from "../commons/Task";
+import { Task } from "../commons/Task";
 import DoneIcon from '@mui/icons-material/Done';
-import { PredecessorOption } from "./PredecessorOption";
+import { PredecessorOption } from "../commons/PredecessorOption";
 import AddIcon from '@mui/icons-material/Add';
 import { ProjectTaskForm } from "../ProjectTaskForm/ProjectTaskForm";
 import "./ProjectPhaseDialog.css"
+import { PRIORITY } from "../commons/enums";
 
 
 interface Props {
@@ -233,11 +220,10 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             workId: newTaskId,
             name: "New task",
             duration: 1,
-            priority: 0,
+            priority: PRIORITY.MEDIUM,
             assignees: [],
             resources: 0,
             predecessors: [],
-            extendable: true
         }
         setCreatedTasks([...createdTasks, newTask]);
         setNewTaskId(newTaskId+1);

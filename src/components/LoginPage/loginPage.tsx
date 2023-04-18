@@ -48,7 +48,7 @@ const LoginPage = () => {
       let currentUser = AuthService.getCurrentUser();
       if (currentUser) {
           console.log(currentUser);
-          setRedirect("/profile");
+          setRedirect("/home");
       };
     });
 

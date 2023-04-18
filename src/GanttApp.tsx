@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, useLocation} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./App2.css";
+import "./GanttApp.css";
 
 import AuthService from "./services/auth.service";
 import IUser from './types/user.type';
@@ -13,22 +13,15 @@ import BoardAdmin from "./components/Examples/boardAdmin.component";
 
 import EventBus from "./components/commons/EventBus";
 import LoginPage from "./components/LoginPage/loginPage";
-import RegisterPage from "./components/RegisterPage/registerPage";
-import ProfilePage from "./components/ProfilePage/profilePage";
-import HomePage from "./components/HomePage/homePage";
+import RegisterPage from "./components/RegisterPage/RegisterPage";
+import ProfilePage from "./components/ProfilePage/ProfilePage";
+import HomePage from "./components/MyProjectsPage/MyProjectsPage";
 import ProjectDetailsPage from "./components/ProjectDetailsPage/ProjectDetailsPage";
 import CreateGanttChartPage from "./components/CreateGanttChartPage/CreateGanttChartPage";
 import GanttChartPage from "./components/GanttChartPage/GanttChartPage";
-import DependencyDiagramPage from "./components/DependencyDiagram/DependencyDiagramPage";
-import { TestPage } from "./components/commons/TestPage";
-
+import DependencyDiagramPage from "./components/DependencyDiagramPage/DependencyDiagramPage";
 
 type Props = {};
-
-type State = {
-  isManager: boolean,
-  currentUser: IUser | undefined
-}
 
 const GanttApp: React.FC<Props> = () => {
     const [isManager, setIsManager] = useState<boolean>(false);
@@ -73,7 +66,6 @@ const GanttApp: React.FC<Props> = () => {
                 <Route path="/projects/:id/gantt-chart" element={<GanttChartPage/>}/>
                 <Route path="/projects/:id/dependency-diagram" element={<DependencyDiagramPage/>}/>
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/test" element={<TestPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/user" element={<BoardUser />} />

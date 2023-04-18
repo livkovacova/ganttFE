@@ -14,7 +14,7 @@ const TooltipNode: React.FC<NodeProps> = ({ data }) => {
           </React.Fragment>}>
             <div className='tooltipStyle'>
             {!data.init? (<Handle type="target" position={Position.Left} />) : undefined}
-            <Typography fontFamily={"Raleway, sans-serif"} color="inherit">{data.label}</Typography>
+            <Typography fontWeight={"bold"} fontFamily={"Raleway, sans-serif"} color="white">{data.label}</Typography>
             {!data.output? (<Handle type="source" position={Position.Right} />) : undefined}
             </div>
           </Tooltip>

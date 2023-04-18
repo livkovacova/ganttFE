@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import ReactFlow, { Node, addEdge, OnConnect, Connection, Position, MarkerType} from 'react-flow-renderer';
 import 'react-flow-renderer/dist/style.css';
 import { Edge } from 'reactflow';
-import { PhaseResponse } from './Phase';
+import { PhaseResponse } from '../commons/Phase';
 import { generateColorMap, setFlowNodePositions } from './NodesUtils';
 import TooltipNode from './TooltipNode';
 
@@ -15,21 +15,21 @@ const nodeTypes = {
 };
 
 const colorOptions = [
+    '#ffcbce',
+    '#8fa8ae',
+    '#ffd4fa',
+    '#CD7A9A',
+    '#C497AD',
     '#81D9D5',
     '#C8E9A0',
     '#F7A278',
-    '#CD7A9A',
-    '#C497AD',
-    '#C497AD',
     '#76BED0',
     '#E9B15D',
+    '#C497AD',
     '#8BA4D0',
     '#ffeae5',
     '#b3ccff',
     '#ffd580',
-    '#ffcbce',
-    '#8fa8ae',
-    '#ffd4fa',
     '#E2FDFF',
     '#BFD7FF',
     '#FBF7F4',
@@ -82,11 +82,6 @@ const prepareNodes = (phases: PhaseResponse[]): Node[] => {
       if(!thisTaskIsPredacessor){
         taskNode.data.output = true;
       }
-      //phase.workId === 0 ? taskNode.hidden = true : taskNode.hidden = false;
-
-      // if(phase.tasks.findIndex(taske => taske.workId===task.workId) == 1){
-      //     taskNode.position = {x:50, y:100}
-      // }
       allNodes.push(taskNode);
     })
   })

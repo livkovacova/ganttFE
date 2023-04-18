@@ -1,12 +1,11 @@
 import React from "react";
 import { Task, ViewMode, Gantt } from "gantt-task-react";
-import { ViewSettings } from "./view-switcher";
-import { ExtendedTask, getStartEndDateForProject, prepareTasks } from "./helper";
+import { ViewSettings } from "./ChartViewSwitcher";
+import { ExtendedTask, getStartEndDateForProject, prepareTasks } from "./GanttChartUtils";
 import "gantt-task-react/dist/index.css";
-import './GnattChartV2.css'
+import './GanttChart.css'
 import { GanttChart } from "../commons/GanttChart";
 import IUser from "../../types/user.type";
-import { fontFamily } from "@mui/system";
 
 interface Props {
   chart: GanttChart,
@@ -35,7 +34,7 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate, 
     let newTasks = tasks.map(t => (t.id === task.id ? task : t));
     chart.phases.forEach(phase => {
       phase.tasks.map(phaseTask => {
-        if(phaseTask.workId == parseInt(task.id)){
+        if(phaseTask.workId === parseInt(task.id)){
           phaseTask.startDate = task.start;
           phaseTask.endDate = task.end;
           const newDuration = task.end.getTime() - task.start.getTime();

@@ -89,6 +89,9 @@ const RegisterPage = () => {
           response => {
             setMessage(response.data.message);
             setSuccessful(true);
+            setTimeout(() => {
+              handleRedirect();
+            }, 1500);
           },
           error => {
             const resMessage =

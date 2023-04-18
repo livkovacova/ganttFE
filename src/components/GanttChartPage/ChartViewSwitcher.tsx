@@ -37,7 +37,7 @@ export const ViewSettings: React.FC<ViewSettingsProps> = ({
         }}>
           <FormControlLabel
             control={
-                <Switch checked={showTaskList} onChange={(e) => onViewListChange(!showTaskList)} name="taskListToggle" />
+                <Switch checked={showTaskList} onChange={() => onViewListChange(!showTaskList)} name="taskListToggle" />
             }
             label="Show Task List"
             labelPlacement="end"

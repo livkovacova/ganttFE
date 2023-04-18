@@ -4,22 +4,20 @@ export interface Task {
     workId: number;
     name: string;
     duration: number;
-    priority: number;
+    priority: PRIORITY;
     assignees: Array<number>;
     resources: number;
     predecessors: Array<number>;
-    extendable: boolean;
 }
 
 export const DEFAULT_TASK: Task = {
     workId: 0,
     name: "New task",
     duration: 0,
-    priority: 0,
+    priority: PRIORITY.MEDIUM,
     assignees: [],
     resources: 0,
     predecessors: [],
-    extendable: true
 }
 
 export interface TaskResponse {
@@ -28,7 +26,6 @@ export interface TaskResponse {
     priority: PRIORITY; //string
     duration: number;
     resources: number;
-    extendable: boolean;
     predecessors: Array<number>;
     assignees: Array<number>;
     startDate: Date;

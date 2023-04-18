@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Phase } from "../components/commons/Phase";
 import { GanttChart } from "../components/commons/GanttChart";
+import authHeader from "./auth-header";
 
 const API_URL = "http://localhost:8080/api/ganttChart";
 
@@ -21,7 +22,8 @@ export const getGanttChart= async (id: number): Promise<GanttChart> => {
     return axios.get(API_URL, {
         params: {
             id: id,
-        }
+        },
+        headers: authHeader() 
     } )
     .then((res: any) => res.data)
     .catch((err: any) => {

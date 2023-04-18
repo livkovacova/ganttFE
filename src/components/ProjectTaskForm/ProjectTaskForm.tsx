@@ -1,5 +1,5 @@
-import { TeamMemberOption } from "../HomePage/teamMemberOption";
-import { PredecessorOption } from "../ProjectPhaseDialog/PredecessorOption";
+import { TeamMemberOption } from "../commons/TeamMemberOption";
+import { PredecessorOption } from "../commons/PredecessorOption";
 import { Task } from "../commons/Task";
 import React from "react";
 import { duration, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
@@ -31,7 +31,6 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
     const [taskDuration, setTaskDuration] = React.useState(taskForAction.duration);
     const [timeUnit, setTimeUnit] = React.useState<string>(TIME_UNIT.DAYS);
     const [taskResources, setTaskResources] = React.useState(taskForAction.resources);
-    const [extendable, setExtendable] = React.useState(taskForAction.extendable);
     const [priority, setPriority] = React.useState<string>(PRIORITY.MEDIUM)
     const [selectedTaskAssignees, setSelectedTaskAssignees] = React.useState<Array<TeamMemberOption>>([]);
     const [selectedTaskPredecessors, setSelectedTaskPredecessors] = React.useState<Array<PredecessorOption>>([]);
@@ -47,14 +46,14 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
         setTaskDuration(duration);
     }
 
+    const setNewPriority = (priority: PRIORITY) => {
+        taskForAction.priority = priority;
+        setPriority(priority);
+    }
+
     const setNewTaskResources = (resources: number) => {
         taskForAction.resources = resources;
         setTaskResources(resources);
-    }
-
-    const toggleExtendable = (checked: boolean) => {
-        taskForAction.extendable = checked;
-        setExtendable(checked);
     }
 
     const handleChangeAssignees = (event: SelectChangeEvent<typeof selectedTaskAssignees>) => {
@@ -196,16 +195,6 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                 />
 
                 <div className="furtherInfoContainer">
-                    <FormControl>
-                        <FormControlLabel
-                                control={
-                                    <Switch checked={extendable} onChange={(e) => toggleExtendable(e.target.checked)} name="jason" />
-                                }
-                                label="Extendable"
-                                labelPlacement="end"
-                                sx={{marginRight:0, flexDirection:"row"}}
-                        />
-                    </FormControl>
 
                     <FormControl >
                         <InputLabel id="priority-select-label">Priority</InputLabel>
@@ -216,7 +205,7 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                             label="time unit"
                             size="small"
                             fullWidth
-                            onChange={(e) => setPriority(e.target.value as string)}
+                            onChange={(e) => setNewPriority(e.target.value as PRIORITY)}
                         >
                         <MenuItem value={PRIORITY.LOW} color="blue">LOW</MenuItem>
                         <MenuItem value={PRIORITY.MEDIUM} color="green">MEDIUM</MenuItem>

@@ -94,7 +94,7 @@ export const deleteProject = async (projectId: number) => {
 }
 
 export const setDependencyDiagramCreated = async (projectId: number) => {
-    return axios.post(API_URL + "depCreated", {
+    return axios.get(API_URL + "dependency", {
         params: {id: projectId}
     } )
     .then((res: any) => console.log("Project succesfully changed"))

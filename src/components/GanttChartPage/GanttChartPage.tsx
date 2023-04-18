@@ -1,7 +1,7 @@
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React, {useEffect, useState} from "react";
 import mainTheme from "../commons/mainTheme";
-import { Button, ButtonGroup, responsiveFontSizes } from '@mui/material/';
+import { Button,responsiveFontSizes } from '@mui/material/';
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
 import {useParams, useNavigate} from "react-router-dom";
@@ -11,9 +11,8 @@ import { Phase } from "../commons/Phase";
 import { Project } from "../commons/Projects";
 import _without from "lodash/without";
 import { useLocation } from "react-router-dom";
-import { DEFAULT_CHART, GanttChart } from "../commons/GanttChart";
-import { GanttChartComponent } from "./GanttChartComponent";
-import { AnotherTry } from "./GnattChartV2";
+import { GanttChart } from "../commons/GanttChart";
+import { AnotherTry } from "./GanttChart";
 
 const theme = responsiveFontSizes(mainTheme);
 
@@ -33,6 +32,11 @@ export const GanttChartPage = () => {
     const alreadyCreated: boolean = location.state.alreadyCreated;
     const onlyView: boolean = location.state.onlyView;
     const [ganttChart, setGanttChart] = useState<GanttChart>();
+    const [ganttSaved, setGanttSaved] = useState(false);
+
+    const navigateToProjectDetailsPage = () => {
+        navigate('/projects/'+id);
+    }
 
     const generateGanttChart = async () => {
         const chart: GanttChart = await createGanttChart(parseInt(id!), phases);
@@ -46,8 +50,7 @@ export const GanttChartPage = () => {
 
     const saveGanttChart = async () => {
         await uploadGanttChart(ganttChart!);
-        console.log("gantt saved");
-        //refreshPage
+        setGanttSaved(true);
     }
 
     useEffect(() => {
@@ -90,15 +93,16 @@ export const GanttChartPage = () => {
                         <Button
                         sx={{marginRight: "0.4vw"}}
                         variant="contained" 
-                        onClick={() => {console.log("beck to edit phases")}}
-                        color="secondary" 
-                    >Back to edit project phases</Button>
+                        onClick={() => {navigateToProjectDetailsPage()}}
+                        color="primary" 
+                    >Back to project page</Button>
                         {alreadyCreated? undefined : (
                             <>
                                 <Button 
                                 variant="contained" 
                                 onClick={() => {saveGanttChart()}}
-                                color="primary" 
+                                color="primary"
+                                disabled={ganttSaved}
                                 >Save GANTT CHART</Button>
                             </>
                         )}
