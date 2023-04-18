@@ -4,6 +4,8 @@ import mainTheme from "./mainTheme";
 import HorizontalFlow from "./FlowExample";
 import { PhaseResponse } from "./Phase";
 import { PRIORITY } from "./enums";
+import "./testPage.css"
+
 
 export const TestPage = ({}) => {
 

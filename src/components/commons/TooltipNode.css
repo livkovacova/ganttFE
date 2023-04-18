@@ -1,0 +1,14 @@
+.tooltipStyle{
+    visibility: visible;
+    user-select: none;
+    box-sizing: border-box;
+    border: 1px solid #1a192b;
+    border-radius: 7px;
+    color: #222;
+    font-size: 12px;
+    padding: 10px;
+    text-align: center;
+    width: 150px;
+    overflow: hidden;
+    cursor: pointer;
+}

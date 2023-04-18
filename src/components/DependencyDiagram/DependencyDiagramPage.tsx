@@ -9,9 +9,12 @@ import "./DependencyDiagramPage.css"
 import { Project } from "../commons/Projects";
 import _without from "lodash/without";
 import { useLocation } from "react-router-dom";
-import Tree, { Phasee } from "./DependencyTry";
 import { PhaseResponse } from "../commons/Phase";
-import { DependencyDiagram } from "./DependencyDiagramComponent";
+import HorizontalFlow from "../commons/FlowExample";
+import { PRIORITY } from "../commons/enums";
+import { GanttChart } from "../commons/GanttChart";
+import { getGanttChart } from "../../services/GanttChartService";
+import { setDependencyDiagramCreated } from "../../services/ProjectDataService";
 
 const theme = responsiveFontSizes(mainTheme);
 
@@ -27,68 +30,65 @@ export const DependencyDiagramPage = () => {
 
     const project: Project = location.state.project;
     const currentUser: IUser = location.state.currentUser;
-    const alreadyCreated: boolean = location.state.alreadyCreated;
     const onlyView: boolean = location.state.onlyView;
-    const [dependencyDiagram, setDependencyDiagram] = useState(false);
+    const [phaseResponses, setPhaseResponses] = useState<Array<PhaseResponse>>([]);
 
-    // const generateDependencyDiagram = async () => {
-    //     const chart: GanttChart = await createDependencyChart(parseInt(id!));
-    //     setDependencyDiagram(chart);
-    // };
+    const fetchGanttChartPhases = async () => {
+      const chart: GanttChart = await getGanttChart(project.id);
+      setPhaseResponses(chart.phases);
+    }
 
-    // const fetchDependencyDiagram = async () => {
-    //     const chart: GanttChart = await getDependencyChart(project.id);
-    //     setDependencyDiagram(chart)
-    // }
+    useEffect(() => {
+        fetchGanttChartPhases();
+        if(currentUser.roles!.includes("ROLE_MANAGER")){
+          setDependencyDiagramCreated(project.id);
+        }
+    },[]);
 
-    // useEffect(() => {
-    //     console.log(alreadyCreated)
-    //     if(!alreadyCreated){
-    //         generateDependencyDiagram();
-    //     }
-    //     else{
-    //         fetchDependencyDiagram();
-    //     }
-    // },[]);
-
-    const phases: Phasee[] = [
-        {
-          name: "Phase 1",
-          tasks: [
-            { name: "Task 1.1", completed: true },
-            { name: "Task 1.2", completed: false },
-          ],
-          children: [
-            {
-              name: "Sub-Phase 1.1",
-              tasks: [{ name: "Task 1.1.1", completed: true, dependencies:["Task 1.2"]}],
-            },
-          ],
-        },
-        {
-          name: "Phase 2",
-          tasks: [{ name: "Task 2.1", completed: false }],
-          children: [
-            {
-              name: "Sub-Phase 2.1",
-              tasks: [
-                { name: "Task 2.1.1", completed: false },
-                { name: "Task 2.1.2", completed: false, dependencies:["Task 2.1.1"] },
-              ],
-            },
-            {
-              name: "Sub-Phase 2.2",
-              tasks: [{ name: "Task 2.2.1", completed: false, dependencies:["Task 2.1.2"] }],
-            },
-          ],
-        },
-      ];
-
-    const phaseResponses: PhaseResponse[] = [
+      const phaseResponsew: PhaseResponse[] = [
         {
             workId: 0,
             name: "phase 1",
             tasks: [
+                {
+                    workId: 0,
+                    name: "T0",
+                    priority: PRIORITY.LOW,
+                    duration: 3,
+                    resources: 3,
+                    extendable: false,
+                    predecessors: [],
+                    assignees: [],
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    realId: 0
+                },
+                {
+                    workId: 1,
+                    name: "T1",
+                    priority: PRIORITY.LOW,
+                    duration: 3,
+                    resources: 3,
+                    extendable: false,
+                    predecessors: [],
+                    assignees: [],
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    realId: 0
+                },
+                {
+                    workId: 2,
+                    name: "T2",
+                    priority: PRIORITY.LOW,
+                    duration: 3,
+                    resources: 3,
+                    extendable: false,
+                    predecessors: [1, 0],
+                    assignees: [],
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    realId: 0
+                }
             ],
             projectId: 2,
             realId: 1
@@ -97,6 +97,58 @@ export const DependencyDiagramPage = () => {
             workId: 1,
             name: "phase 2",
             tasks: [
+                {
+                    workId: 9,
+                    name: "T9",
+                    priority: PRIORITY.LOW,
+                    duration: 3,
+                    resources: 3,
+                    extendable: false,
+                    predecessors: [1,0],
+                    assignees: [],
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    realId: 0
+                },
+                {
+                    workId: 3,
+                    name: "T3",
+                    priority: PRIORITY.LOW,
+                    duration: 3,
+                    resources: 3,
+                    extendable: false,
+                    predecessors: [9],
+                    assignees: [],
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    realId: 0
+                },
+                {
+                    workId: 10,
+                    name: "T10",
+                    priority: PRIORITY.LOW,
+                    duration: 3,
+                    resources: 3,
+                    extendable: false,
+                    predecessors: [9],
+                    assignees: [],
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    realId: 0
+                },
+                {
+                    workId: 12,
+                    name: "T12",
+                    priority: PRIORITY.LOW,
+                    duration: 3,
+                    resources: 3,
+                    extendable: false,
+                    predecessors: [9],
+                    assignees: [],
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    realId: 0
+                }
             ],
             projectId: 2,
             realId: 1
@@ -105,34 +157,37 @@ export const DependencyDiagramPage = () => {
             workId: 2,
             name: "phase 3",
             tasks: [
+                {
+                    workId: 4,
+                    name: "T4",
+                    priority: PRIORITY.LOW,
+                    duration: 3,
+                    resources: 3,
+                    extendable: false,
+                    predecessors: [3],
+                    assignees: [2],
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    realId: 0
+                },
+                {
+                    workId: 11,
+                    name: "T11",
+                    priority: PRIORITY.LOW,
+                    duration: 3,
+                    resources: 3,
+                    extendable: false,
+                    predecessors: [3],
+                    assignees: [2],
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    realId: 0
+                }
             ],
             projectId: 2,
             realId: 1
         },
-        {
-            workId: 3,
-            name: "phase 3",
-            tasks: [
-            ],
-            projectId: 2,
-            realId: 1
-        },
-        {
-            workId: 4,
-            name: "phase 3",
-            tasks: [
-            ],
-            projectId: 2,
-            realId: 1
-        },
-        {
-            workId: 5,
-            name: "phase 3",
-            tasks: [
-            ],
-            projectId: 2,
-            realId: 1
-        }
+        
     ]
 
 
@@ -140,20 +195,17 @@ export const DependencyDiagramPage = () => {
         <ThemeProvider theme={theme}>
             <div className="pageContainer">
                 <NavigationBar withCreate={false} isManager={true} mainTitle={project.name + " | Dependency diagram"} userNameLetter={currentUser.username.charAt(0).toUpperCase()}/>
-                {dependencyDiagram != undefined || null ? (
-                    <>
-                    </>
-                ):
-                undefined}
-                <DependencyDiagram phases={phaseResponses}></DependencyDiagram>
-                <div className="bottomSectionContainer">
-                    
+                <div className="phasesWrapper">
+                  {phaseResponses.length != 0? (
+                    <HorizontalFlow phases={phaseResponses}/>
+                  ):
+                  undefined}
+                </div>
+                <div className="bottomSectionContainer">  
                 </div>
             </div>
         </ThemeProvider>
     );
-                    //add mesage about saved gantt
-
 };
 
 export default DependencyDiagramPage;

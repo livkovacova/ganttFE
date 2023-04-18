@@ -43,8 +43,6 @@
 }
 
 .phasesWrapper{
-    display: flex;
-    flex-direction: row;
     align-items: center;
     background-color: #02445a;
     height: 85vh;
@@ -64,4 +62,8 @@
 .phaseTasks{
     background-color: whitesmoke;
     height: 90%;
+}
+
+.react-flow__attribution{
+    visibility: hidden;
 }

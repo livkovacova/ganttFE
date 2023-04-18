@@ -1,13 +1,18 @@
 import React, { useCallback } from 'react';
-import ReactFlow, { Node, addEdge, OnConnect, Connection, Position, MarkerType, NodeProps,  } from 'react-flow-renderer';
+import ReactFlow, { Node, addEdge, OnConnect, Connection, Position, MarkerType} from 'react-flow-renderer';
 import 'react-flow-renderer/dist/style.css';
 import { Edge } from 'reactflow';
 import { PhaseResponse } from './Phase';
 import { generateColorMap, setFlowNodePositions } from './NodesUtils';
+import TooltipNode from './TooltipNode';
 
 interface Props {
-  phases: PhaseResponse[]
-}
+    phases: PhaseResponse[]
+  }
+
+const nodeTypes = {
+    tooltip: TooltipNode
+};
 
 const colorOptions = [
     '#81D9D5',
@@ -51,18 +56,31 @@ const prepareNodes = (phases: PhaseResponse[]): Node[] => {
     phase.tasks.forEach(task => {
       const taskNode: Node = {
         id: `horizontal-${task.workId}`,
-        data: { label: task.name },
+        data: { label: task.name, phaseName: phase.name, assignees: task.assignees},
         position: { x: 0, y: 0 },
         parentNode: `parent-${phase.workId}`,
         sourcePosition: Position.Right,
-        expandParent: true,
-        style: { zIndex: 3 }
+        style: { zIndex: 3, borderRadius: "7px" },
+        selectable: true
       }
-      if (task.predecessors.length === 0) {
-        taskNode.type = 'input'
+      taskNode.type = 'tooltip'
+      if (task.predecessors.length != 0) {
+        taskNode.targetPosition = Position.Left;
       }
       else {
-        taskNode.targetPosition = Position.Left;
+        taskNode.data.init = true;
+      }
+
+      let thisTaskIsPredacessor = false;
+      phases.forEach(phasei => {
+        phasei.tasks.forEach(taski => {
+            if (taski.predecessors.find(pred => pred == task.workId) != null){
+                thisTaskIsPredacessor = true;
+            } 
+        })
+      })
+      if(!thisTaskIsPredacessor){
+        taskNode.data.output = true;
       }
       //phase.workId === 0 ? taskNode.hidden = true : taskNode.hidden = false;
 
@@ -126,6 +144,7 @@ const prepareEdges = (phases: PhaseResponse[]): Edge[] => {
 const HorizontalFlow = ({ phases }: Props) => {
   const [nodes, setNodes] = React.useState<Node[]>(prepareNodes(phases));
   const [edges, setEdges] = React.useState<Edge[]>(prepareEdges(phases));
+  const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
   const onConnect: OnConnect = useCallback((params: Connection) => setEdges((els) => addEdge(params, els)), []);
 
   React.useEffect(() => {
@@ -151,6 +170,7 @@ const HorizontalFlow = ({ phases }: Props) => {
           edges={edges}
           onConnect={onConnect}
           fitView
+          nodeTypes={nodeTypes}
         />
       ) : undefined}
     </>

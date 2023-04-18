@@ -89,7 +89,7 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
                 <Tooltip title={!isGanttCreated ? "Create Gantt Chart first." : null} arrow>
                     <span>
                         <Button fullWidth color="primary" disabled={!isGanttCreated} onClick={() => onDependencyDiagramClick(false)}>
-                            GENERATE DEPENDENCY TREE
+                            GENERATE DEPENDENCY DIAGRAM
                         </Button>
                     </span>
                 </Tooltip>) 
@@ -97,7 +97,7 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
                 <Tooltip title={!isTreeCreated ? "Dependency tree is not created yet." : null} arrow>
                     <span>
                         <Button fullWidth color="primary" disabled={!isTreeCreated} onClick={() => onDependencyDiagramClick(true)}>
-                            VIEW DEPENDENCY TREE
+                            VIEW DEPENDENCY DIAGRAM
                         </Button>
                     </span>
                 </Tooltip>
