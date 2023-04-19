@@ -7,7 +7,7 @@ import "../commons/auth.css"
 import { createTheme } from '@mui/material/styles';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 
-import AuthService from "../../services/auth.service";
+import AuthService from "../../services/AuthService";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React from "react"
 import IUser from "../../types/user.type";

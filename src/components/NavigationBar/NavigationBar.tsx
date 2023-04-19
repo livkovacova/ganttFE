@@ -6,7 +6,7 @@ import { Avatar, Box, ButtonGroup, Divider, IconButton, ListItemIcon, Menu, Menu
 import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import mainTheme from "../commons/mainTheme";
 import Logout from '@mui/icons-material/Logout';
-import authService from "../../services/auth.service";
+import authService from "../../services/AuthService";
 import AddIcon from '@mui/icons-material/Add';
 import ViewStreamIcon from '@mui/icons-material/ViewStream';
 

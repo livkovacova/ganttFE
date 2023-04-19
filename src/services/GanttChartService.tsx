@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Phase } from "../components/commons/Phase";
 import { GanttChart } from "../components/commons/GanttChart";
-import authHeader from "./auth-header";
+import authHeader from "./AuthHeader";
 
 const API_URL = "http://localhost:8080/api/ganttChart";
 
@@ -9,7 +9,7 @@ export const createGanttChart = async (projectId: number, phases: Phase[]): Prom
     return axios.post(API_URL + "/create", {
             projectId: projectId,
             phases: phases
-        }
+        }, { headers: authHeader() }
     )
     .then((res: any) => res.data)
     .catch((err: any) => {
@@ -23,7 +23,7 @@ export const getGanttChart= async (id: number): Promise<GanttChart> => {
         params: {
             id: id,
         },
-        headers: authHeader() 
+        headers: authHeader()
     } )
     .then((res: any) => res.data)
     .catch((err: any) => {
@@ -33,7 +33,7 @@ export const getGanttChart= async (id: number): Promise<GanttChart> => {
 }
 
 export const uploadGanttChart= async (ganttChart: GanttChart) => {
-    return axios.post(API_URL + "/save", ganttChart)
+    return axios.post(API_URL + "/save", ganttChart, { headers: authHeader() })
     .then((res: any) => res.data)
     .catch((err: any) => {
         console.error("Error saving gantt chart", err);
@@ -42,7 +42,7 @@ export const uploadGanttChart= async (ganttChart: GanttChart) => {
 }
 
 export const updateGanttChart= async (ganttChart: GanttChart) => {
-    return axios.post(API_URL + "/update", ganttChart)
+    return axios.post(API_URL + "/update", ganttChart, { headers: authHeader() })
     .then((res: any) => res.data)
     .catch((err: any) => {
         console.error("Error saving gantt chart", err);

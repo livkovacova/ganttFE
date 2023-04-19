@@ -3,7 +3,7 @@ import { Routes, Route, useLocation} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./GanttApp.css";
 
-import AuthService from "./services/auth.service";
+import AuthService from "./services/AuthService";
 import IUser from './types/user.type';
 
 import Home from "./components/Examples/home.component";

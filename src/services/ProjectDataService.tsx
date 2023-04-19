@@ -1,6 +1,7 @@
 import axios from "axios";
 import { PageData } from "../components/commons/PageData";
 import { Project } from "../components/commons/Projects";
+import authHeader from "./AuthHeader";
 
 const API_URL = "http://localhost:8080/api/projects/";
 
@@ -9,7 +10,8 @@ export const getProjectsForUserById = async (userId: number, role: string): Prom
         params: {
             userId: userId,
             role: role.slice(5)
-        }
+        },
+        headers: authHeader()
     } )
     .then((res: any) => res.data)
     .catch((err: any) => {
@@ -25,7 +27,8 @@ export const getPageOfProjects = async (userId: number, role: string, page?: num
             role: role.slice(5),
             page: page,
             size: size,
-        }
+        },
+        headers: authHeader()
     })
                 .then((res: any) => res.data)
                 .catch((err: any) => {
@@ -38,7 +41,8 @@ export const getProjectById= async (id: number): Promise<Project> => {
     return axios.get(API_URL + "project", {
         params: {
             id: id,
-        }
+        },
+        headers: authHeader()
     } )
     .then((res: any) => res.data)
     .catch((err: any) => {
@@ -56,7 +60,7 @@ export const createProject = async (projectName: string, projectDescription: str
         currency: currency,
         members: members,
         startDate: startDate
-    })
+    }, { headers: authHeader()})
     .then((res: any) => console.log("Project succesfully created"))
     .catch((err: any) => {
         console.error("Error creating projects", err);
@@ -74,7 +78,7 @@ export const editProject = async (id: number, projectName: string, projectDescri
         currency: currency,
         members: members,
         startDate: startDate
-    })
+    }, {headers: authHeader()})
     .then((res: any) => console.log("Project succesfully edited"))
     .catch((err: any) => {
         console.error("Error editing projects", err);
@@ -84,7 +88,8 @@ export const editProject = async (id: number, projectName: string, projectDescri
 
 export const deleteProject = async (projectId: number) => {
     return axios.delete(API_URL + "delete", {
-        params: {id: projectId}
+        params: {id: projectId},
+        headers: authHeader()
     } )
     .then((res: any) => console.log("Project succesfully deleted"))
     .catch((err: any) => {
@@ -95,7 +100,8 @@ export const deleteProject = async (projectId: number) => {
 
 export const setDependencyDiagramCreated = async (projectId: number) => {
     return axios.get(API_URL + "dependency", {
-        params: {id: projectId}
+        params: {id: projectId},
+        headers: authHeader()
     } )
     .then((res: any) => console.log("Project succesfully changed"))
     .catch((err: any) => {

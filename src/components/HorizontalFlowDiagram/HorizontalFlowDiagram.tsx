@@ -88,7 +88,7 @@ const prepareNodes = (phases: PhaseResponse[]): Node[] => {
   return allNodes;
 }
 
-const newRecursive = (createdNodes: Node[], createdEdges: Edge[]): Node[] => {
+const newPositionsRecursive = (createdNodes: Node[], createdEdges: Edge[]): Node[] => {
   let taskNodes = createdNodes.filter(createdNode => createdNode.type != 'group');
   setFlowNodePositions(taskNodes, createdEdges, 0, 0);
 
@@ -143,7 +143,7 @@ const HorizontalFlow = ({ phases }: Props) => {
   const onConnect: OnConnect = useCallback((params: Connection) => setEdges((els) => addEdge(params, els)), []);
 
   React.useEffect(() => {
-    setNodes(newRecursive(nodes, edges));
+    setNodes(newPositionsRecursive(nodes, edges));
   }, []);
 
   React.useEffect(() => {
@@ -151,9 +151,6 @@ const HorizontalFlow = ({ phases }: Props) => {
   }, [nodes]);
 
   const isAllPrepared = () => {
-    console.log("alllprepared")
-    console.log(nodes);
-    console.log(edges);
     return nodes.length != 0 && edges.length != 0;
   }
 

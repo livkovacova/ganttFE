@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import "../Auth/auth.css"
 import { createTheme } from '@mui/material/styles';
 
-import AuthService from "../../services/auth.service";
+import AuthService from "../../services/AuthService";
 import { TextField } from "@mui/material";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 

@@ -1,7 +1,7 @@
 import { Project } from "../commons/Projects";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, TextField as DateField, TextField} from "@mui/material";
 import React from "react";
-import authService from "../../services/auth.service";
+import authService from "../../services/AuthService";
 import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import mainTheme from "../commons/mainTheme";
 import InputLabel from '@mui/material/InputLabel';

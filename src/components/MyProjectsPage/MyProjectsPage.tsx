@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import "../commons/auth.css"
 import { responsiveFontSizes } from '@mui/material/styles';
 
-import AuthService from "../../services/auth.service";
+import AuthService from "../../services/AuthService";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React from "react"
 import mainTheme from "../commons/mainTheme";
