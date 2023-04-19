@@ -6,13 +6,8 @@ import "./GanttApp.css";
 import AuthService from "./services/AuthService";
 import IUser from './types/user.type';
 
-import Home from "./components/Examples/home.component";
-import BoardUser from "./components/Examples/boardUser.component";
-import BoardModerator from "./components/Examples/boardModerator.component";
-import BoardAdmin from "./components/Examples/boardAdmin.component";
-
 import EventBus from "./components/commons/EventBus";
-import LoginPage from "./components/LoginPage/loginPage";
+import LoginPage from "./components/LoginPage/LoginPage";
 import RegisterPage from "./components/RegisterPage/RegisterPage";
 import ProfilePage from "./components/ProfilePage/ProfilePage";
 import HomePage from "./components/MyProjectsPage/MyProjectsPage";
@@ -63,7 +58,7 @@ const GanttApp: React.FC<Props> = () => {
         <div>
         <div>
             <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<LoginPage />} />
                 <Route path="/home" element={<HomePage isManager={isManager}/>} />
                 <Route path="/projects/:id" element={<ProjectDetailsPage isManager={isManager} currentUser={currentUser}/>}/>
                 <Route path="/projects/:id/create-gantt" element={<CreateGanttChartPage currentUser={currentUser}/>}/>
@@ -72,9 +67,6 @@ const GanttApp: React.FC<Props> = () => {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/user" element={<BoardUser />} />
-                <Route path="/mod" element={<BoardModerator />} />
-                <Route path="/manager" element={<BoardAdmin />} />
             </Routes>
         </div>
         </div>

@@ -1,6 +1,5 @@
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
-import {useNavigate} from "react-router-dom";
 
 
 const API_URL = "http://localhost:8080/api/auth/";
@@ -18,12 +17,11 @@ class AuthService {
         }
 
         return response.data;
-      });
+    });
   }
 
   logout() {
     secureLocalStorage.removeItem("user");
-    console.log("im here");
   }
 
   register(username: string, email: string, password: string, roles: Array<string>) {
