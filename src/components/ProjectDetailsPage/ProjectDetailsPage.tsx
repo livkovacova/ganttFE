@@ -30,7 +30,6 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
 
     const fetchProjectInfo = async () => {
         const project = await getProjectById(parseInt(id!));
-        console.log(project);
         setGanttCreated(project.ganttCreated);
         setTreeCreated(project.treeCreated);
         setProjectName(project.name);

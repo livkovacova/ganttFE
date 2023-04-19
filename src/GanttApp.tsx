@@ -20,6 +20,8 @@ import ProjectDetailsPage from "./components/ProjectDetailsPage/ProjectDetailsPa
 import CreateGanttChartPage from "./components/CreateGanttChartPage/CreateGanttChartPage";
 import GanttChartPage from "./components/GanttChartPage/GanttChartPage";
 import DependencyDiagramPage from "./components/DependencyDiagramPage/DependencyDiagramPage";
+import {useNavigate} from "react-router-dom";
+
 
 type Props = {};
 
@@ -27,11 +29,13 @@ const GanttApp: React.FC<Props> = () => {
     const [isManager, setIsManager] = useState<boolean>(false);
     const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
     const location = useLocation();
+    const navigate = useNavigate()
 
     const logOut = () => {
         AuthService.logout();
         setIsManager(false);
         setCurrentUser(undefined);
+        navigate("/login");
     }
 
     const setUserInfo = () => {

@@ -13,7 +13,6 @@ import _without from "lodash/without";
 import { useLocation } from "react-router-dom";
 import { GanttChart } from "../commons/GanttChart";
 import { AnotherTry } from "./GanttChart";
-import eventBus from "../commons/EventBus";
 
 const theme = responsiveFontSizes(mainTheme);
 
@@ -40,31 +39,17 @@ export const GanttChartPage = () => {
     }
 
     const generateGanttChart = async () => {
-        await createGanttChart(parseInt(id!), phases).then((response) =>{
-            setGanttChart(response);
-        }).catch((error) => {
-            if (error.response && error.response.status === 401) {
-                eventBus.dispatch("logout");
-            }
-        });
+        const chart: GanttChart = await createGanttChart(parseInt(id!), phases);
+        setGanttChart(chart);
     };
 
     const fetchGanttChart = async () => {
-        await getGanttChart(project.id).then((response) =>{
-            setGanttChart(response);
-        }).catch((error) => {
-            if (error.response && error.response.status === 401) {
-                eventBus.dispatch("logout");
-            }
-        });
+        const chart: GanttChart = await getGanttChart(project.id);
+        setGanttChart(chart)
     }
 
     const saveGanttChart = async () => {
-        await uploadGanttChart(ganttChart!).catch((error) => {
-            if (error.response && error.response.status === 401) {
-                eventBus.dispatch("logout");
-            }
-        });;
+        await uploadGanttChart(ganttChart!);
         setGanttSaved(true);
     }
 
