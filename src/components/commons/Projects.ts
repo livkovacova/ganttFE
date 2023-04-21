@@ -1,5 +1,6 @@
 import { BooleanLiteral } from "typescript";
 import IUser, { DEFAULT_USER } from "../../types/user.type";
+import { GanttChartInfo } from "./GanttChart";
 
 export interface Project {
     id: number;
@@ -9,9 +10,10 @@ export interface Project {
     resources: number;
     currency: string;
     members: Array<IUser>;
-    startdate?: Date | null,
+    startDate?: Date | null,
     ganttCreated: boolean,
-    treeCreated: boolean
+    treeCreated: boolean,
+    ganttChartInfo?: GanttChartInfo
 }
 
 export const DEFAULT_PROJECT: Project = {
@@ -22,7 +24,8 @@ export const DEFAULT_PROJECT: Project = {
     resources: 0,
     currency: "EUR",
     members: [DEFAULT_USER],
-    startdate: new Date(),
+    startDate: new Date(),
     ganttCreated: false,
-    treeCreated: false
+    treeCreated: false, 
+    ganttChartInfo: undefined
 };

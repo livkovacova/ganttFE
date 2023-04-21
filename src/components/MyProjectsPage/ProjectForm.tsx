@@ -178,7 +178,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
             resetInputFields();
         } else {
             setProjectName(projectToEdit?.name);
-            setProjectStart(projectToEdit.startdate? new Date(projectToEdit.startdate) : new Date());
+            setProjectStart(projectToEdit.startDate? new Date(projectToEdit.startDate) : new Date());
             setProjectDescription(projectToEdit.description);
             setProjectResources(projectToEdit.resources);
             setCurrency(projectToEdit.currency);

@@ -13,7 +13,7 @@ import { DEFAULT_PROJECT, Project } from "../commons/Projects";
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import TablePagination from '@mui/material/TablePagination';
 import { ProjectForm } from "./ProjectForm";
-import { ButtonGroup, IconButton } from "@mui/material";
+import { ButtonGroup, IconButton, Typography } from "@mui/material";
 import { DeleteForever, ChevronRight } from "@mui/icons-material";
 import EditIcon from '@mui/icons-material/Edit';
 import Dialog from "@mui/material/Dialog";
@@ -116,6 +116,11 @@ const HomePage = ({isManager}: Props) => {
         fetchProjectInfoPaged();
     }, [page, rowsPerPage, refresh, projectFetched]);
 
+    const getProjectStartData = (project: Project):string | undefined=> {
+        let starDate = new Date(project?.startDate!);
+        return starDate.toLocaleDateString("sk-SK");
+    }
+
     const renderProjects = (): React.ReactNode => {
         return (
             <div className="projectListContainer">
@@ -123,6 +128,12 @@ const HomePage = ({isManager}: Props) => {
                     <div key={project.id} className="projectsContainer">
                         <div className="headingContainer">
                             <h5 className="headingStyle">{project?.name}</h5>
+                            <div className="projectInfo" style={{marginTop: "0.5vw", display: "flex", flexDirection: "row"}}>
+                            <Typography variant="body2" sx={{marginRight:"0.7vh"}}>{"start date: "+ getProjectStartData(project)+ " |"}</Typography>
+                            <Typography variant="body2" sx={{marginRight:"0.7vh"}}>{"team members: "+ project.members.length+ " | "}</Typography>
+                            <Typography variant="body2" sx={{marginRight:"0.7vh"}}>{"tasks: "+ project.ganttChartInfo?.numberOfTasks + " |"}</Typography>
+                            <Typography variant="body2" sx={{marginRight:"0.7vh"}}>{"phases: "+ project.ganttChartInfo?.numberOfPhases}</Typography>
+                            </div>
                         </div>
                         <ButtonGroup className="projectButtons">
                             {isManager ?

@@ -47,26 +47,29 @@ export const DependencyDiagramPage = () => {
         <ThemeProvider theme={theme}>
             <div className="pageContainer">
                 <NavigationBar withCreate={false} isManager={true} mainTitle={project.name + " | Dependency diagram"} userNameLetter={currentUser.username.charAt(0).toUpperCase()}/>
-                <div className="phasesWrapper">
-                  {phaseResponses.length !== 0? (
-                    <HorizontalFlow phases={phaseResponses}/>
-                  ):
-                  undefined}
+                <div className="contentWrapper">
+                  <div className="phasesWrapper">
+                    {phaseResponses.length !== 0? (
+                      <HorizontalFlow phases={phaseResponses}/>
+                    ):
+                    undefined}
+                  </div>
+                  <div className="toolBar"></div>
                 </div>
-                <div className="bottomSectionContainerHere">  
-                <div
-                    className="saveGanttButtons" 
-                    >
-                        <Button
-                        sx={{marginRight: "0.4vw"}}
-                        variant="contained" 
-                        onClick={() => {navigateToProjectDetailsPage()}}
-                        color="primary" 
-                    >Back to project page</Button>
-                        
-                    </div>
+                  <div className="bottomSectionContainerHere">  
+                  <div
+                      className="saveGanttButtons" 
+                      >
+                          <Button
+                          sx={{marginRight: "0.4vw"}}
+                          variant="contained" 
+                          onClick={() => {navigateToProjectDetailsPage()}}
+                          color="primary" 
+                      >Back to project page</Button>
+                          
+                      </div>
+                  </div>
                 </div>
-            </div>
         </ThemeProvider>
     );
 };

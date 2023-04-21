@@ -78,7 +78,7 @@ export const GanttChartPage = () => {
                         chart={ganttChart!} 
                         currency={project.currency}
                         projectMembers={project.members}
-                        projectStartDate={project.startdate!}
+                        projectStartDate={project.startDate!}
                         onDateChange={handleDateChanges}
                         readonly={alreadyCreated}
                     />

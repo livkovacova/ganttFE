@@ -3,7 +3,7 @@ import ReactFlow, { Node, addEdge, OnConnect, Connection, Position, MarkerType} 
 import 'react-flow-renderer/dist/style.css';
 import { Edge } from 'reactflow';
 import { PhaseResponse } from '../commons/Phase';
-import { generateColorMap, setFlowNodePositions } from './NodesUtils';
+import { generateColorMap, positionateNodesToDataFlow } from './NodesUtils';
 import TooltipNode from './TooltipNode';
 
 interface Props {
@@ -88,9 +88,9 @@ const prepareNodes = (phases: PhaseResponse[]): Node[] => {
   return allNodes;
 }
 
-const newPositionsRecursive = (createdNodes: Node[], createdEdges: Edge[]): Node[] => {
+const positionateNodesRecursive = (createdNodes: Node[], createdEdges: Edge[]): Node[] => {
   let taskNodes = createdNodes.filter(createdNode => createdNode.type != 'group');
-  setFlowNodePositions(taskNodes, createdEdges, 0, 0);
+  positionateNodesToDataFlow(taskNodes, createdEdges);
 
   let phaseNodes: Node[] = createdNodes.filter(createdNode => createdNode.type == 'group');
   const colorMap = generateColorMap(phaseNodes, colorOptions);
@@ -136,6 +136,7 @@ const prepareEdges = (phases: PhaseResponse[]): Edge[] => {
   return allEdges;
 }
 
+
 const HorizontalFlow = ({ phases }: Props) => {
   const [nodes, setNodes] = React.useState<Node[]>(prepareNodes(phases));
   const [edges, setEdges] = React.useState<Edge[]>(prepareEdges(phases));
@@ -143,7 +144,7 @@ const HorizontalFlow = ({ phases }: Props) => {
   const onConnect: OnConnect = useCallback((params: Connection) => setEdges((els) => addEdge(params, els)), []);
 
   React.useEffect(() => {
-    setNodes(newPositionsRecursive(nodes, edges));
+    setNodes(positionateNodesRecursive(nodes, edges));
   }, []);
 
   React.useEffect(() => {

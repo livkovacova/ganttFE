@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Phase } from "../components/commons/Phase";
-import { GanttChart } from "../components/commons/GanttChart";
+import { GanttChart, GanttChartInfo } from "../components/commons/GanttChart";
 import authHeader from "./AuthHeader";
 import eventBus from "../components/commons/EventBus";
 
@@ -44,6 +44,23 @@ export const uploadGanttChart= async (ganttChart: GanttChart) => {
     .then((res: any) => res.data)
     .catch((err: any) => {
         console.error("Error uploading gantt chart", err);
+        if (err.response && err.response.status === 401) {
+            eventBus.dispatch("logout");
+        }
+        return {};
+    })
+}
+
+export const getGanttChartInfo= async (id: number): Promise<GanttChartInfo> => {
+    return axios.get(API_URL + "/info", {
+        params: {
+            id: id,
+        },
+        headers: authHeader()
+    } )
+    .then((res: any) => res.data)
+    .catch((err: any) => {
+        console.error("Error fetching gantt chart info", err);
         if (err.response && err.response.status === 401) {
             eventBus.dispatch("logout");
         }

@@ -12,3 +12,8 @@ export const DEFAULT_CHART: GanttChart = {
     phases: [],
     project: 0
 }
+
+export interface GanttChartInfo {
+    numberOfPhases: number,
+    numberOfTasks: number
+}
