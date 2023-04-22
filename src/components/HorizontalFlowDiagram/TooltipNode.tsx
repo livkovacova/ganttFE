@@ -75,7 +75,7 @@ const TooltipNode: React.FC<NodeProps> = ({ data }) => {
             index++;
             index = index == assigneesColorPalette.length? 0 : index;
           return (<div>
-            <Tooltip arrow title={assignee}>
+            <Tooltip key={assignee} arrow title={assignee}>
               <Item sx={{backgroundColor: resolveMemberColor(assignee)}}>{
                 resolveAssigneeString(assignee, data.assignees.length)
                 }</Item>

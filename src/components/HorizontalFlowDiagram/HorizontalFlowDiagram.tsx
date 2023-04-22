@@ -10,6 +10,8 @@ import IUser from '../../types/user.type';
 interface Props {
     phases: PhaseResponse[]
     teamMembers: IUser[]
+    selectedPhases: string[]
+    selectedAssignees: string[]
   }
 
 const nodeTypes = {
@@ -51,6 +53,23 @@ const getAssigneesProperty = (assignees: Array<number>, projectMembers: IUser[])
   return result;
 }
 
+const resolveHiddenProperty = (selectedPhases: string[], currentPhase: string, selectedUsers: string[], assignees: string[]) =>{
+  console.log(selectedUsers);
+  console.log(selectedPhases);
+  console.log(assignees);
+  console.log(currentPhase);
+  let haveAssignee = false;
+  selectedUsers.forEach(selected => {
+    assignees.forEach(assignee => {
+      if(assignee === selected){
+        haveAssignee = true;
+      }
+    })
+  })
+  const hidden = haveAssignee && selectedPhases.includes(currentPhase) ? false : true
+  return hidden;
+}
+
 const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => {
   const allNodes: Node[] = [];
   let newPhasePositionX = 0;
@@ -77,6 +96,7 @@ const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => 
         sourcePosition: Position.Right,
         style: { zIndex: 3, borderRadius: "7px"},
         selectable: true,
+        hidden: false
       }
       taskNode.type = 'tooltip'
       if (task.predecessors.length != 0) {
@@ -103,7 +123,7 @@ const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => 
   return allNodes;
 }
 
-const positionateNodesRecursive = (createdNodes: Node[], createdEdges: Edge[]): Node[] => {
+const positionateNodesRecursive = (createdNodes: Node[], createdEdges: Edge[], selectedPhases: string[], selectedAssignees: string[]): Node[] => {
   let taskNodes = createdNodes.filter(createdNode => createdNode.type != 'group');
   positionateNodesToDataFlow(taskNodes, createdEdges);
 
@@ -114,6 +134,9 @@ const positionateNodesRecursive = (createdNodes: Node[], createdEdges: Edge[]): 
   taskNodes.forEach(taskNode => {
     if(taskNode.type != 'group'){
         taskNode.style!.backgroundColor = colorMap.get(taskNode.parentNode!);
+    }
+    if (taskNode.data.assignees != undefined){
+      taskNode.hidden = resolveHiddenProperty(selectedPhases, taskNode.data.phaseName, selectedAssignees, taskNode.data.assignees);
     }
   })
 
@@ -152,14 +175,23 @@ const prepareEdges = (phases: PhaseResponse[]): Edge[] => {
 }
 
 
-const HorizontalFlow = ({ phases, teamMembers }: Props) => {
+const HorizontalFlow = ({ phases, teamMembers, selectedPhases, selectedAssignees }: Props) => {
   const [nodes, setNodes] = React.useState<Node[]>(prepareNodes(phases, teamMembers));
   const [edges, setEdges] = React.useState<Edge[]>(prepareEdges(phases));
   const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
   const onConnect: OnConnect = useCallback((params: Connection) => setEdges((els) => addEdge(params, els)), []);
 
+
   React.useEffect(() => {
-    setNodes(positionateNodesRecursive(nodes, edges));
+    setNodes(prepareNodes(phases, teamMembers));
+  }, []);
+  
+  React.useEffect(() => {
+    setNodes(positionateNodesRecursive(nodes, edges, selectedPhases, selectedAssignees));
+  }, [selectedAssignees, selectedPhases]);
+
+  React.useEffect(() => {
+    setNodes(positionateNodesRecursive(nodes, edges, selectedPhases, selectedAssignees));
   }, []);
 
   React.useEffect(() => {
