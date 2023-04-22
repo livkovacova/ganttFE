@@ -9,10 +9,11 @@ interface FlowEdge extends Edge {}
 
 export interface NodePos {
   xPos: number,
-  yPos: number
+  yPos: number,
+  nodeHeight: number
 }
 
-const COLUMN_WIDTH = 250;
+const COLUMN_WIDTH = 350;
 const ROW_HEIGHT = 125;
 const COLUMN_MARGIN = 25;
 const ROW_MARGIN = 20;
@@ -22,6 +23,36 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
   let positionsMap = new Map<FlowNode, NodePos>();
   let maxRowValue = new Map<number,number>();
   let sourceMap = new Map<FlowNode, Set<FlowNode>>();
+
+  function computeNodeHeight(node: FlowNode){
+    let assignees = node.data.assignees;
+    let rows = 0;
+    let rowWidth = 0;
+    let assigneesBoxHeight = 0;
+    if(assignees.length < 3){
+      assigneesBoxHeight = 40;
+    }
+    else{
+      assignees.forEach((assignee: string) => {
+        let thisWidth = 0;
+        console.log(assignee.length);
+        if(assignee.length > 4){
+            thisWidth = 30;
+        }
+        else{
+          thisWidth = 25;
+        }
+        rowWidth += thisWidth;
+        console.log(rowWidth);
+        if(rowWidth > 170){
+          rows++;
+          rowWidth = thisWidth;
+        }
+      });
+      assigneesBoxHeight = rows === 0 ? 40 : (rows * 50) + 10;
+    }
+    return 100 + assigneesBoxHeight + 20;
+  } 
 
   nodes.forEach(node => {
     const sources = edges
@@ -66,7 +97,7 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
             }
           }
         })
-        positionsMap.set(node, {xPos: maxX+1, yPos:maxRowValue.get(maxX+1)!})
+        positionsMap.set(node, {xPos: maxX+1, yPos:maxRowValue.get(maxX+1)!, nodeHeight: computeNodeHeight(node)})
       }
     
       targets.forEach((tgt) => {
@@ -76,15 +107,19 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
           let maxRootY = maxRowValue.get(positionsMap.get(node)!.xPos + 1);
           if(maxRootY === undefined){
             maxRowValue.set(rootX, 0);
-            positionsMap.set(tgt, {xPos: rootX, yPos: 0});
+            positionsMap.set(tgt, {xPos: rootX, yPos: 0, nodeHeight: computeNodeHeight(tgt)});
           }
           else{
             let newY = maxRowValue.get(rootX)! + 1;
             maxRowValue.set(rootX, newY);
-            positionsMap.set(tgt, {xPos: rootX, yPos: newY});
+            positionsMap.set(tgt, {xPos: rootX, yPos: newY, nodeHeight:computeNodeHeight(tgt)});
           }
           computeFlowNodePosition(tgt);
       })
+    }
+    else{
+      positionsMap.set(node, {xPos: positionsMap.get(node)!.xPos, yPos:positionsMap.get(node)!.yPos, nodeHeight: computeNodeHeight(node)})
+      maxRowValue.set(positionsMap.get(node)!.xPos, 0);
     }
 
   }
@@ -96,7 +131,8 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
   roots.forEach((root) => {
     let pos: NodePos = {
       xPos: xx,
-      yPos: yy
+      yPos: yy,
+      nodeHeight: computeNodeHeight(root)
     }
     positionsMap.set(root, pos);
     maxRowValue.set(xx, yy);
@@ -112,8 +148,15 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
 export const positionateNodesToDataFlow = (nodes: FlowNode[], edges: Edge[]) => {
   const positionsMap = computePositions(nodes, edges);
   nodes.forEach(node => {
+    const row = positionsMap.get(node)!.yPos;
+    const maxRowHeight = [...positionsMap.values()]
+    .filter((nodePos) => nodePos.yPos === row)
+    .reduce((max, nodePos) => (nodePos.nodeHeight > max ? nodePos.nodeHeight : max), 0);
+    console.log(maxRowHeight);
+    console.log(positionsMap);
     node.position.x = COLUMN_WIDTH * (positionsMap.get(node)!.xPos) + COLUMN_MARGIN;
-    node.position.y = ROW_HEIGHT * (positionsMap.get(node)!.yPos) + ROW_MARGIN;
+    node.position.y = (maxRowHeight+30) * (positionsMap.get(node)!.yPos) + ROW_MARGIN;
+    node.data.height = positionsMap.get(node)!.nodeHeight;
   })
 }
 

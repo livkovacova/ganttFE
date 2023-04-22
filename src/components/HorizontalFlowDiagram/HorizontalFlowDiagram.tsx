@@ -71,12 +71,12 @@ const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => 
       const assignees = getAssigneesProperty(task.assignees, teamMembers);
       const taskNode: Node = {
         id: `horizontal-${task.workId}`,
-        data: { label: task.name, phaseName: phase.name, assignees: assignees},
+        data: { label: task.name, phaseName: phase.name, assignees: assignees, height:0},
         position: { x: 0, y: 0 },
         parentNode: `parent-${phase.workId}`,
         sourcePosition: Position.Right,
-        style: { zIndex: 3, borderRadius: "7px" },
-        selectable: true
+        style: { zIndex: 3, borderRadius: "7px"},
+        selectable: true,
       }
       taskNode.type = 'tooltip'
       if (task.predecessors.length != 0) {

@@ -2,7 +2,6 @@ import { Box, Paper, Stack, Tooltip, Typography, styled } from '@mui/material';
 import React, { memo } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import "./TooltipNode.css"
-import { Height } from '@mui/icons-material';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? 'gray' : 'white',
@@ -12,6 +11,8 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.primary,
   boxShadow: "none"
 }));
+
+let colorToAssign = 0;
 
 const assigneesColorPalette = [
   "#9cc0c1",
@@ -26,8 +27,45 @@ const assigneesColorPalette = [
   "#b4d1b8",
 ]
 
+const mapMemberToColor = new Map<string, string>();
     
 const TooltipNode: React.FC<NodeProps> = ({ data }) => {
+
+      const resolveAssigneeString = (assignee: string, amountOfAssignees: number):string => {
+        let result = "";
+        if(amountOfAssignees <= 2){
+          if(amountOfAssignees == 1){
+            result = assignee.substring(0,20);
+          }
+          else{
+            result = assignee.substring(0,9);
+            if(assignee.length > 10){
+              result += "...";
+            }
+          }
+        }
+        else{
+          result = assignee.substring(0,3);
+          if(assignee.length >= 4){
+            result += "...";
+          }
+        }
+        return result;
+      }
+
+      function resolveMemberColor(assignee: string) {
+        if(mapMemberToColor.get(assignee) === undefined){
+          if(colorToAssign == assigneesColorPalette.length){
+            colorToAssign = 0;
+          }
+          mapMemberToColor.set(assignee,assigneesColorPalette[colorToAssign]);
+          colorToAssign++;
+          return assigneesColorPalette[colorToAssign]
+        }
+        else{
+          return mapMemberToColor.get(assignee);
+        }
+      }
 
       const renderAssignees = () => {
         let index = -1;
@@ -38,7 +76,9 @@ const TooltipNode: React.FC<NodeProps> = ({ data }) => {
             index = index == assigneesColorPalette.length? 0 : index;
           return (<div>
             <Tooltip arrow title={assignee}>
-              <Item sx={{backgroundColor: assigneesColorPalette[index]}}>{assignee.substring(0, 4)+"..."}</Item>
+              <Item sx={{backgroundColor: resolveMemberColor(assignee)}}>{
+                resolveAssigneeString(assignee, data.assignees.length)
+                }</Item>
             </Tooltip>
           </div>
           )
@@ -50,21 +90,26 @@ const TooltipNode: React.FC<NodeProps> = ({ data }) => {
 
       return (
         <div>
-            <div className='tooltipStyle'>
+            <div className='tooltipStyle' style={{height: data.height}}>
             {!data.init? (<Handle type="target" position={Position.Left} />) : undefined}
             <div className="nodeHeader">
-              <Typography sx={{textAlign: "start"}} fontWeight={"bold"} fontFamily={"Raleway, sans-serif"} color="white">{data.label}</Typography>
+              <Typography   
+                style={{ wordWrap: "break-word" }}
+                sx={{textAlign: "start"}} 
+                fontWeight={"bold"} 
+                fontFamily={"Raleway, sans-serif"} 
+                color="white">
+                  {data.label}
+              </Typography>
               <Typography sx={{textAlign: "start"}} fontWeight={"normal"} fontFamily={"Raleway, sans-serif"} color="white">state: 70%</Typography>
             </div>
             <div className='nodeInfo'>
-              <Typography variant="body1" sx={{textAlign: "start", marginTop: "2px"}} fontWeight={"normal"} fontFamily={"Raleway, sans-serif"} color="inherit">{data.phaseName}</Typography>
-              <Box sx={{ width: 250 }}>
-                <Stack useFlexGap flexWrap="wrap" height={"50%"} direction="row" spacing={{xs: 1, sm: 1}}>
+              <div className='phaseInfo'>
+              <Typography variant="body1" sx={{wordWrap:"break-word", textAlign: "start", paddingTop: "2px", paddingLeft:"2px"}} fontWeight={"normal"} fontFamily={"Raleway, sans-serif"} color="inherit">{data.phaseName}</Typography>
+              </div>
+              <Box sx={{ width: 230}}>
+                <Stack sx={{paddingLeft: "4px", paddingBottom: "3px", paddingTop:"3px"}} useFlexGap flexWrap="wrap" height={"50%"} direction="row" spacing={{xs: 1, sm: 1}}>
                   {renderAssignees()}
-                  <Item>team...</Item>
-                  <Item>team...</Item>
-                  <Item>team...</Item>
-                  <Item>team...</Item>
                 </Stack>
               </Box>
             </div>
