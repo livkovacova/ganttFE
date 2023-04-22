@@ -50,7 +50,7 @@ export const DependencyDiagramPage = () => {
                 <div className="contentWrapper">
                   <div className="phasesWrapper">
                     {phaseResponses.length !== 0? (
-                      <HorizontalFlow phases={phaseResponses}/>
+                      <HorizontalFlow phases={phaseResponses} teamMembers={project.members}/>
                     ):
                     undefined}
                   </div>

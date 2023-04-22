@@ -5,9 +5,11 @@ import { Edge } from 'reactflow';
 import { PhaseResponse } from '../commons/Phase';
 import { generateColorMap, positionateNodesToDataFlow } from './NodesUtils';
 import TooltipNode from './TooltipNode';
+import IUser from '../../types/user.type';
 
 interface Props {
     phases: PhaseResponse[]
+    teamMembers: IUser[]
   }
 
 const nodeTypes = {
@@ -37,7 +39,19 @@ const colorOptions = [
     '#E3A587'
 ]
 
-const prepareNodes = (phases: PhaseResponse[]): Node[] => {
+const getAssigneesProperty = (assignees: Array<number>, projectMembers: IUser[]): string[] =>{
+  const result: Array<string> = [];
+  console.log(projectMembers)
+  assignees.forEach(assignee => {
+      let member = projectMembers.find(member => member.id === assignee);
+      if (member !== undefined){
+          result.push(member.username);
+      }
+  })
+  return result;
+}
+
+const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => {
   const allNodes: Node[] = [];
   let newPhasePositionX = 0;
   phases.forEach(phase => {
@@ -54,9 +68,10 @@ const prepareNodes = (phases: PhaseResponse[]): Node[] => {
     allNodes.push(phaseNode);
 
     phase.tasks.forEach(task => {
+      const assignees = getAssigneesProperty(task.assignees, teamMembers);
       const taskNode: Node = {
         id: `horizontal-${task.workId}`,
-        data: { label: task.name, phaseName: phase.name, assignees: task.assignees},
+        data: { label: task.name, phaseName: phase.name, assignees: assignees},
         position: { x: 0, y: 0 },
         parentNode: `parent-${phase.workId}`,
         sourcePosition: Position.Right,
@@ -137,8 +152,8 @@ const prepareEdges = (phases: PhaseResponse[]): Edge[] => {
 }
 
 
-const HorizontalFlow = ({ phases }: Props) => {
-  const [nodes, setNodes] = React.useState<Node[]>(prepareNodes(phases));
+const HorizontalFlow = ({ phases, teamMembers }: Props) => {
+  const [nodes, setNodes] = React.useState<Node[]>(prepareNodes(phases, teamMembers));
   const [edges, setEdges] = React.useState<Edge[]>(prepareEdges(phases));
   const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
   const onConnect: OnConnect = useCallback((params: Connection) => setEdges((els) => addEdge(params, els)), []);
