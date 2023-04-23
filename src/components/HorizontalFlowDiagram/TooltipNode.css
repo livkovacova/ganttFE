@@ -15,13 +15,6 @@
     flex-direction: column;
 }
 
-.nodeHeader{
-    display: flex;
-    height: 48px;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
 .nodeInfo{
     /* border-top: solid 1px black; */
     width: 100%;
@@ -33,6 +26,6 @@
 }
 
 .phaseInfo{
-    height:50px;
+    height:25px;
     background-color:#e9ebec;
 }

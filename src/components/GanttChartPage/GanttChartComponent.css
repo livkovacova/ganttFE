@@ -1,6 +1,5 @@
 .Wrapper {
     background-color: white;
-    height: 85vh;
   }
 
   ._34SS0:nth-of-type(even) {
@@ -17,6 +16,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 1vh;
   }
 
   .ViewModeButtons {

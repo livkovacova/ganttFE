@@ -5,6 +5,14 @@
     flex-direction: column;
 }
 
+.chartWrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 85vh;
+    background-color: white;
+}
+
 .chartContainer {
     display: flex;
     flex-direction: column;

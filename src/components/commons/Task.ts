@@ -8,6 +8,7 @@ export interface Task {
     assignees: Array<number>;
     resources: number;
     predecessors: Array<number>;
+    state: number;
 }
 
 export const DEFAULT_TASK: Task = {
@@ -18,6 +19,7 @@ export const DEFAULT_TASK: Task = {
     assignees: [],
     resources: 0,
     predecessors: [],
+    state: 0
 }
 
 export interface TaskResponse {
@@ -30,5 +32,6 @@ export interface TaskResponse {
     assignees: Array<number>;
     startDate: Date;
     endDate: Date;
+    state: number;
     realId?: number
 }

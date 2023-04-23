@@ -29,8 +29,9 @@ export const DependencyDiagramPage = () => {
   const [phaseResponses, setPhaseResponses] = useState<Array<PhaseResponse>>([]);
   const [assigneeOptions, setAssigneeOptions] = useState<Array<string>>([]);
   const [phaseOptions, setPhaseOptions] = useState<Array<string>>([]);
-  const [selectedAssigneeOptions, setselectedAssigneeOptions] = useState<Array<string>>([]);
-  const [selectedPhaseOptions, setselectedPhaseOptions] = useState<Array<string>>([]);
+  const [selectedAssigneeOptions, setSelectedAssigneeOptions] = useState<Array<string>>([]);
+  const [selectedPhaseOptions, setSelectedPhaseOptions] = useState<Array<string>>([]);
+  const [selectedStateOptions, setSelectedStateOptions] = useState<Array<string>>([]);
 
   const navigateToProjectDetailsPage = () => {
     navigate('/projects/' + id);
@@ -41,8 +42,9 @@ export const DependencyDiagramPage = () => {
     setPhaseResponses(chart.phases);
     setPhaseOptions(chart.phases.map(phase => phase.name));
     setAssigneeOptions(project.members.map(member => member.username));
-    setselectedPhaseOptions(chart.phases.map(phase => phase.name));
-    setselectedAssigneeOptions(project.members.map(member => member.username));
+    setSelectedPhaseOptions(chart.phases.map(phase => phase.name));
+    setSelectedAssigneeOptions(project.members.map(member => member.username));
+    setSelectedStateOptions(["not started", "in progress", "done"]);
   }
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export const DependencyDiagramPage = () => {
     }
   }, []);
 
-  const setSelectedOptions = (phaseMap: Map<string, boolean>, assigneesMap: Map<string,boolean>) => {
+  const setSelectedOptions = (phaseMap: Map<string, boolean>, assigneesMap: Map<string,boolean>, stateMap: Map<string,boolean>) => {
     const selectedPhasesFromMap: string[] = [];
     phaseMap.forEach((value,key) => {
       if(value){
@@ -65,8 +67,15 @@ export const DependencyDiagramPage = () => {
         selectedAssigneesFromMap.push(key);
       }
     })
-    setselectedPhaseOptions(selectedPhasesFromMap);
-    setselectedAssigneeOptions(selectedAssigneesFromMap);
+    const selectedStatesFromMap: string[] = [];
+    stateMap.forEach((value,key) => {
+      if(value){
+        selectedStatesFromMap.push(key);
+      }
+    })
+    setSelectedPhaseOptions(selectedPhasesFromMap);
+    setSelectedAssigneeOptions(selectedAssigneesFromMap);
+    setSelectedStateOptions(selectedStatesFromMap);
   }
 
   return (
@@ -81,6 +90,7 @@ export const DependencyDiagramPage = () => {
                 teamMembers={project.members} 
                 selectedPhases={selectedPhaseOptions}
                 selectedAssignees={selectedAssigneeOptions}
+                selectedStates={selectedStateOptions}
                 />
             ) :
               undefined}

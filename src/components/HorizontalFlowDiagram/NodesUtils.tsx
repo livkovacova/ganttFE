@@ -49,9 +49,9 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
           rowWidth = thisWidth;
         }
       });
-      assigneesBoxHeight = rows === 0 ? 40 : (rows * 50) + 10;
+      assigneesBoxHeight = rows === 0 ? 40 : (rows * 70) + 10;
     }
-    return 100 + assigneesBoxHeight + 20;
+    return 109 + assigneesBoxHeight + 20;
   } 
 
   nodes.forEach(node => {

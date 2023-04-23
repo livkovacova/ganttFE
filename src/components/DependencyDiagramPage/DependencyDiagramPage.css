@@ -43,16 +43,15 @@
 
 .phasesWrapper{
     align-items: center;
-    background-color: lightgray;
+    background-color: #51545a;
     height: 100%;
     width: 85vw;
 }
 
 .toolBar{
-    background-color: #B8C2CC;
+    background-color: #e9ebec;
     width: 20vw;
     height: 100%; 
-    justify-self:"flex-end";
 }
 
 .phaseHeader{

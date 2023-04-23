@@ -12,7 +12,7 @@ import { Project } from "../commons/Projects";
 import _without from "lodash/without";
 import { useLocation } from "react-router-dom";
 import { GanttChart } from "../commons/GanttChart";
-import { AnotherTry } from "./GanttChart";
+import { GanttChartComponent } from "./GanttChartComponent";
 
 const theme = responsiveFontSizes(mainTheme);
 
@@ -73,16 +73,17 @@ export const GanttChartPage = () => {
             <div className="pageContainer">
                 <NavigationBar withCreate={false} isManager={true} mainTitle={project.name + " | Gantt chart"} userNameLetter={currentUser.username.charAt(0).toUpperCase()}/>
                 {ganttChart != undefined || null ? (
-                    <>
-                    <AnotherTry 
+                    <div className="chartWrapper">
+                    <GanttChartComponent 
                         chart={ganttChart!} 
                         currency={project.currency}
                         projectMembers={project.members}
                         projectStartDate={project.startDate!}
                         onDateChange={handleDateChanges}
                         readonly={alreadyCreated}
+                        isManager={currentUser.roles!.includes("ROLE_MANAGER")}
                     />
-                    </>
+                    </div>
                 ):
                 undefined}
                     

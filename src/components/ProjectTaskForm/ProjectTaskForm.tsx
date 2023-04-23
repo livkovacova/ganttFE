@@ -31,7 +31,8 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
     const [taskDuration, setTaskDuration] = React.useState(taskForAction.duration);
     const [timeUnit, setTimeUnit] = React.useState<string>(TIME_UNIT.DAYS);
     const [taskResources, setTaskResources] = React.useState(taskForAction.resources);
-    const [priority, setPriority] = React.useState<string>(PRIORITY.MEDIUM)
+    const [taskState, setTaskState] = React.useState(taskForAction.state);
+    const [priority, setPriority] = React.useState<string>(taskForAction.priority);
     const [selectedTaskAssignees, setSelectedTaskAssignees] = React.useState<Array<TeamMemberOption>>([]);
     const [selectedTaskPredecessors, setSelectedTaskPredecessors] = React.useState<Array<PredecessorOption>>([]);
     const [saved, setSaved] = React.useState(false);
@@ -54,6 +55,11 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
     const setNewTaskResources = (resources: number) => {
         taskForAction.resources = resources;
         setTaskResources(resources);
+    }
+
+    const setNewTaskState = (state: number) => {
+        taskForAction.state = state;
+        setTaskState(state);
     }
 
     const handleChangeAssignees = (event: SelectChangeEvent<typeof selectedTaskAssignees>) => {
@@ -212,6 +218,28 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                         <MenuItem value={PRIORITY.HIGH} color="red">HIGH</MenuItem>
                         </Select>
                     </FormControl>
+
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        type="number"
+                        value={taskState.toString(10)}
+                        onChange={(e) => setNewTaskState(parseInt(e.target.value))}
+                        label="State"
+                        id="state"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        InputProps={{
+                            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                            inputProps: { 
+                                min: 0,
+                                max: 100
+                            }
+                        }}
+                        variant="standard"
+                        sx={{width: "30%", marginTop:0}}
+                    />
                     
                 </div>
 

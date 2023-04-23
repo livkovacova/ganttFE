@@ -4,7 +4,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 3px solid #B03066;
+    border-bottom: 2px solid #B03066;
     min-height: 48px;
     background-color: #e9ebec;
   }

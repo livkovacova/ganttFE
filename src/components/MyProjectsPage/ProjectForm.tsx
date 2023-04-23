@@ -322,6 +322,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
         </LocalizationProvider>
         <TextField
             fullWidth
+            hidden={onlyView}
             autoFocus
             margin="normal"
             type="number"

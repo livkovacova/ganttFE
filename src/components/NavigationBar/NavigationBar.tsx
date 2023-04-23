@@ -52,7 +52,7 @@ export const NavigationBar = ({onClick, userNameLetter, isManager, withCreate, m
                     >
                         GanttApp
                     </Typography>
-                    <div style={{color: "white", marginLeft: "0.7vw", backgroundColor:"#B8C2CC", padding: "0.4vw", borderRadius: 3}}>
+                    <div style={{color: "white", marginLeft: "0.7vw", backgroundColor:"rgb(160 162 168)", padding: "0.4vw", borderRadius: 3}}>
                     <Typography
                         variant="body1"
                         style={{fontWeight: "100"}}

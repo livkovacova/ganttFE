@@ -3,7 +3,7 @@ import { Task, ViewMode, Gantt } from "gantt-task-react";
 import { ViewSettings } from "./ChartViewSwitcher";
 import { ExtendedTask, getStartEndDateForProject, prepareTasks } from "./GanttChartUtils";
 import "gantt-task-react/dist/index.css";
-import './GanttChart.css'
+import './GanttChartComponent.css'
 import { GanttChart } from "../commons/GanttChart";
 import IUser from "../../types/user.type";
 
@@ -12,11 +12,12 @@ interface Props {
   currency: string,
   projectMembers: Array<IUser>,
   projectStartDate: Date,
-  onDateChange: (chart:GanttChart) => void;
+  onDateChange: (chart: GanttChart) => void;
   readonly: boolean
+  isManager: boolean
 }
 
-export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate, onDateChange, readonly }: Props) => {
+export const GanttChartComponent = ({ chart, currency, projectMembers, projectStartDate, onDateChange, readonly, isManager }: Props) => {
   const [view, setView] = React.useState<ViewMode>(ViewMode.Day);
   const [tasks, setTasks] = React.useState<Task[]>(prepareTasks(chart, currency, projectMembers, projectStartDate, readonly));
   const [isChecked, setIsChecked] = React.useState(true);
@@ -34,14 +35,14 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate, 
     let newTasks = tasks.map(t => (t.id === task.id ? task : t));
     chart.phases.forEach(phase => {
       phase.tasks.map(phaseTask => {
-        if(phaseTask.workId === parseInt(task.id)){
+        if (phaseTask.workId === parseInt(task.id)) {
           phaseTask.startDate = task.start;
           phaseTask.endDate = task.end;
           const newDuration = task.end.getTime() - task.start.getTime();
           phaseTask.duration = Math.ceil(newDuration / (1000 * 3600 * 24));
         }
       })
-    }) 
+    })
     if (task.project) {
       const [start, end] = getStartEndDateForProject(newTasks, task.project);
       const project = newTasks[newTasks.findIndex(t => t.id === task.project)];
@@ -85,39 +86,42 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate, 
   };
 
   const computeGanttWidth = (): number => {
-    return 50*(tasks.length) > window.innerHeight*0.67 ? window.innerHeight*0.67 : 50*(tasks.length);
+    return 50 * (tasks.length) > window.innerHeight * 0.67 ? window.innerHeight * 0.67 : 50 * (tasks.length);
   }
 
-  const MyCustomizedTooltip: React.FC<{task: ExtendedTask, fontSize: string, fontFamily: string}> = ({task, fontSize, fontFamily}) => {
+  const MyCustomizedTooltip: React.FC<{ task: ExtendedTask, fontSize: string, fontFamily: string }> = ({ task, fontSize, fontFamily }) => {
     const style = {
       fontSize,
       fontFamily
     };
     return (
       <div className="tooltipContainer" style={style}>
-      <b style={{ fontSize: fontSize + 6 }}>{`${
-        task.name
-      }: ${task.start.toLocaleDateString()} - ${task.end.toLocaleDateString()}`}</b>
-      {task.end.getTime() - task.start.getTime() !== 0 && (
-        <div className="tooltipParagraph">{`Duration: ${~~(
-          (task.end.getTime() - task.start.getTime()) /
-          (1000 * 60 * 60 * 24)
-        )} day(s)`}</div>
-      )}
-      {task.type === "task"? 
-        (<>
-          <div className="tooltipParagraph">Priority: {task.priority}</div>
-          <div className="tooltipParagraph">Assignees: {task.assignees}</div>
-          <div className="tooltipParagraph">Resources: {task.resources}</div>
-        </>)
-        :
-        (undefined)
+        <b style={{ fontSize: fontSize + 6 }}>{`${task.name
+          }: ${task.start.toLocaleDateString()} - ${task.end.toLocaleDateString()}`}</b>
+        {task.end.getTime() - task.start.getTime() !== 0 && (
+          <div className="tooltipParagraph">{`Duration: ${~~(
+            (task.end.getTime() - task.start.getTime()) /
+            (1000 * 60 * 60 * 24)
+          )} day(s)`}</div>
+        )}
+        {task.type === "task" ?
+          (<>
+            <div className="tooltipParagraph">Priority: {task.priority}</div>
+            <div className="tooltipParagraph">Assignees: {task.assignees}</div>
+            <div className="tooltipParagraph">Progress: {task.progress}%</div>
+            {isManager ?
+              (<>
+                <div className="tooltipParagraph">Resources: {task.resources}</div>
+              </>)
+              :
+              (undefined)
+            }
+          </>)
+          :
+          (undefined)
         }
 
-      <div className="tooltipParagraph">
-        {!!task.progress && `Progress: ${task.progress} %`}
       </div>
-    </div>
     )
   }
 
@@ -144,6 +148,11 @@ export const AnotherTry = ({ chart, currency, projectMembers, projectStartDate, 
         TooltipContent={MyCustomizedTooltip}
         projectBackgroundColor='#B03066'
         todayColor="rgba(245, 139, 0, 0.3)"
+        barProgressColor="rgb(160 162 168)"
+        barProgressSelectedColor='rgb(255 195 111)'
+        projectProgressColor='#B03066'
+        projectBackgroundSelectedColor="rgb(138 19 70)"
+        projectProgressSelectedColor="rgb(138 19 70)"
       />
     </div>
   );

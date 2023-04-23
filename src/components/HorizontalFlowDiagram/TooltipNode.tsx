@@ -28,95 +28,101 @@ const assigneesColorPalette = [
 ]
 
 const mapMemberToColor = new Map<string, string>();
-    
+
 const TooltipNode: React.FC<NodeProps> = ({ data }) => {
 
-      const resolveAssigneeString = (assignee: string, amountOfAssignees: number):string => {
-        let result = "";
-        if(amountOfAssignees <= 2){
-          if(amountOfAssignees == 1){
-            result = assignee.substring(0,20);
-          }
-          else{
-            result = assignee.substring(0,9);
-            if(assignee.length > 10){
-              result += "...";
-            }
-          }
-        }
-        else{
-          result = assignee.substring(0,3);
-          if(assignee.length >= 4){
-            result += "...";
-          }
-        }
-        return result;
+  const resolveAssigneeString = (assignee: string, amountOfAssignees: number): string => {
+    let result = "";
+    if (amountOfAssignees <= 2) {
+      if (amountOfAssignees == 1) {
+        result = assignee.substring(0, 20);
       }
-
-      function resolveMemberColor(assignee: string) {
-        if(mapMemberToColor.get(assignee) === undefined){
-          if(colorToAssign == assigneesColorPalette.length){
-            colorToAssign = 0;
-          }
-          mapMemberToColor.set(assignee,assigneesColorPalette[colorToAssign]);
-          colorToAssign++;
-          return assigneesColorPalette[colorToAssign]
-        }
-        else{
-          return mapMemberToColor.get(assignee);
+      else {
+        result = assignee.substring(0, 9);
+        if (assignee.length > 10) {
+          result += "...";
         }
       }
+    }
+    else {
+      result = assignee.substring(0, 3);
+      if (assignee.length >= 4) {
+        result += "...";
+      }
+    }
+    return result;
+  }
 
-      const renderAssignees = () => {
-        let index = -1;
-        return (
-          <>
-          {data.assignees.map((assignee: string) => {
-            index++;
-            index = index == assigneesColorPalette.length? 0 : index;
+  function resolveMemberColor(assignee: string) {
+    if (mapMemberToColor.get(assignee) === undefined) {
+      if (colorToAssign == assigneesColorPalette.length) {
+        colorToAssign = 0;
+      }
+      mapMemberToColor.set(assignee, assigneesColorPalette[colorToAssign]);
+      colorToAssign++;
+      return assigneesColorPalette[colorToAssign]
+    }
+    else {
+      return mapMemberToColor.get(assignee);
+    }
+  }
+
+  const renderAssignees = () => {
+    let index = -1;
+    return (
+      <>
+        {data.assignees.map((assignee: string) => {
+          index++;
+          index = index == assigneesColorPalette.length ? 0 : index;
           return (<div>
             <Tooltip key={assignee} arrow title={assignee}>
-              <Item sx={{backgroundColor: resolveMemberColor(assignee)}}>{
+              <Item sx={{ backgroundColor: resolveMemberColor(assignee) }}>{
                 resolveAssigneeString(assignee, data.assignees.length)
-                }</Item>
+              }</Item>
             </Tooltip>
           </div>
           )
-          }
-          )}
-          </>
-        )
-      }
-
-      return (
-        <div>
-            <div className='tooltipStyle' style={{height: data.height}}>
-            {!data.init? (<Handle type="target" position={Position.Left} />) : undefined}
-            <div className="nodeHeader">
-              <Typography   
-                style={{ wordWrap: "break-word" }}
-                sx={{textAlign: "start"}} 
-                fontWeight={"bold"} 
-                fontFamily={"Raleway, sans-serif"} 
-                color="white">
-                  {data.label}
-              </Typography>
-              <Typography sx={{textAlign: "start"}} fontWeight={"normal"} fontFamily={"Raleway, sans-serif"} color="white">state: 70%</Typography>
-            </div>
-            <div className='nodeInfo'>
-              <div className='phaseInfo'>
-              <Typography variant="body1" sx={{wordWrap:"break-word", textAlign: "start", paddingTop: "2px", paddingLeft:"2px"}} fontWeight={"normal"} fontFamily={"Raleway, sans-serif"} color="inherit">{data.phaseName}</Typography>
-              </div>
-              <Box sx={{ width: 230}}>
-                <Stack sx={{paddingLeft: "4px", paddingBottom: "3px", paddingTop:"3px"}} useFlexGap flexWrap="wrap" height={"50%"} direction="row" spacing={{xs: 1, sm: 1}}>
-                  {renderAssignees()}
-                </Stack>
-              </Box>
-            </div>
-            {!data.output? (<Handle type="source" position={Position.Right} />) : undefined}
-            </div>
+        }
+        )}
+      </>
+    )
+  }
+  return (
+    <div>
+      <div className='tooltipStyle' style={{ height: data.height }}>
+        {!data.init ? (<Handle type="target" position={Position.Left} />) : undefined}
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-around", height: "72px" }}>
+          <Typography
+            style={{ wordWrap: "break-word" }}
+            sx={{ textAlign: "start" }}
+            fontWeight={"bold"}
+            fontFamily={"Raleway, sans-serif"}
+            color="white">
+            {data.label}
+          </Typography>
+          <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+            <Typography
+              sx={{ textAlign: "end", alignSelf: "flex-end" }}
+              fontWeight={"normal"}
+              fontFamily={"Raleway, sans-serif"}
+              color="white">duration: {data.duration} {data.duration === 1 ? "day" : "days"}</Typography>
+            <Typography sx={{ textAlign: "end", alignSelf: "flex-end" }} fontWeight={"normal"} fontFamily={"Raleway, sans-serif"} color="white">state: {data.progress}%</Typography>
+          </div>
         </div>
-      );
-  };
+        <div className='nodeInfo'>
+          <div className='phaseInfo'>
+            <Typography variant="body1" sx={{ wordWrap: "break-word", textAlign: "start", paddingTop: "2px", paddingLeft: "2px" }} fontWeight={"normal"} fontFamily={"Raleway, sans-serif"} color="inherit">{data.phaseName}</Typography>
+          </div>
+          <Box sx={{ width: 230 }}>
+            <Stack sx={{ paddingLeft: "4px", paddingBottom: "3px", paddingTop: "3px" }} useFlexGap flexWrap="wrap" height={"50%"} direction="row" spacing={{ xs: 1, sm: 1 }}>
+              {renderAssignees()}
+            </Stack>
+          </Box>
+        </div>
+        {!data.output ? (<Handle type="source" position={Position.Right} />) : undefined}
+      </div>
+    </div>
+  );
+};
 
 export default memo(TooltipNode);

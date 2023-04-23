@@ -75,10 +75,10 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
       end: new Date(phaseEnd.getFullYear(), phaseEnd.getMonth(), phaseEnd.getDate()),
       name: phase.name,
       id: phase.name,
-      progress: 0,
+      progress: 100,
       type: "project",
       hideChildren: false,
-      isDisabled: readOnly
+      isDisabled: readOnly,
     }
     preparedTasks.push(newPhase);
     phase.tasks.forEach( task =>{
@@ -90,7 +90,7 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
           end: new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()),
           name: task.name,
           id: task.workId.toString(),
-          progress: 0,
+          progress: task.state,
           type: "task",
           isDisabled: readOnly,
           project: phase.name,

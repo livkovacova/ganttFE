@@ -6,12 +6,14 @@ import { PhaseResponse } from '../commons/Phase';
 import { generateColorMap, positionateNodesToDataFlow } from './NodesUtils';
 import TooltipNode from './TooltipNode';
 import IUser from '../../types/user.type';
+import { number } from 'yup';
 
 interface Props {
     phases: PhaseResponse[]
     teamMembers: IUser[]
     selectedPhases: string[]
     selectedAssignees: string[]
+    selectedStates: string[]
   }
 
 const nodeTypes = {
@@ -53,7 +55,12 @@ const getAssigneesProperty = (assignees: Array<number>, projectMembers: IUser[])
   return result;
 }
 
-const resolveHiddenProperty = (selectedPhases: string[], currentPhase: string, selectedUsers: string[], assignees: string[]) =>{
+const resolveTaskState = (progress: number): string => {
+  let state = progress === 0 ? "not started" : progress === 100? "done" : "in progress";
+  return state;
+}
+
+const resolveHiddenProperty = (selectedPhases: string[], currentPhase: string, selectedUsers: string[], assignees: string[], selectedStates: string[], currentProgress: number) =>{
   console.log(selectedUsers);
   console.log(selectedPhases);
   console.log(assignees);
@@ -66,7 +73,8 @@ const resolveHiddenProperty = (selectedPhases: string[], currentPhase: string, s
       }
     })
   })
-  const hidden = haveAssignee && selectedPhases.includes(currentPhase) ? false : true
+  let currentState = resolveTaskState(currentProgress);
+  const hidden = haveAssignee && selectedPhases.includes(currentPhase) && selectedStates.includes(currentState)? false : true
   return hidden;
 }
 
@@ -90,7 +98,7 @@ const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => 
       const assignees = getAssigneesProperty(task.assignees, teamMembers);
       const taskNode: Node = {
         id: `horizontal-${task.workId}`,
-        data: { label: task.name, phaseName: phase.name, assignees: assignees, height:0},
+        data: { label: task.name, phaseName: phase.name, assignees: assignees, progress: task.state, duration: task.duration, height:0},
         position: { x: 0, y: 0 },
         parentNode: `parent-${phase.workId}`,
         sourcePosition: Position.Right,
@@ -123,7 +131,7 @@ const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => 
   return allNodes;
 }
 
-const positionateNodesRecursive = (createdNodes: Node[], createdEdges: Edge[], selectedPhases: string[], selectedAssignees: string[]): Node[] => {
+const positionateNodesRecursive = (createdNodes: Node[], createdEdges: Edge[], selectedPhases: string[], selectedAssignees: string[], selectedStates: string[]): Node[] => {
   let taskNodes = createdNodes.filter(createdNode => createdNode.type != 'group');
   positionateNodesToDataFlow(taskNodes, createdEdges);
 
@@ -136,7 +144,7 @@ const positionateNodesRecursive = (createdNodes: Node[], createdEdges: Edge[], s
         taskNode.style!.backgroundColor = colorMap.get(taskNode.parentNode!);
     }
     if (taskNode.data.assignees != undefined){
-      taskNode.hidden = resolveHiddenProperty(selectedPhases, taskNode.data.phaseName, selectedAssignees, taskNode.data.assignees);
+      taskNode.hidden = resolveHiddenProperty(selectedPhases, taskNode.data.phaseName, selectedAssignees, taskNode.data.assignees, selectedStates, taskNode.data.progress);
     }
   })
 
@@ -175,7 +183,7 @@ const prepareEdges = (phases: PhaseResponse[]): Edge[] => {
 }
 
 
-const HorizontalFlow = ({ phases, teamMembers, selectedPhases, selectedAssignees }: Props) => {
+const HorizontalFlow = ({ phases, teamMembers, selectedPhases, selectedAssignees, selectedStates }: Props) => {
   const [nodes, setNodes] = React.useState<Node[]>(prepareNodes(phases, teamMembers));
   const [edges, setEdges] = React.useState<Edge[]>(prepareEdges(phases));
   const [selectedNodeId, setSelectedNodeId] = React.useState<string | null>(null);
@@ -187,11 +195,11 @@ const HorizontalFlow = ({ phases, teamMembers, selectedPhases, selectedAssignees
   }, []);
   
   React.useEffect(() => {
-    setNodes(positionateNodesRecursive(nodes, edges, selectedPhases, selectedAssignees));
+    setNodes(positionateNodesRecursive(nodes, edges, selectedPhases, selectedAssignees, selectedStates));
   }, [selectedAssignees, selectedPhases]);
 
   React.useEffect(() => {
-    setNodes(positionateNodesRecursive(nodes, edges, selectedPhases, selectedAssignees));
+    setNodes(positionateNodesRecursive(nodes, edges, selectedPhases, selectedAssignees, selectedStates));
   }, []);
 
   React.useEffect(() => {

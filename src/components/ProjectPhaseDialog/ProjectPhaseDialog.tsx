@@ -224,6 +224,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             assignees: [],
             resources: 0,
             predecessors: [],
+            state: 0
         }
         setCreatedTasks([...createdTasks, newTask]);
         setNewTaskId(newTaskId+1);
