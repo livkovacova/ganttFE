@@ -8,6 +8,7 @@ import { GanttChart } from "../commons/GanttChart";
 import IUser from "../../types/user.type";
 import { Button, Dialog, DialogActions, DialogTitle, Typography } from "@mui/material";
 import { TaskResponse } from "../commons/Task";
+import { TeamMemberOption } from "../commons/TeamMemberOption";
 
 interface Props {
   chart: GanttChart,
@@ -23,10 +24,15 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
   const [view, setView] = React.useState<ViewMode>(ViewMode.Day);
   const [tasks, setTasks] = React.useState<Task[]>(prepareTasks(chart, currency, projectMembers, projectStartDate, readonly));
   const [isChecked, setIsChecked] = React.useState(true);
+  const [taskToEdit, setTaskToEdit] = React.useState<Task>({} as Task);
+  
   const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-  const [taskToDelete, setTaskToDelete] = React.useState<Task>({} as Task);
   const onDeleteDialogClick = () => setDeleteDialogOpen(true);
   const onDeleteDialogClose = () => setDeleteDialogOpen(false);
+
+  const [isEditDialogOpen, setEditDialogOpen] = React.useState(false);
+  const onEditDialogClick = () => setEditDialogOpen(true);
+  const onEditDialogClose = () => setEditDialogOpen(false);  
 
   let columnWidth = 65;
   if (view === ViewMode.Year) {
@@ -81,13 +87,20 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
     return true;
   };
 
-  const openTaskDeleteDialog = (task: Task) => {
-    onDeleteDialogClick();
-    setTaskToDelete(task);
+  const handleTaskEdit = (task: Task) => {
+    setTasks(tasks.map(t => (t.id === task.id ? task : t)));
+    onEditDialogClose();
+    return true;
   };
 
-  const handleDblClick = (task: Task) => {
-    alert("On Double Click event Id:" + task.id);
+  const openTaskDeleteDialog = (task: Task) => {
+    onDeleteDialogClick();
+    setTaskToEdit(task);
+  };
+
+  const openEditTaskDialog = (task: Task) => {
+    onEditDialogClick();
+    setTaskToEdit(task);
   };
 
   const handleExpanderClick = (task: Task) => {
@@ -109,6 +122,19 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
   const computeGanttWidth = (): number => {
     return 50 * (tasks.length) > window.innerHeight * 0.67 ? window.innerHeight * 0.67 : 50 * (tasks.length);
   }
+
+  const prepareAssigneesOptions = (): TeamMemberOption[] => {
+    const options = projectMembers.map((teamMember) => {
+            console.log(teamMember.id)
+            let option: TeamMemberOption = {
+                value: teamMember.id,
+                text: teamMember.username
+            };
+            return option;
+        }
+    );
+    return options;
+};
 
   const MyCustomizedTooltip: React.FC<{ task: ExtendedTask, fontSize: string, fontFamily: string }> = ({ task, fontSize, fontFamily }) => {
     const style = {
@@ -159,7 +185,7 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
         fontFamily="Raleway, sans-serif"
         onDateChange={handleTaskChange}
         onDelete={openTaskDeleteDialog}
-        onDoubleClick={handleDblClick}
+        onDoubleClick={openEditTaskDialog}
         onExpanderClick={handleExpanderClick}
         onProgressChange={handleProgressChange}
         listCellWidth={isChecked ? "155px" : ""}
@@ -176,12 +202,22 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
       />
       <Dialog open={isDeleteDialogOpen} onClose={onDeleteDialogClose}>
                  <DialogTitle>
-                    <Typography variant="body1">Are you sure you want to delete "{taskToDelete.name}" task?</Typography>
+                    <Typography variant="body1">Are you sure you want to delete "{taskToEdit.name}" task?</Typography>
                     <Typography color="primary" variant="body2">This task will be removed as predeccesor from dependent tasks too.</Typography> 
                 </DialogTitle>
                 <DialogActions>
                     <Button onClick={onDeleteDialogClose} color="secondary">Cancel</Button>
-                    <Button onClick={() => handleTaskDelete(taskToDelete)} color="warning" variant="contained">Delete</Button>
+                    <Button onClick={() => handleTaskDelete(taskToEdit)} color="warning" variant="contained">Delete</Button>
+                </DialogActions>
+      </Dialog>
+      <Dialog open={isEditDialogOpen} onClose={onEditDialogClose}>
+                 <DialogTitle>
+                    <Typography variant="h5">{taskToEdit.name}</Typography>
+                    <Typography variant="body2">Edit task details</Typography>
+                </DialogTitle>
+                <DialogActions>
+                    <Button onClick={onEditDialogClose} color="secondary">Cancel</Button>
+                    <Button onClick={() => handleTaskEdit(taskToEdit)} color="warning" variant="contained">Save</Button>
                 </DialogActions>
       </Dialog>
     </div>
