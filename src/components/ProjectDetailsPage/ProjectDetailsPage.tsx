@@ -65,7 +65,7 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
         return (
             <>{isManager && !isGanttCreated? 
                 (
-                <Button fullWidth color="primary" onClick={() => navigate(`/projects/${id}/create-gantt`)}>
+                <Button fullWidth color="primary" onClick={() => navigate(`/projects/${id}/create-gantt`, {state: {isEditingGantt: false}})}>
                     CREATE GANTT CHART
                 </Button>) 
                     :

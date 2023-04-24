@@ -4,7 +4,7 @@ import mainTheme from "../commons/mainTheme";
 import { responsiveFontSizes } from '@mui/material/';
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
-import {useParams, useNavigate} from "react-router-dom";
+import {useParams, useNavigate, useLocation} from "react-router-dom";
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, ButtonGroup, Dialog, DialogActions, DialogTitle, Divider, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material/";
 import "../CreateGanttChartPage/CreateGanttChartPage.css"
 import { getProjectById } from "../../services/ProjectDataService";
@@ -25,24 +25,28 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
 
     const {id} = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    console.log(location);
+    const isEditingGantt = location.state.isEditingGantt; 
+    const previousState = isEditingGantt? location.state : undefined;
 
     const [projectName, setProjectName] = useState<string>("");
     const [project, setProject] = useState<Project>(DEFAULT_PROJECT);
     const [refresh, setRefresh] = useState<boolean>(false);
-    const [savedPhases, setSavedPhases] = useState<Array<Phase>>([]);
+    const [savedPhases, setSavedPhases] = useState<Array<Phase>>(isEditingGantt? previousState.savedPhases : []);
 
     const [isOpenForm, setIsOpenForm] = React.useState<boolean>(false);
     const [isEditing, setIsEditing] = React.useState<boolean>(false);
     const [phaseToEdit, setPhaseToEdit] = React.useState<Phase>(DEFAULT_PHASE);
     const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-    const [newPhaseId, setNewPhaseId] = React.useState(0);
+    const [newPhaseId, setNewPhaseId] = React.useState(isEditingGantt? previousState.newPhaseId : 0);
+    const [nextTaskId, setNextTaskId] = React.useState(isEditingGantt? previousState.nextTaskId : 0);
     
     const onDeleteDialogClick = () => setDeleteDialogOpen(true);
     const onDeleteDialogClose = () => setDeleteDialogOpen(false);
 
     const handleRefresh = () => setRefresh(!refresh);
 
-    // Create/edit event form
     const onFormClick = () => setIsOpenForm(true);
     const onFormClose = () => setIsOpenForm(false);
 
@@ -127,6 +131,10 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
         )
     }
 
+    const handleAddTask = (id: number) => {
+        setNextTaskId(id);
+    }
+
     const onAddPhaseSubmit = (phase: Phase) => {
         console.log(phase);
         console.log(isEditing);
@@ -145,12 +153,15 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
     };
 
     const onCreateGanttChartSubmit = () => {
+        console.log(location);
         navigate(`/projects/${id}/gantt-chart`, {
             state: {
                 currentUser: currentUser,
                 project: project,
                 phases: savedPhases,
-                alreadyCreated: false
+                alreadyCreated: false,
+                newPhaseId: newPhaseId,
+                nextTaskId: nextTaskId
             }
         })
     }
@@ -196,12 +207,15 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
                 <ProjectPhaseDialog
                     isOpen={isOpenForm}
                     onClose={handleEditClose}
-                    isEditing={isEditing}
+                    isEditing={isEditing || isEditingGantt}
                     phaseToEdit={phaseToEdit}
                     refreshPage={handleRefresh}
                     savedPhases={savedPhases}
                     onSubmit={onAddPhaseSubmit}
                     project={project}
+                    nextTaskId={nextTaskId}
+                    isEditingGantt={isEditingGantt}
+                    onAddTaskForm={handleAddTask}
                 />
             </div>
         </ThemeProvider>

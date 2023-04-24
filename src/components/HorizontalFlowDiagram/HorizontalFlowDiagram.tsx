@@ -6,7 +6,6 @@ import { PhaseResponse } from '../commons/Phase';
 import { generateColorMap, positionateNodesToDataFlow } from './NodesUtils';
 import TooltipNode from './TooltipNode';
 import IUser from '../../types/user.type';
-import { number } from 'yup';
 
 interface Props {
     phases: PhaseResponse[]

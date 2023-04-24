@@ -1,10 +1,10 @@
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import mainTheme from "../commons/mainTheme";
-import { Button,responsiveFontSizes } from '@mui/material/';
+import { Button, responsiveFontSizes } from '@mui/material/';
 import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
-import {useParams, useNavigate} from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./GanttChartPage.css"
 import { createGanttChart, getGanttChart, uploadGanttChart } from "../../services/GanttChartService";
 import { Phase } from "../commons/Phase";
@@ -22,9 +22,11 @@ interface Props {
 
 export const GanttChartPage = () => {
 
-    const {id} = useParams();
+    const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const newPhaseId: number = location.state.newPhaseId;
+    const nexTaskId: number = location.state.nextTaskId;
 
     const project: Project = location.state.project;
     const currentUser: IUser = location.state.currentUser;
@@ -35,7 +37,7 @@ export const GanttChartPage = () => {
     const [ganttSaved, setGanttSaved] = useState(false);
 
     const navigateToProjectDetailsPage = () => {
-        navigate('/projects/'+id);
+        navigate('/projects/' + id);
     }
 
     const generateGanttChart = async () => {
@@ -55,65 +57,87 @@ export const GanttChartPage = () => {
 
     useEffect(() => {
         console.log(alreadyCreated)
-        if(!alreadyCreated){
+        if (!alreadyCreated) {
             generateGanttChart();
         }
-        else{
+        else {
             fetchGanttChart();
         }
-    },[]);
+    }, []);
 
     const handleDateChanges = (chart: GanttChart) => {
         setGanttChart(chart);
         console.log(chart);
     }
 
+    const navigateToEditPhases = () => {
+        navigate(`/projects/${id}/create-gantt`, {
+            state: {
+                isEditingGantt: true,
+                savedPhases: phases,
+                newPhaseId: newPhaseId,
+                nextTaskId: nexTaskId
+            }
+        })
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <div className="pageContainer">
-                <NavigationBar withCreate={false} isManager={true} mainTitle={project.name + " | Gantt chart"} userNameLetter={currentUser.username.charAt(0).toUpperCase()}/>
+                <NavigationBar withCreate={false} isManager={true} mainTitle={project.name + " | Gantt chart"} userNameLetter={currentUser.username.charAt(0).toUpperCase()} />
                 {ganttChart != undefined || null ? (
                     <div className="chartWrapper">
-                    <GanttChartComponent 
-                        chart={ganttChart!} 
-                        currency={project.currency}
-                        projectMembers={project.members}
-                        projectStartDate={project.startDate!}
-                        onDateChange={handleDateChanges}
-                        readonly={alreadyCreated}
-                        isManager={currentUser.roles!.includes("ROLE_MANAGER")}
-                    />
+                        <GanttChartComponent
+                            chart={ganttChart!}
+                            currency={project.currency}
+                            projectMembers={project.members}
+                            projectStartDate={project.startDate!}
+                            onDateChange={handleDateChanges}
+                            readonly={alreadyCreated}
+                            isManager={currentUser.roles!.includes("ROLE_MANAGER")}
+                        />
                     </div>
-                ):
-                undefined}
-                    
+                ) :
+                    undefined}
+
                 <div className="bottomSectionContainer">
                     <div
-                    className="saveGanttButtons" 
+                        className="saveGanttButtons"
                     >
                         <Button
-                        sx={{marginRight: "0.4vw"}}
-                        variant="contained" 
-                        onClick={() => {navigateToProjectDetailsPage()}}
-                        color="primary" 
-                    >Back to project page</Button>
-                        {alreadyCreated? undefined : (
+                            sx={{ marginRight: "0.4vw" }}
+                            variant="contained"
+                            onClick={() => { navigateToProjectDetailsPage() }}
+                            color="primary"
+                        >Back to project page</Button>
+
+                        {alreadyCreated ? undefined : (
                             <>
-                                <Button 
-                                variant="contained" 
-                                onClick={() => {saveGanttChart()}}
-                                color="primary"
-                                disabled={ganttSaved}
+                                <Button
+                                    variant="contained"
+                                    onClick={() => { navigateToEditPhases() }}
+                                    color="primary"
+                                    disabled={ganttSaved}
+                                >BACK TO EDIT PHASES</Button>
+                            </>
+                        )}
+                        {alreadyCreated ? undefined : (
+                            <>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => { saveGanttChart() }}
+                                    color="primary"
+                                    disabled={ganttSaved}
                                 >Save GANTT CHART</Button>
                             </>
                         )}
-                        
+
                     </div>
                 </div>
             </div>
         </ThemeProvider>
     );
-                    //add mesage about saved gantt
+    //add mesage about saved gantt
 
 };
 

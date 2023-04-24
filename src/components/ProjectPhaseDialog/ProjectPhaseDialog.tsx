@@ -25,9 +25,12 @@ interface Props {
     savedPhases: Array<Phase>;
     onSubmit: (phase:Phase) => void;
     project: Project;
+    nextTaskId: number;
+    isEditingGantt: boolean;
+    onAddTaskForm: (id: number) => void;
 }
 
-export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, refreshPage, savedPhases, onSubmit, project }: Props) => {
+export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, refreshPage, savedPhases, onSubmit, project, nextTaskId, isEditingGantt, onAddTaskForm }: Props) => {
     const [assigneesFormOptions, setAssigneesFormOptions] = React.useState<Array<TeamMemberOption>>([]);
     const [predecessorsFormOptions, setPredecessorsFormOptions] = React.useState<Array<PredecessorOption>>([]);
     const [phaseName, setPhaseName] = React.useState<string>("");
@@ -35,7 +38,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     const [savedTasks, setSavedTasks] = React.useState<Array<Task>>([]);
     const [refresh, setRefresh] = React.useState<boolean>(false);
     const [taskEdited, setTaskEdited] = React.useState(false);
-    const [newTaskId, setNewTaskId] = React.useState(0);
+    const [newTaskId, setNewTaskId] = React.useState(isEditingGantt? nextTaskId : 0);
 
     const [errorPhaseName, setErrorPhaseName] = React.useState<boolean>(false);
 
@@ -228,9 +231,9 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         }
         setCreatedTasks([...createdTasks, newTask]);
         setNewTaskId(newTaskId+1);
-        console.log("Created: ");
         console.log(createdTasks);
         handleRefresh();
+        onAddTaskForm(newTaskId+1);
     }
 
     //add is Editing
