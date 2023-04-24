@@ -19,7 +19,7 @@ import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TeamMemberOption } from "../commons/TeamMemberOption";
 import { createProject, editProject } from "../../services/ProjectDataService";
-
+import GroupsIcon from '@mui/icons-material/Groups';
 
 interface Props {
     isOpen: boolean;
@@ -278,23 +278,23 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
                     id="mutiple-chip"
                     multiple
                     variant="outlined"
-                    readOnly={isEditing || onlyView}
+                    readOnly={onlyView}
                     value={selectedProjectMembersOptions}
                     onChange={handleChange}
-                    IconComponent={KeyboardArrowDownIcon}
+                    IconComponent={onlyView? GroupsIcon : KeyboardArrowDownIcon}
                     renderValue={(selected) => (
                     <div style={{display:"flex", flexWrap:"wrap"}}>
                         {(selected as TeamMemberOption[]).map((value) => (
                         <Chip
                             key={value.value}
                             label={value.text}
-                            clickable
-                            deleteIcon={
+                            clickable={!onlyView}
+                            deleteIcon={ !onlyView?
                             <CancelIcon
                                 onMouseDown={(event) => event.stopPropagation()}
                             />
-                            }
-                            onDelete={(e) => {handleDelete(e, value)}}
+                            : undefined}
+                            onDelete={!onlyView? (e) => {handleDelete(e, value)} : undefined}
                             onClick={() => console.log("clicked chip")}
                             style={{margin: 2}}
                         />

@@ -6,6 +6,8 @@ import "gantt-task-react/dist/index.css";
 import './GanttChartComponent.css'
 import { GanttChart } from "../commons/GanttChart";
 import IUser from "../../types/user.type";
+import { Button, Dialog, DialogActions, DialogTitle, Typography } from "@mui/material";
+import { TaskResponse } from "../commons/Task";
 
 interface Props {
   chart: GanttChart,
@@ -21,6 +23,11 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
   const [view, setView] = React.useState<ViewMode>(ViewMode.Day);
   const [tasks, setTasks] = React.useState<Task[]>(prepareTasks(chart, currency, projectMembers, projectStartDate, readonly));
   const [isChecked, setIsChecked] = React.useState(true);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [taskToDelete, setTaskToDelete] = React.useState<Task>({} as Task);
+  const onDeleteDialogClick = () => setDeleteDialogOpen(true);
+  const onDeleteDialogClose = () => setDeleteDialogOpen(false);
+
   let columnWidth = 65;
   if (view === ViewMode.Year) {
     columnWidth = 350;
@@ -61,28 +68,42 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
   };
 
   const handleTaskDelete = (task: Task) => {
-    const conf = window.confirm("Are you sure about " + task.name + " ?");
-    if (conf) {
-      setTasks(tasks.filter(t => t.id !== task.id));
-    }
-    return conf;
+    setTasks(tasks.filter(t => t.id !== task.id));
+    chart.phases.forEach(phase => {
+      phase.tasks = phase.tasks.filter(phaseTask => phaseTask.workId != parseInt(task.id));
+    })
+    chart.phases.forEach(phase => {
+      phase.tasks.map(phaseTask => {
+        phaseTask.predecessors = phaseTask.predecessors.filter(predecessor => predecessor != parseInt(task.id));
+      })
+    })
+    onDeleteDialogClose();
+    return true;
+  };
+
+  const openTaskDeleteDialog = (task: Task) => {
+    onDeleteDialogClick();
+    setTaskToDelete(task);
   };
 
   const handleDblClick = (task: Task) => {
     alert("On Double Click event Id:" + task.id);
   };
 
-  const handleClick = (task: Task) => {
-    console.log("On Click event Id:" + task.id);
-  };
-
-  const handleSelect = (task: Task, isSelected: boolean) => {
-    console.log(task.name + " has " + (isSelected ? "selected" : "unselected"));
-  };
-
   const handleExpanderClick = (task: Task) => {
     setTasks(tasks.map(t => (t.id === task.id ? task : t)));
-    console.log("On expander click Id:" + task.id);
+  };
+
+  const handleProgressChange = async (task: Task) => {
+    setTasks(tasks.map(t => (t.id === task.id ? task : t)));
+    chart.phases.forEach(phase => {
+      phase.tasks.map(phaseTask => {
+        if (phaseTask.workId === parseInt(task.id)) {
+          phaseTask.state = task.progress;
+        }
+      })
+    })
+    console.log("On progress change Id:" + task.id);
   };
 
   const computeGanttWidth = (): number => {
@@ -137,11 +158,10 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
         viewMode={view}
         fontFamily="Raleway, sans-serif"
         onDateChange={handleTaskChange}
-        onDelete={handleTaskDelete}
+        onDelete={openTaskDeleteDialog}
         onDoubleClick={handleDblClick}
-        onClick={handleClick}
-        onSelect={handleSelect}
         onExpanderClick={handleExpanderClick}
+        onProgressChange={handleProgressChange}
         listCellWidth={isChecked ? "155px" : ""}
         ganttHeight={computeGanttWidth()}
         columnWidth={columnWidth}
@@ -154,6 +174,16 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
         projectBackgroundSelectedColor="rgb(138 19 70)"
         projectProgressSelectedColor="rgb(138 19 70)"
       />
+      <Dialog open={isDeleteDialogOpen} onClose={onDeleteDialogClose}>
+                 <DialogTitle>
+                    <Typography variant="body1">Are you sure you want to delete "{taskToDelete.name}" task?</Typography>
+                    <Typography color="primary" variant="body2">This task will be removed as predeccesor from dependent tasks too.</Typography> 
+                </DialogTitle>
+                <DialogActions>
+                    <Button onClick={onDeleteDialogClose} color="secondary">Cancel</Button>
+                    <Button onClick={() => handleTaskDelete(taskToDelete)} color="warning" variant="contained">Delete</Button>
+                </DialogActions>
+      </Dialog>
     </div>
   );
 }

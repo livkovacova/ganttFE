@@ -102,43 +102,40 @@ export const GanttChartPage = () => {
 
                 <div className="bottomSectionContainer">
                     <div
-                        className="saveGanttButtons"
+                        className="editGanttButtons"
                     >
+                        
                         <Button
-                            sx={{ marginRight: "0.4vw" }}
+                            sx={{ marginLeft: "0.6vw" }}
                             variant="contained"
                             onClick={() => { navigateToProjectDetailsPage() }}
                             color="primary"
                         >Back to project page</Button>
 
+                        <div>
                         {alreadyCreated ? undefined : (
                             <>
                                 <Button
+                                    sx={{ marginRight: "0.4vw" }}
                                     variant="contained"
                                     onClick={() => { navigateToEditPhases() }}
                                     color="primary"
-                                    disabled={ganttSaved}
-                                >BACK TO EDIT PHASES</Button>
-                            </>
-                        )}
-                        {alreadyCreated ? undefined : (
-                            <>
-                                <Button
-                                    variant="contained"
-                                    onClick={() => { saveGanttChart() }}
-                                    color="primary"
-                                    disabled={ganttSaved}
-                                >Save GANTT CHART</Button>
+                                >EDIT PHASES</Button>
                             </>
                         )}
 
+                        <Button
+                            sx={{ marginRight: "0.6vw" }}
+                            variant="contained"
+                            onClick={() => { saveGanttChart() }}
+                            color="primary"
+                        >{alreadyCreated || ganttSaved? "UPDATE " : "SAVE "}GANTT CHART</Button>
+                        </div>
                     </div>
                 </div>
             </div>
         </ThemeProvider>
     );
-    //add mesage about saved gantt
-
 };
 
 export default GanttChartPage;

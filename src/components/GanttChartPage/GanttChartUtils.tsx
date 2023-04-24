@@ -67,7 +67,6 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
 
   const preparedTasks: ExtendedTask[] = [];
 
-  //PRIORITY IS LOW ALWAYS
   chart.phases.forEach(phase => {
     const [phaseStart, phaseEnd] = getStartEndDateForProjectPhase(phase.tasks);
     const newPhase: ExtendedTask = {
@@ -78,7 +77,7 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
       progress: 100,
       type: "project",
       hideChildren: false,
-      isDisabled: readOnly,
+      isDisabled: false,
     }
     preparedTasks.push(newPhase);
     phase.tasks.forEach( task =>{
@@ -92,7 +91,7 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
           id: task.workId.toString(),
           progress: task.state,
           type: "task",
-          isDisabled: readOnly,
+          isDisabled: false,
           project: phase.name,
           priority: task.priority,
           dependencies: getDependenciesProperty(task.predecessors),

@@ -27,16 +27,16 @@
 
 .bottomSectionContainer {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
     border-top: 2px solid lightgrey;
     height: 8vh;
 }
 
-.saveGanttButtons{
+.editGanttButtons{
     height: 3em;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-right: 1vw;
+    justify-content: space-between;
 }

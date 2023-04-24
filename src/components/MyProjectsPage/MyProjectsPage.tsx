@@ -170,7 +170,7 @@ const HomePage = ({isManager}: Props) => {
             {renderProjects()}
             <Dialog open={isDeleteDialogOpen} onClose={onDeleteDialogClose}>
                  <DialogTitle>
-                    Are you sure you want to delete "{projectForAction.name}" project?
+                 <Typography variant="body1">Are you sure you want to delete "{projectForAction.name}" project?</Typography>
                 </DialogTitle>
                 <DialogActions>
                     <Button onClick={onDeleteDialogClose} color="secondary">Cancel</Button>
