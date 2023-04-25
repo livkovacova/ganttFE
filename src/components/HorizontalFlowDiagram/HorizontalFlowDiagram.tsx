@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import ReactFlow, { Node, addEdge, OnConnect, Connection, Position, MarkerType} from 'react-flow-renderer';
+import ReactFlow, { Node, addEdge, OnConnect, Connection, Position, MarkerType } from 'react-flow-renderer';
 import 'react-flow-renderer/dist/style.css';
 import { Edge } from 'reactflow';
 import { PhaseResponse } from '../commons/Phase';
@@ -8,73 +8,82 @@ import TooltipNode from './TooltipNode';
 import IUser from '../../types/user.type';
 
 interface Props {
-    phases: PhaseResponse[]
-    teamMembers: IUser[]
-    selectedPhases: string[]
-    selectedAssignees: string[]
-    selectedStates: string[]
-  }
+  phases: PhaseResponse[]
+  teamMembers: IUser[]
+  selectedPhases: string[]
+  selectedAssignees: string[]
+  selectedStates: string[]
+}
 
 const nodeTypes = {
-    tooltip: TooltipNode
+  tooltip: TooltipNode
 };
 
 const colorOptions = [
-    '#ffcbce',
-    '#8fa8ae',
-    '#ffd4fa',
-    '#CD7A9A',
-    '#C497AD',
-    '#81D9D5',
-    '#C8E9A0',
-    '#F7A278',
-    '#76BED0',
-    '#E9B15D',
-    '#C497AD',
-    '#8BA4D0',
-    '#ffeae5',
-    '#b3ccff',
-    '#ffd580',
-    '#E2FDFF',
-    '#BFD7FF',
-    '#FBF7F4',
-    'E8998D',  
-    '#E3A587'
+  '#ffcbce',
+  '#8fa8ae',
+  '#ffd4fa',
+  '#CD7A9A',
+  '#C497AD',
+  '#81D9D5',
+  '#C8E9A0',
+  '#F7A278',
+  '#76BED0',
+  '#E9B15D',
+  '#C497AD',
+  '#8BA4D0',
+  '#ffeae5',
+  '#b3ccff',
+  '#ffd580',
+  '#E2FDFF',
+  '#BFD7FF',
+  '#FBF7F4',
+  'E8998D',
+  '#E3A587'
 ]
 
-const getAssigneesProperty = (assignees: Array<number>, projectMembers: IUser[]): string[] =>{
+let hiddenNodesIds: string[] = [];
+
+const getAssigneesProperty = (assignees: Array<number>, projectMembers: IUser[]): string[] => {
   const result: Array<string> = [];
   console.log(projectMembers)
   assignees.forEach(assignee => {
-      let member = projectMembers.find(member => member.id === assignee);
-      if (member !== undefined){
-          result.push(member.username);
-      }
+    let member = projectMembers.find(member => member.id === assignee);
+    if (member !== undefined) {
+      result.push(member.username);
+    }
   })
   return result;
 }
 
 const resolveTaskState = (progress: number): string => {
-  let state = progress === 0 ? "not started" : progress === 100? "done" : "in progress";
+  let state = progress === 0 ? "not started" : progress === 100 ? "done" : "in progress";
   return state;
 }
 
-const resolveHiddenProperty = (selectedPhases: string[], currentPhase: string, selectedUsers: string[], assignees: string[], selectedStates: string[], currentProgress: number) =>{
-  console.log(selectedUsers);
-  console.log(selectedPhases);
-  console.log(assignees);
-  console.log(currentPhase);
+const resolveHiddenProperty = (selectedPhases: string[], currentPhase: string, selectedUsers: string[], assignees: string[], selectedStates: string[], currentProgress: number, taskId: string) => {
   let haveAssignee = false;
   selectedUsers.forEach(selected => {
     assignees.forEach(assignee => {
-      if(assignee === selected){
+      if (assignee === selected) {
         haveAssignee = true;
       }
     })
   })
   let currentState = resolveTaskState(currentProgress);
-  const hidden = haveAssignee && selectedPhases.includes(currentPhase) && selectedStates.includes(currentState)? false : true
+  const hidden = haveAssignee && selectedPhases.includes(currentPhase) && selectedStates.includes(currentState) ? false : true
+  if (hidden) {
+    hiddenNodesIds.push(taskId);
+    console.log(hiddenNodesIds);
+  }
+  else {
+    hiddenNodesIds = hiddenNodesIds.filter(hiddenNode => hiddenNode != taskId);
+  }
   return hidden;
+}
+
+const resolveEdgeHiddenProperty = (predecessorId: string): boolean => {
+  return hiddenNodesIds.some(hiddenId => hiddenId === predecessorId);
 }
 
 const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => {
@@ -82,7 +91,7 @@ const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => 
   let newPhasePositionX = 0;
   phases.forEach(phase => {
     const phaseNode: Node = {
-      id: `parent-${phase.workId}`,
+      id: `phase-${phase.workId}`,
       data: { label: phase.name },
       type: 'group',
       position: { x: 0, y: 0 },
@@ -96,12 +105,12 @@ const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => 
     phase.tasks.forEach(task => {
       const assignees = getAssigneesProperty(task.assignees, teamMembers);
       const taskNode: Node = {
-        id: `horizontal-${task.workId}`,
-        data: { label: task.name, phaseName: phase.name, assignees: assignees, progress: task.state, duration: task.duration, height:0},
+        id: `task-${task.workId}`,
+        data: { label: task.name, phaseName: phase.name, assignees: assignees, progress: task.state, duration: task.duration, height: 0 },
         position: { x: 0, y: 0 },
-        parentNode: `parent-${phase.workId}`,
+        parentNode: `phase-${phase.workId}`,
         sourcePosition: Position.Right,
-        style: { zIndex: 3, borderRadius: "7px"},
+        style: { zIndex: 3, borderRadius: "7px" },
         selectable: true,
         hidden: false
       }
@@ -116,12 +125,12 @@ const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => 
       let thisTaskIsPredacessor = false;
       phases.forEach(phasei => {
         phasei.tasks.forEach(taski => {
-            if (taski.predecessors.find(pred => pred == task.workId) != null){
-                thisTaskIsPredacessor = true;
-            } 
+          if (taski.predecessors.find(pred => pred == task.workId) != null) {
+            thisTaskIsPredacessor = true;
+          }
         })
       })
-      if(!thisTaskIsPredacessor){
+      if (!thisTaskIsPredacessor) {
         taskNode.data.output = true;
       }
       allNodes.push(taskNode);
@@ -139,11 +148,11 @@ const positionateNodesRecursive = (createdNodes: Node[], createdEdges: Edge[], s
   console.log(colorMap);
   phaseNodes.forEach(phaseNode => { taskNodes.push(phaseNode) });
   taskNodes.forEach(taskNode => {
-    if(taskNode.type != 'group'){
-        taskNode.style!.backgroundColor = colorMap.get(taskNode.parentNode!);
+    if (taskNode.type != 'group') {
+      taskNode.style!.backgroundColor = colorMap.get(taskNode.parentNode!);
     }
-    if (taskNode.data.assignees != undefined){
-      taskNode.hidden = resolveHiddenProperty(selectedPhases, taskNode.data.phaseName, selectedAssignees, taskNode.data.assignees, selectedStates, taskNode.data.progress);
+    if (taskNode.data.assignees != undefined) {
+      taskNode.hidden = resolveHiddenProperty(selectedPhases, taskNode.data.phaseName, selectedAssignees, taskNode.data.assignees, selectedStates, taskNode.data.progress, taskNode.id);
     }
   })
 
@@ -160,8 +169,8 @@ const prepareEdges = (phases: PhaseResponse[]): Edge[] => {
       task.predecessors.forEach(predecessor => {
         const newEdge: Edge = {
           id: `horizontalEdge-${edgeId}`,
-          source: `horizontal-${predecessor}`,
-          target: `horizontal-${task.workId}`,
+          source: `task-${predecessor}`,
+          target: `task-${task.workId}`,
           animated: false,
           type: 'smoothstep',
           pathOptions: {
@@ -170,7 +179,8 @@ const prepareEdges = (phases: PhaseResponse[]): Edge[] => {
           style: { stroke: "white", strokeWidth: 2 },
           markerEnd: {
             type: MarkerType.ArrowClosed
-          }
+          },
+          hidden: resolveEdgeHiddenProperty(`task-${predecessor}`)
         };
         edgeId++;
         console.log(newEdge);
@@ -192,18 +202,19 @@ const HorizontalFlow = ({ phases, teamMembers, selectedPhases, selectedAssignees
   React.useEffect(() => {
     setNodes(prepareNodes(phases, teamMembers));
   }, []);
-  
+
   React.useEffect(() => {
     setNodes(positionateNodesRecursive(nodes, edges, selectedPhases, selectedAssignees, selectedStates));
-  }, [selectedAssignees, selectedPhases]);
+  }, [selectedAssignees, selectedPhases, selectedStates]);
 
   React.useEffect(() => {
     setNodes(positionateNodesRecursive(nodes, edges, selectedPhases, selectedAssignees, selectedStates));
   }, []);
 
   React.useEffect(() => {
-    setEdges(prepareEdges(phases))
-  }, [nodes]);
+    setEdges(prepareEdges(phases));
+    console.log(hiddenNodesIds);
+  }, [nodes, selectedAssignees, selectedPhases, selectedStates]);
 
   const isAllPrepared = () => {
     return nodes.length != 0 && edges.length != 0;

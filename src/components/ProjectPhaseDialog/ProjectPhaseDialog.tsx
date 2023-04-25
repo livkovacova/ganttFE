@@ -180,7 +180,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
 
     React.useEffect(() => {
         preparePredecessorsOptions();
-    }, [savedPhases]);
+    }, [savedPhases, isOpen]);
 
     React.useEffect(() => {
         updatePredecessorsOptions();

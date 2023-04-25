@@ -161,10 +161,6 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
   }));
 
   const TaskTooltip: React.FC<{ task: ExtendedTask, fontSize: string, fontFamily: string }> = ({ task, fontSize, fontFamily }) => {
-    const style = {
-      fontSize,
-      fontFamily
-    };
     return (
       <Tooltip title={task.name} placement="bottom">
         <Item>

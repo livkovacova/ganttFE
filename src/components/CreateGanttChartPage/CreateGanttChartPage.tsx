@@ -143,7 +143,6 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
             setNewPhaseId(newPhaseId+1);
         }
         else{
-            //let editedPhase = savedPhases.find((savedPhase) => savedPhase.workId === phase.workId);
             let editedPhases = savedPhases.map(savedPhase => savedPhase.workId === phase.workId? phase : savedPhase)
             setSavedPhases(editedPhases);
             setIsEditing(false);

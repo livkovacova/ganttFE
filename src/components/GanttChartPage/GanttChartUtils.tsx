@@ -77,7 +77,7 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
       progress: 100,
       type: "project",
       hideChildren: false,
-      isDisabled: false,
+      isDisabled: readOnly,
     }
     preparedTasks.push(newPhase);
     phase.tasks.forEach( task =>{
@@ -91,7 +91,7 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
           id: task.workId.toString(),
           progress: task.state,
           type: "task",
-          isDisabled: false,
+          isDisabled: readOnly,
           project: phase.name,
           priority: task.priority,
           dependencies: getDependenciesProperty(task.predecessors),

@@ -51,7 +51,8 @@ export const GanttChartPage = () => {
     }
 
     const saveGanttChart = async () => {
-        await uploadGanttChart(ganttChart!);
+        const chart: GanttChart = await uploadGanttChart(ganttChart!);
+        setGanttChart(chart);
         setGanttSaved(true);
     }
 
@@ -97,7 +98,7 @@ export const GanttChartPage = () => {
                             projectMembers={project.members}
                             projectStartDate={project.startDate!}
                             onDateChange={handleDateChanges}
-                            readonly={alreadyCreated}
+                            readonly={onlyView}
                             isManager={currentUser.roles!.includes("ROLE_MANAGER")}
                         />
                     </div>
@@ -117,7 +118,7 @@ export const GanttChartPage = () => {
                         >Back to project page</Button>
 
                         <div>
-                        {alreadyCreated ? undefined : (
+                        {alreadyCreated || ganttSaved ? undefined : (
                             <>
                                 <Button
                                     sx={{ marginRight: "0.4vw" }}
@@ -128,12 +129,14 @@ export const GanttChartPage = () => {
                             </>
                         )}
 
+                        {onlyView ? undefined : (
                         <Button
                             sx={{ marginRight: "0.6vw" }}
                             variant="contained"
                             onClick={alreadyCreated || ganttSaved? () => { editGanttChart() } : () => { saveGanttChart() }}
                             color="primary"
                         >{alreadyCreated || ganttSaved? "UPDATE " : "SAVE "}GANTT CHART</Button>
+                        )}
                         </div>
                     </div>
                 </div>

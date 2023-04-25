@@ -42,7 +42,7 @@ export const ProjectDetailsPage = ({isManager, currentUser}: Props) => {
                 project: project,
                 currentUser: currentUser,
                 alreadyCreated: true, 
-                onlyView: true
+                onlyView: !isManager
             }
         })
     }
