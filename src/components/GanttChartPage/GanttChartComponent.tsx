@@ -6,9 +6,10 @@ import "gantt-task-react/dist/index.css";
 import './GanttChartComponent.css'
 import { GanttChart } from "../commons/GanttChart";
 import IUser from "../../types/user.type";
-import { Button, Dialog, DialogActions, DialogTitle, Typography } from "@mui/material";
-import { TaskResponse } from "../commons/Task";
+import { Button, Dialog, DialogActions, DialogTitle, Paper, Tooltip, Typography, styled } from "@mui/material";
 import { TeamMemberOption } from "../commons/TeamMemberOption";
+import { EditTaskForm } from "./EditTaskForm";
+import { PRIORITY } from "../commons/enums";
 
 interface Props {
   chart: GanttChart,
@@ -22,9 +23,9 @@ interface Props {
 
 export const GanttChartComponent = ({ chart, currency, projectMembers, projectStartDate, onDateChange, readonly, isManager }: Props) => {
   const [view, setView] = React.useState<ViewMode>(ViewMode.Day);
-  const [tasks, setTasks] = React.useState<Task[]>(prepareTasks(chart, currency, projectMembers, projectStartDate, readonly));
+  const [tasks, setTasks] = React.useState<ExtendedTask[]>(prepareTasks(chart, currency, projectMembers, projectStartDate, readonly));
   const [isChecked, setIsChecked] = React.useState(true);
-  const [taskToEdit, setTaskToEdit] = React.useState<Task>({} as Task);
+  const [taskToEdit, setTaskToEdit] = React.useState<ExtendedTask>({} as Task);
   
   const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const onDeleteDialogClick = () => setDeleteDialogOpen(true);
@@ -43,7 +44,7 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
     columnWidth = 250;
   }
 
-  const handleTaskChange = (task: Task) => {
+  const handleTaskChange = (task: ExtendedTask) => {
     console.log("On date change Id:" + task.id);
     let newTasks = tasks.map(t => (t.id === task.id ? task : t));
     chart.phases.forEach(phase => {
@@ -73,7 +74,7 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
     setTasks(newTasks);
   };
 
-  const handleTaskDelete = (task: Task) => {
+  const handleTaskDelete = (task: ExtendedTask) => {
     setTasks(tasks.filter(t => t.id !== task.id));
     chart.phases.forEach(phase => {
       phase.tasks = phase.tasks.filter(phaseTask => phaseTask.workId != parseInt(task.id));
@@ -87,27 +88,42 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
     return true;
   };
 
-  const handleTaskEdit = (task: Task) => {
+  const handleTaskEdit = (task: ExtendedTask, assignees: TeamMemberOption[], priority: PRIORITY, resources: number) => {
     setTasks(tasks.map(t => (t.id === task.id ? task : t)));
+    chart.phases.forEach(phase => {
+      phase.tasks.map(phaseTask => {
+        if (phaseTask.workId === parseInt(task.id)) {
+          phaseTask.assignees = assignees.map(assignee => assignee.value);
+          phaseTask.priority = priority;
+          phaseTask.resources = resources;
+        }
+      })
+    })
     onEditDialogClose();
     return true;
   };
 
-  const openTaskDeleteDialog = (task: Task) => {
+  const openTaskDeleteDialog = (task: ExtendedTask) => {
+    if(task.type === "project"){
+      return;
+    }
     onDeleteDialogClick();
     setTaskToEdit(task);
   };
 
-  const openEditTaskDialog = (task: Task) => {
-    onEditDialogClick();
+  const openEditTaskDialog = (task: ExtendedTask) => {
+    if(task.type === "project"){
+      return;
+    }
     setTaskToEdit(task);
+    onEditDialogClick();
   };
 
-  const handleExpanderClick = (task: Task) => {
+  const handleExpanderClick = (task: ExtendedTask) => {
     setTasks(tasks.map(t => (t.id === task.id ? task : t)));
   };
 
-  const handleProgressChange = async (task: Task) => {
+  const handleProgressChange = async (task: ExtendedTask) => {
     setTasks(tasks.map(t => (t.id === task.id ? task : t)));
     chart.phases.forEach(phase => {
       phase.tasks.map(phaseTask => {
@@ -116,7 +132,6 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
         }
       })
     })
-    console.log("On progress change Id:" + task.id);
   };
 
   const computeGanttWidth = (): number => {
@@ -136,29 +151,37 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
     return options;
 };
 
-  const MyCustomizedTooltip: React.FC<{ task: ExtendedTask, fontSize: string, fontFamily: string }> = ({ task, fontSize, fontFamily }) => {
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? 'gray' : 'white',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'start',
+    color: theme.palette.text.primary,
+    boxShadow: "none"
+  }));
+
+  const TaskTooltip: React.FC<{ task: ExtendedTask, fontSize: string, fontFamily: string }> = ({ task, fontSize, fontFamily }) => {
     const style = {
       fontSize,
       fontFamily
     };
     return (
-      <div className="tooltipContainer" style={style}>
-        <b style={{ fontSize: fontSize + 6 }}>{`${task.name
-          }: ${task.start.toLocaleDateString()} - ${task.end.toLocaleDateString()}`}</b>
-        {task.end.getTime() - task.start.getTime() !== 0 && (
-          <div className="tooltipParagraph">{`Duration: ${~~(
+      <Tooltip title={task.name} placement="bottom">
+        <Item>
+          <Typography variant="subtitle2" fontWeight={"bold"}>{task.name}: {task.start.toLocaleDateString()} - {task.end.toLocaleDateString()}</Typography>
+          <Typography variant="subtitle2">{`Duration: ${~~(
             (task.end.getTime() - task.start.getTime()) /
             (1000 * 60 * 60 * 24)
-          )} day(s)`}</div>
-        )}
-        {task.type === "task" ?
+          )} day(s)`}
+          </Typography>
+          {task.type === "task" ?
           (<>
-            <div className="tooltipParagraph">Priority: {task.priority}</div>
-            <div className="tooltipParagraph">Assignees: {task.assignees}</div>
-            <div className="tooltipParagraph">Progress: {task.progress}%</div>
+            <Typography variant="subtitle2">Priority: {task.priority}</Typography>
+            <Typography variant="subtitle2">Assignees: {task.assignees}</Typography>
+            <Typography variant="subtitle2">Progress: {task.progress}%</Typography>
             {isManager ?
               (<>
-                <div className="tooltipParagraph">Resources: {task.resources}</div>
+                <Typography variant="subtitle2">Resources: {task.resources}</Typography>
               </>)
               :
               (undefined)
@@ -167,8 +190,8 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
           :
           (undefined)
         }
-
-      </div>
+        </Item>
+      </Tooltip>
     )
   }
 
@@ -191,7 +214,7 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
         listCellWidth={isChecked ? "155px" : ""}
         ganttHeight={computeGanttWidth()}
         columnWidth={columnWidth}
-        TooltipContent={MyCustomizedTooltip}
+        TooltipContent={TaskTooltip}
         projectBackgroundColor='#B03066'
         todayColor="rgba(245, 139, 0, 0.3)"
         barProgressColor="rgb(160 162 168)"
@@ -210,16 +233,14 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
                     <Button onClick={() => handleTaskDelete(taskToEdit)} color="warning" variant="contained">Delete</Button>
                 </DialogActions>
       </Dialog>
-      <Dialog open={isEditDialogOpen} onClose={onEditDialogClose}>
-                 <DialogTitle>
-                    <Typography variant="h5">{taskToEdit.name}</Typography>
-                    <Typography variant="body2">Edit task details</Typography>
-                </DialogTitle>
-                <DialogActions>
-                    <Button onClick={onEditDialogClose} color="secondary">Cancel</Button>
-                    <Button onClick={() => handleTaskEdit(taskToEdit)} color="warning" variant="contained">Save</Button>
-                </DialogActions>
-      </Dialog>
+      <EditTaskForm
+        isOpen={isEditDialogOpen}
+        onClose={onEditDialogClose}
+        onSubmit={handleTaskEdit}
+        taskToEdit={taskToEdit}
+        assigneesOptions={prepareAssigneesOptions()}
+        currency={currency}
+      />
     </div>
   );
 }

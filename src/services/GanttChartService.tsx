@@ -51,6 +51,18 @@ export const uploadGanttChart= async (ganttChart: GanttChart) => {
     })
 }
 
+export const updateGanttChart= async (ganttChart: GanttChart) => {
+    return axios.post(API_URL + "/edit", ganttChart, { headers: authHeader() })
+    .then((res: any) => res.data)
+    .catch((err: any) => {
+        console.error("Error editing gantt chart", err);
+        if (err.response && err.response.status === 401) {
+            eventBus.dispatch("logout");
+        }
+        return {};
+    })
+}
+
 export const getGanttChartInfo= async (id: number): Promise<GanttChartInfo> => {
     return axios.get(API_URL + "/info", {
         params: {

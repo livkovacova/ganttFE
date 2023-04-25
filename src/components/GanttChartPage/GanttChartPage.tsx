@@ -6,7 +6,7 @@ import { NavigationBar } from "../NavigationBar/NavigationBar";
 import IUser from "../../types/user.type";
 import { useParams, useNavigate } from "react-router-dom";
 import "./GanttChartPage.css"
-import { createGanttChart, getGanttChart, uploadGanttChart } from "../../services/GanttChartService";
+import { createGanttChart, getGanttChart, uploadGanttChart, updateGanttChart } from "../../services/GanttChartService";
 import { Phase } from "../commons/Phase";
 import { Project } from "../commons/Projects";
 import _without from "lodash/without";
@@ -47,12 +47,16 @@ export const GanttChartPage = () => {
 
     const fetchGanttChart = async () => {
         const chart: GanttChart = await getGanttChart(project.id);
-        setGanttChart(chart)
+        setGanttChart(chart);
     }
 
     const saveGanttChart = async () => {
         await uploadGanttChart(ganttChart!);
         setGanttSaved(true);
+    }
+
+    const editGanttChart = async () => {
+        await updateGanttChart(ganttChart!);
     }
 
     useEffect(() => {
@@ -127,7 +131,7 @@ export const GanttChartPage = () => {
                         <Button
                             sx={{ marginRight: "0.6vw" }}
                             variant="contained"
-                            onClick={() => { saveGanttChart() }}
+                            onClick={alreadyCreated || ganttSaved? () => { editGanttChart() } : () => { saveGanttChart() }}
                             color="primary"
                         >{alreadyCreated || ganttSaved? "UPDATE " : "SAVE "}GANTT CHART</Button>
                         </div>

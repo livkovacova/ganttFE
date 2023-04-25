@@ -2,7 +2,7 @@ import { TeamMemberOption } from "../commons/TeamMemberOption";
 import { PredecessorOption } from "../commons/PredecessorOption";
 import { Task } from "../commons/Task";
 import React from "react";
-import { duration, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
+import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import mainTheme from "../commons/mainTheme";
 import "./ProjectTaskForm.css"
 import { Button, ButtonGroup, Checkbox, Chip, FormControl, FormControlLabel, FormHelperText, IconButton, InputAdornment, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent, Switch, TextField } from "@mui/material";
@@ -10,7 +10,6 @@ import { PRIORITY, TIME_UNIT } from "../commons/enums";
 import _without from "lodash/without";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CancelIcon from '@mui/icons-material/Cancel';
-import DoneIcon from '@mui/icons-material/Done';
 
 
 interface Props {
@@ -208,7 +207,7 @@ export const ProjectTaskForm = ({ isEditing, taskForAction, refreshPage, onSubmi
                             labelId="priority-select-label"
                             id="priority-simple-select"
                             value={priority}
-                            label="time unit"
+                            label="Priority"
                             size="small"
                             fullWidth
                             onChange={(e) => setNewPriority(e.target.value as PRIORITY)}
