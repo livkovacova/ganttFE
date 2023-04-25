@@ -39,7 +39,7 @@ export const getGanttChart= async (id: number): Promise<GanttChart> => {
     })
 }
 
-export const uploadGanttChart= async (ganttChart: GanttChart) => {
+export const uploadGanttChart= async (ganttChart: GanttChart): Promise<GanttChart> => {
     return axios.post(API_URL + "/save", ganttChart, { headers: authHeader() })
     .then((res: any) => res.data)
     .catch((err: any) => {
