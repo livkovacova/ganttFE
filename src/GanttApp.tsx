@@ -9,7 +9,6 @@ import IUser from './types/user.type';
 import EventBus from "./components/commons/EventBus";
 import LoginPage from "./components/LoginPage/LoginPage";
 import RegisterPage from "./components/RegisterPage/RegisterPage";
-import ProfilePage from "./components/ProfilePage/ProfilePage";
 import HomePage from "./components/MyProjectsPage/MyProjectsPage";
 import ProjectDetailsPage from "./components/ProjectDetailsPage/ProjectDetailsPage";
 import CreateGanttChartPage from "./components/CreateGanttChartPage/CreateGanttChartPage";
