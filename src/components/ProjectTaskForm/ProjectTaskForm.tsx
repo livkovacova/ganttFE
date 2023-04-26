@@ -5,7 +5,7 @@ import React from "react";
 import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import mainTheme from "../commons/mainTheme";
 import "./ProjectTaskForm.css"
-import { Button, ButtonGroup, Checkbox, Chip, FormControl, FormControlLabel, FormHelperText, IconButton, InputAdornment, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent, Switch, TextField } from "@mui/material";
+import { Button, ButtonGroup, Checkbox, Chip, FormControl, FormHelperText, InputAdornment, InputLabel, ListItemText, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { PRIORITY, TIME_UNIT } from "../commons/enums";
 import _without from "lodash/without";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';

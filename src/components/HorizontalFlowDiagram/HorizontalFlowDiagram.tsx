@@ -139,23 +139,35 @@ const prepareNodes = (phases: PhaseResponse[], teamMembers: IUser[]): Node[] => 
   return allNodes;
 }
 
-const positionateNodesRecursive = (createdNodes: Node[], createdEdges: Edge[], selectedPhases: string[], selectedAssignees: string[], selectedStates: string[]): Node[] => {
+const positionateNodesRecursive = (
+  createdNodes: Node[], 
+  createdEdges: Edge[], 
+  selectedPhases: string[], 
+  selectedAssignees: string[], 
+  selectedStates: string[]): Node[] => {
+  
   let taskNodes = createdNodes.filter(createdNode => createdNode.type != 'group');
   positionateNodesToDataFlow(taskNodes, createdEdges);
 
   let phaseNodes: Node[] = createdNodes.filter(createdNode => createdNode.type == 'group');
   const colorMap = generateColorMap(phaseNodes, colorOptions);
-  console.log(colorMap);
   phaseNodes.forEach(phaseNode => { taskNodes.push(phaseNode) });
   taskNodes.forEach(taskNode => {
     if (taskNode.type != 'group') {
       taskNode.style!.backgroundColor = colorMap.get(taskNode.parentNode!);
     }
     if (taskNode.data.assignees != undefined) {
-      taskNode.hidden = resolveHiddenProperty(selectedPhases, taskNode.data.phaseName, selectedAssignees, taskNode.data.assignees, selectedStates, taskNode.data.progress, taskNode.id);
+      taskNode.hidden = resolveHiddenProperty(
+        selectedPhases, 
+        taskNode.data.phaseName, 
+        selectedAssignees, 
+        taskNode.data.assignees, 
+        selectedStates, 
+        taskNode.data.progress, 
+        taskNode.id
+        );
     }
   })
-
   return taskNodes;
 }
 

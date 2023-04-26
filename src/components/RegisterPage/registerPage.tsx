@@ -1,6 +1,5 @@
-import { Component } from "react";
-import { Navigate, redirect, useNavigate } from "react-router-dom";
-import { Formik, Field, Form, ErrorMessage, useField } from "formik";
+import { useNavigate } from "react-router-dom";
+import { Formik, Field, Form} from "formik";
 import * as Yup from "yup";
 import YupPassword from 'yup-password'
 import Box from '@mui/material/Box';
@@ -13,7 +12,6 @@ import AuthService from "../../services/AuthService";
 import { TextField, Alert, Select, MenuItem, SelectChangeEvent, InputLabel, FormControl} from "@mui/material";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React from "react"
-import { margin } from "@mui/system";
 
 YupPassword(Yup)
 
