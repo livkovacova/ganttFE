@@ -7,8 +7,8 @@ import AuthService from "./services/AuthService";
 import IUser from './types/user.type';
 
 import EventBus from "./components/commons/EventBus";
-import LoginPage from "./components/LoginPage/LoginPage";
-import RegisterPage from "./components/RegisterPage/RegisterPage";
+import LoginPage from "./components/LoginPage/loginPage";
+import RegisterPage from "./components/RegisterPage/registerPage";
 import HomePage from "./components/MyProjectsPage/MyProjectsPage";
 import ProjectDetailsPage from "./components/ProjectDetailsPage/ProjectDetailsPage";
 import CreateGanttChartPage from "./components/CreateGanttChartPage/CreateGanttChartPage";
