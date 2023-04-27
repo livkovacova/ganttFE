@@ -4,7 +4,7 @@ import { Project } from "../components/commons/Projects";
 import authHeader from "./AuthHeader";
 import eventBus from "../components/commons/EventBus";
 
-const API_URL = "http://localhost:8080/api/projects/";
+const API_URL = "https://lk-gantt-app.herokuapp.com/api/projects/";
 
 export const getPageOfProjects = async (userId: number, role: string, page?: number, size?: number): Promise<PageData<Project>> => {
     return axios.get(API_URL + "byUserPaged", {
