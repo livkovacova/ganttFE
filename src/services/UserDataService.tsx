@@ -3,7 +3,7 @@ import IUser, { TeamMember } from "../types/user.type";
 import authHeader from "./AuthHeader";
 import eventBus from "../components/commons/EventBus";
 
-const API_URL = "http://localhost:8080/api/users/";
+const API_URL = "https://lk-gantt-app.herokuapp.com/api/users/";
 
 export const getAllTeamMembers = async (): Promise<Array<TeamMember>> => {
     return axios.get(API_URL + "allTeamMembers", {

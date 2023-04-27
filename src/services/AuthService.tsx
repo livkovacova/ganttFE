@@ -2,7 +2,7 @@ import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 
 
-const API_URL = "http://localhost:8080/api/auth/";
+const API_URL = "https://lk-gantt-app.herokuapp.com/api/auth/";
 
 class AuthService {
   login(username: string, password: string) {

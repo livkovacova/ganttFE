@@ -4,7 +4,7 @@ import { GanttChart, GanttChartInfo } from "../components/commons/GanttChart";
 import authHeader from "./AuthHeader";
 import eventBus from "../components/commons/EventBus";
 
-const API_URL = "http://localhost:8080/api/ganttChart";
+const API_URL = "https://lk-gantt-app.herokuapp.com/api/ganttChart";
 
 export const createGanttChart = async (projectId: number, phases: Phase[]): Promise<GanttChart> => {
     return axios.post(API_URL + "/create", {
