@@ -50,7 +50,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
         setProjectName("");
         setSelectedProjectMembersOptions([]);
         setProjectStart(new Date());
-        setProjectManager(authService.getCurrentUser().username)
+        setProjectManager(authService.getCurrentUser().roles.includes("ROLE_MANAGER")? authService.getCurrentUser().username : projectToEdit.manager.username);
         setProjectDescription("");
         setProjectResources(0);
     };
