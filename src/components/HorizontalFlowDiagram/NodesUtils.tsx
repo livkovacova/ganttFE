@@ -35,7 +35,6 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
     else{
       assignees.forEach((assignee: string) => {
         let thisWidth = 0;
-        console.log(assignee.length);
         if(assignee.length > 4){
             thisWidth = 30;
         }
@@ -43,7 +42,6 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
           thisWidth = 25;
         }
         rowWidth += thisWidth;
-        console.log(rowWidth);
         if(rowWidth > 170){
           rows++;
           rowWidth = thisWidth;
@@ -66,7 +64,6 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
     if (visited.has(node)){
       let oldY = maxRowValue.get(positionsMap.get(node)!.yPos);
       maxRowValue.set(positionsMap.get(node)!.xPos, oldY!-1);
-      console.log(maxRowValue);
     } 
 
     const targets = edges
@@ -78,9 +75,6 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
     let allSourcesVisited = true;
       sources?.forEach(source => {
         if(!visited.has(source)){
-          console.log(node);
-          console.log(source);
-          console.log(visited);
           allSourcesVisited = false;
         }
       })
@@ -101,8 +95,6 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
       }
     
       targets.forEach((tgt) => {
-          console.log(node);
-          console.log(positionsMap);
           let rootX = positionsMap.get(node)!.xPos + 1;
           let maxRootY = maxRowValue.get(positionsMap.get(node)!.xPos + 1);
           if(maxRootY === undefined){
@@ -140,8 +132,6 @@ export const computePositions = (nodes: FlowNode[], edges: FlowEdge[]): Map<Flow
     computeFlowNodePosition(root)
   });
 
-  console.log(positionsMap);
-  console.log(maxRowValue);
   return positionsMap;
 }
 
@@ -152,8 +142,6 @@ export const positionateNodesToDataFlow = (nodes: FlowNode[], edges: Edge[]) => 
     const maxRowHeight = [...positionsMap.values()]
     .filter((nodePos) => nodePos.yPos === row)
     .reduce((max, nodePos) => (nodePos.nodeHeight > max ? nodePos.nodeHeight : max), 0);
-    console.log(maxRowHeight);
-    console.log(positionsMap);
     node.position.x = COLUMN_WIDTH * (positionsMap.get(node)!.xPos) + COLUMN_MARGIN;
     node.position.y = (maxRowHeight+30) * (positionsMap.get(node)!.yPos) + ROW_MARGIN;
     node.data.height = positionsMap.get(node)!.nodeHeight;

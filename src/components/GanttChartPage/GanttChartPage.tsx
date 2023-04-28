@@ -61,7 +61,6 @@ export const GanttChartPage = () => {
     }
 
     useEffect(() => {
-        console.log(alreadyCreated)
         if (!alreadyCreated) {
             generateGanttChart();
         }
@@ -72,7 +71,6 @@ export const GanttChartPage = () => {
 
     const handleDateChanges = (chart: GanttChart) => {
         setGanttChart(chart);
-        console.log(chart);
     }
 
     const navigateToEditPhases = () => {

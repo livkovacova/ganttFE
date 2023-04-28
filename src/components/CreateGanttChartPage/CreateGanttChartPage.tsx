@@ -26,7 +26,6 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
     const {id} = useParams();
     const navigate = useNavigate();
     const location = useLocation();
-    console.log(location);
     const isEditingGantt = location.state.isEditingGantt; 
     const previousState = isEditingGantt? location.state : undefined;
 
@@ -136,8 +135,6 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
     }
 
     const onAddPhaseSubmit = (phase: Phase) => {
-        console.log(phase);
-        console.log(isEditing);
         if(!isEditing){
             setSavedPhases([...savedPhases, phase]);
             setNewPhaseId(newPhaseId+1);
@@ -147,12 +144,10 @@ export const CreateGanttChartPage = ({currentUser}: Props) => {
             setSavedPhases(editedPhases);
             setIsEditing(false);
         }
-        console.log(savedPhases);
         setRefresh(!refresh);
     };
 
     const onCreateGanttChartSubmit = () => {
-        console.log(location);
         navigate(`/projects/${id}/gantt-chart`, {
             state: {
                 currentUser: currentUser,

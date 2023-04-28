@@ -47,7 +47,6 @@ const LoginPage = () => {
     React.useEffect(() => {
       let currentUser = AuthService.getCurrentUser();
       if (currentUser) {
-          console.log(currentUser);
           setRedirect("/home");
       };
     });

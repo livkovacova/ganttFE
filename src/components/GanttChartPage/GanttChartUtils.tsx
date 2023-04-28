@@ -37,8 +37,6 @@ function getStartEndDateForProjectPhase(tasks: TaskResponse[]) {
     if (end.getTime() < thisTaskEnd.getTime()) {
       end = thisTaskEnd;
     }
-    console.log(start);
-    console.log(end);
   }
   return [start, end];
 }
@@ -47,7 +45,6 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
 
   const getAssigneesProperty = (assignees: Array<number>): string =>{
     const result: Array<string> = [];
-    console.log(projectMembers)
     assignees.forEach(assignee => {
         let member = projectMembers.find(member => member.id === assignee);
         if (member !== undefined){
@@ -83,7 +80,6 @@ export function prepareTasks( chart: GanttChart, currency: string, projectMember
     phase.tasks.forEach( task =>{
         const startDate = getNewDate(task.startDate, true);
         const endDate = getNewDate(task.endDate, false);
-        console.log(task.assignees);
         const newTask: ExtendedTask = {
           start: new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()),
           end: new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()),

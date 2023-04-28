@@ -2,7 +2,6 @@ import secureLocalStorage from "react-secure-storage";
 
 export default function authHeader() {
     const userStr = secureLocalStorage.getItem("user");
-    console.log("user: "+userStr);
     let user = null;
     if (userStr)
       user = JSON.parse(userStr as string);

@@ -45,7 +45,6 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
   }
 
   const handleTaskChange = (task: ExtendedTask) => {
-    console.log("On date change Id:" + task.id);
     let newTasks = tasks.map(t => (t.id === task.id ? task : t));
     chart.phases.forEach(phase => {
       phase.tasks.map(phaseTask => {
@@ -140,7 +139,6 @@ export const GanttChartComponent = ({ chart, currency, projectMembers, projectSt
 
   const prepareAssigneesOptions = (): TeamMemberOption[] => {
     const options = projectMembers.map((teamMember) => {
-            console.log(teamMember.id)
             let option: TeamMemberOption = {
                 value: teamMember.id,
                 text: teamMember.username

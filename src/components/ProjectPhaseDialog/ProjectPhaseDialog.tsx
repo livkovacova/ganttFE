@@ -82,9 +82,7 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             }) 
         });
         
-        console.log(otherPhasesOptions);
         otherPhasesOptions.length == 0 ? setPredecessorsFormOptions([]) : setPredecessorsFormOptions(otherPhasesOptions);
-        console.log(predecessorsFormOptions);
     }
 
     const throwDuplicatesAway = (array: Array<PredecessorOption>): Array<PredecessorOption> => {
@@ -106,17 +104,12 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             }
             return option;
         });
-        console.log(thisPhaseOptions)
-        console.log(predecessorsFormOptions)
         let allOptions = throwDuplicatesAway(predecessorsFormOptions.concat(thisPhaseOptions)).reverse();
         allOptions.length == 0 ? setPredecessorsFormOptions([]) : setPredecessorsFormOptions(allOptions);
-        console.log("som v update:");
-        console.log(predecessorsFormOptions);
     }
 
     const prepareAssigneesOptions = () => {
         const options = project.members.map((teamMember) => {
-                console.log(teamMember.id)
                 let option: TeamMemberOption = {
                     value: teamMember.id,
                     text: teamMember.username
@@ -128,7 +121,6 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
             setAssigneesFormOptions([]);
         }
         else{
-            console.log(options)
             setAssigneesFormOptions(options as Array<TeamMemberOption>);
         }
     };
@@ -144,15 +136,12 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
     };
 
     const onFormSubmit = () => {
-        console.log(isFormValid());
         if (isFormValid()) {
-            console.log("phase saved")
             let phase: Phase = {
                 workId: phaseToEdit.workId,
                 name: phaseName,
                 tasks: savedTasks
             }
-            console.log(savedTasks);
             onSubmit(phase);
             closeForm(true);
             refreshPage();
@@ -184,7 +173,6 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
 
     React.useEffect(() => {
         updatePredecessorsOptions();
-        console.log("useefect");
     }, [savedTasks, taskEdited]);
 
     const removeItselfFromOptions = (taskId: number): PredecessorOption[] => {
@@ -195,7 +183,6 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         if (thisTaskOption){
             updatedPredecessorsOptions = _without(updatedPredecessorsOptions, thisTaskOption);
         }
-        console.log("REMOVED");
         return updatedPredecessorsOptions;
     }
 
@@ -231,7 +218,6 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         }
         setCreatedTasks([...createdTasks, newTask]);
         setNewTaskId(newTaskId+1);
-        console.log(createdTasks);
         handleRefresh();
         onAddTaskForm(newTaskId+1);
     }
@@ -247,8 +233,6 @@ export const ProjectPhaseDialog = ({isOpen, onClose, isEditing, phaseToEdit, ref
         else{
             setSavedTasks([...savedTasks, task]);
         }
-        console.log("Saved: ");
-        console.log(savedTasks);
         handleRefresh();
     };
 

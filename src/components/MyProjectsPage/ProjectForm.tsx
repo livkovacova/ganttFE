@@ -147,9 +147,7 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
     };
 
     const onFormSubmit = () => {
-        console.log(isFormValid());
         if (isFormValid()) {
-            console.log("project saved")
             saveProject();
             refreshPage();
         }
@@ -166,7 +164,6 @@ export const ProjectForm = ({isOpen, onClose, isEditing, projectToEdit, onlyView
 
     const handleDelete = (e: React.MouseEvent, value: TeamMemberOption) => {
         e.preventDefault();
-        console.log("clicked delete");
         setSelectedProjectMembersOptions((current) => _without(current, value));
     };
 

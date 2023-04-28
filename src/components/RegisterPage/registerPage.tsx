@@ -71,7 +71,6 @@ const RegisterPage = () => {
     const handleRegister = (formValue: { username: string; email: string; password: string; role: string }) => {
         
         const { username, email, password, role } = formValue;
-        console.log("role in register:" +role);
     
         setMessage("");
         setSuccessful(false);

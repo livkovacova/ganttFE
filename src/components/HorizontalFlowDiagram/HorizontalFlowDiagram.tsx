@@ -46,7 +46,6 @@ let hiddenNodesIds: string[] = [];
 
 const getAssigneesProperty = (assignees: Array<number>, projectMembers: IUser[]): string[] => {
   const result: Array<string> = [];
-  console.log(projectMembers)
   assignees.forEach(assignee => {
     let member = projectMembers.find(member => member.id === assignee);
     if (member !== undefined) {
@@ -74,7 +73,6 @@ const resolveHiddenProperty = (selectedPhases: string[], currentPhase: string, s
   const hidden = haveAssignee && selectedPhases.includes(currentPhase) && selectedStates.includes(currentState) ? false : true
   if (hidden) {
     hiddenNodesIds.push(taskId);
-    console.log(hiddenNodesIds);
   }
   else {
     hiddenNodesIds = hiddenNodesIds.filter(hiddenNode => hiddenNode != taskId);
@@ -195,7 +193,6 @@ const prepareEdges = (phases: PhaseResponse[]): Edge[] => {
           hidden: resolveEdgeHiddenProperty(`task-${predecessor}`)
         };
         edgeId++;
-        console.log(newEdge);
         allEdges.push(newEdge);
       })
     });
@@ -225,7 +222,6 @@ const HorizontalFlow = ({ phases, teamMembers, selectedPhases, selectedAssignees
 
   React.useEffect(() => {
     setEdges(prepareEdges(phases));
-    console.log(hiddenNodesIds);
   }, [nodes, selectedAssignees, selectedPhases, selectedStates]);
 
   const isAllPrepared = () => {
